@@ -10,7 +10,14 @@ from urllib.parse import unquote
 
 ROOT = Path(__file__).resolve().parents[1]
 PROMPTS = ROOT / "prompts"
-REQUIRED_ROOT = ["README.md", "CONTRIBUTING.md", "LICENSE", "templates/prompt-template.md"]
+REQUIRED_ROOT = [
+    "README.md",
+    "AGENTS.md",
+    "BOOTSTRAP",
+    "CONTRIBUTING.md",
+    "LICENSE",
+    "templates/prompt-template.md",
+]
 REQUIRED_HEADINGS = [
     "Purpose",
     "When to use",
@@ -115,7 +122,12 @@ def validate_repository(root: Path = ROOT) -> list[str]:
     for path in prompt_files:
         errors.extend(validate_prompt_file(path))
 
-    for path in sorted(root.rglob("*.md")):
+    public_text_paths = set(root.rglob("*.md"))
+    bootstrap = root / "BOOTSTRAP"
+    if bootstrap.exists():
+        public_text_paths.add(bootstrap)
+
+    for path in sorted(public_text_paths):
         text = path.read_text(encoding="utf-8")
         errors.extend(validate_text_safety(path, text))
         errors.extend(validate_links(path, text, root))
