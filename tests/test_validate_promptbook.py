@@ -121,6 +121,48 @@ class PromptbookValidationTests(unittest.TestCase):
         self.assertIn("branch protection", lower)
         self.assertIn("does not itself create mutation authority", lower)
 
+    def test_decision_capsule_router_contract(self):
+        text = (ROOT / "prompts" / "workflows" / "README.md").read_text(encoding="utf-8")
+        lower = text.lower()
+
+        self.assertIn("## Decision capsules", text)
+        self.assertIn("recommendation-first", lower)
+        self.assertIn("Recommended: A", text)
+        self.assertIn("Recommended: ACCEPT", text)
+        for intent in ("`ACCEPT`", "`REJECT`", "`CHOOSE <option>`", "`CHANGE <instruction>`"):
+            self.assertIn(intent, text)
+        self.assertIn("natural-language", lower)
+        self.assertIn("voice", lower)
+        self.assertIn("exactly one unresolved decision", lower)
+        self.assertIn("do not silently migrate", lower)
+        self.assertIn("consume accepted authority once", lower)
+        self.assertIn("does not implicitly close the issue", lower)
+        self.assertIn("requests revision", lower)
+        self.assertIn("without another `proceed` confirmation", lower)
+        self.assertIn("repository-local policy", lower)
+        self.assertIn("validation", lower)
+        self.assertIn("security controls", lower)
+
+    def test_autonomous_progression_decision_capsule_contract(self):
+        text = (
+            ROOT / "prompts" / "workflows" / "autonomous-progression.md"
+        ).read_text(encoding="utf-8")
+        lower = text.lower()
+
+        self.assertIn("recommendation-first decision capsule", lower)
+        self.assertIn("a / b / c", lower)
+        self.assertIn("accept / reject / change", lower)
+        self.assertIn("semantic intents, not required command syntax", lower)
+        self.assertIn("natural-language", lower)
+        self.assertIn("voice", lower)
+        self.assertIn("do not guess", lower)
+        self.assertIn("proposal/revision identity", lower)
+        self.assertIn("do not migrate stale approval", lower)
+        self.assertIn("consume accepted authority once", lower)
+        self.assertIn("resume autonomous progression immediately", lower)
+        self.assertIn("reject rejects only the presented proposal", lower)
+        self.assertIn("change requests a revision", lower)
+
     def test_fresh_review_composition_contract(self):
         text = (
             ROOT / "prompts" / "workflows" / "fresh-independent-review.md"
@@ -195,6 +237,34 @@ class PromptbookValidationTests(unittest.TestCase):
         self.assertIn("must not bypass branch protection", lower)
         self.assertIn("same github account", lower)
         self.assertIn("separation-of-duties", lower)
+
+    def test_decision_capsule_guide_contract(self):
+        path = ROOT / "guides" / "decision-capsules.md"
+        text = path.read_text(encoding="utf-8")
+        lower = text.lower()
+
+        self.assertIn("Recommendation and choices first", text)
+        self.assertIn("Recommended: A", text)
+        self.assertIn("Recommended: ACCEPT", text)
+        for intent in ("`ACCEPT`", "`REJECT`", "`CHOOSE <option>`", "`CHANGE <instruction>`"):
+            self.assertIn(intent, text)
+        self.assertIn("keyboard, touch", lower)
+        self.assertIn("voice", lower)
+        self.assertIn("one concrete unresolved decision", lower)
+        self.assertIn("do not migrate the earlier response", lower)
+        self.assertIn("consumed once", lower)
+        self.assertIn("does not automatically close the issue", lower)
+        self.assertIn("not implicit approval", lower)
+        self.assertIn("fail closed", lower)
+        self.assertIn("/go", text)
+        self.assertIn("repository-local instructions", lower)
+
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        using = (ROOT / "guides" / "using-promptbook.md").read_text(encoding="utf-8")
+        router = (ROOT / "prompts" / "workflows" / "README.md").read_text(encoding="utf-8")
+        self.assertIn("guides/decision-capsules.md", readme)
+        self.assertIn("decision-capsules.md", using)
+        self.assertIn("../../guides/decision-capsules.md", router)
 
     def test_public_command_docs_stay_aligned(self):
         surfaces = (
