@@ -52,11 +52,15 @@ class PromptbookValidationTests(unittest.TestCase):
 
     def test_workflow_router_contract(self):
         text = (ROOT / "prompts" / "workflows" / "README.md").read_text(encoding="utf-8")
+        lower = text.lower()
 
         for target in (
             "autonomous-progression.md",
             "fresh-independent-review.md",
             "next-session-handover.md",
+            "../engineering/plan-an-issue.md",
+            "../engineering/implement-an-approved-issue.md",
+            "../engineering/remediate-review-findings.md",
         ):
             self.assertIn(target, text)
 
@@ -68,15 +72,29 @@ class PromptbookValidationTests(unittest.TestCase):
         ):
             self.assertIn(terminal_state, text)
 
-        self.assertIn("fresh", text.lower())
-        self.assertIn("not genuinely fresh", text.lower())
-        self.assertIn("handover", text.lower())
-        self.assertIn("approval", text.lower())
-        self.assertIn("execution authority", text.lower())
-        self.assertIn("return control to the governing workflow", text.lower())
-        self.assertIn("minimum-safe remediation", text.lower())
-        self.assertIn("final deliverable", text.lower())
-        self.assertIn("does not itself create mutation authority", text.lower())
+        for command in (
+            "/go",
+            "/review",
+            "/plan",
+            "/implement",
+            "/fix",
+            "/handoff",
+            "/status",
+        ):
+            self.assertIn(command, text)
+
+        self.assertIn("fresh", lower)
+        self.assertIn("not genuinely fresh", lower)
+        self.assertIn("handover", lower)
+        self.assertIn("approval", lower)
+        self.assertIn("execution authority", lower)
+        self.assertIn("return control to the governing workflow", lower)
+        self.assertIn("minimum-safe remediation", lower)
+        self.assertIn("final deliverable", lower)
+        self.assertIn("does not itself create mutation authority", lower)
+        self.assertIn("commands do not grant authority", lower)
+        self.assertIn("read-only", lower)
+        self.assertIn("routine `proceed` confirmation", lower)
 
         for pattern in MODULE.PRIVATE_PATTERNS.values():
             self.assertNotIn(pattern, text)
@@ -94,6 +112,46 @@ class PromptbookValidationTests(unittest.TestCase):
         self.assertIn("review result never creates mutation authority", lower)
         self.assertIn("must not claim a fresh independent review", lower)
         self.assertIn("already-authorised merge, verification, and close-out", lower)
+
+        for pattern in MODULE.PRIVATE_PATTERNS.values():
+            self.assertNotIn(pattern, text)
+
+    def test_project_bootstrap_contract(self):
+        path = ROOT / "guides" / "project-bootstrap.md"
+        text = path.read_text(encoding="utf-8")
+        lower = text.lower()
+
+        self.assertIn("AGENTS.md", text)
+        self.assertIn("prompts/workflows/README.md", text)
+        self.assertIn("8ft0-ai/promptbook@vX.Y.Z", text)
+        self.assertIn("stable release", lower)
+        self.assertIn("track `main`", lower)
+        self.assertIn("do not grant additional authority", lower)
+        self.assertIn("read-only", lower)
+
+        for terminal_state in (
+            "EXTERNAL_REQUIRED",
+            "DECISION_REQUIRED",
+            "BLOCKED",
+            "COMPLETE",
+        ):
+            self.assertIn(terminal_state, text)
+
+        for command in (
+            "/go",
+            "/review",
+            "/plan",
+            "/implement",
+            "/fix",
+            "/handoff",
+            "/status",
+        ):
+            self.assertIn(command, text)
+
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        using = (ROOT / "guides" / "using-promptbook.md").read_text(encoding="utf-8")
+        self.assertIn("guides/project-bootstrap.md", readme)
+        self.assertIn("project-bootstrap.md", using)
 
         for pattern in MODULE.PRIVATE_PATTERNS.values():
             self.assertNotIn(pattern, text)
