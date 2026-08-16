@@ -31,9 +31,9 @@ Use the first matching case:
 1. **A handover or next-session prompt is explicitly the requested deliverable** → [Next-session handover](next-session-handover.md).
    - Produce the handover only. Do not reinterpret a request for a prompt as authority to execute the handed-off task in the current context.
 
-2. **The current context is genuinely fresh and an independent substantive review is required now** → [Fresh independent review](fresh-independent-review.md).
-   - Reconstruct the decision from the actual candidate and evidence rather than inheriting the authoring conclusion.
-   - If independence is required but the current context is not genuinely fresh, use the handover workflow to produce a complete fresh-context review handoff and stop as `EXTERNAL_REQUIRED`.
+2. **An independent substantive review is required now**.
+   - If the current context is genuinely fresh for that decision → [Fresh independent review](fresh-independent-review.md). Reconstruct the decision from the actual candidate and evidence rather than inheriting the authoring conclusion.
+   - If the current context is not genuinely fresh → [Next-session handover](next-session-handover.md). Produce a complete fresh-context review handoff and stop as `EXTERNAL_REQUIRED`; do not substitute author-side reasoning for independent evidence.
 
 3. **A newly supplied bounded approval or execution authority applies to the current proposal or action** → [Autonomous progression](autonomous-progression.md).
    - Identify the exact proposal or action being authorised.
@@ -50,7 +50,7 @@ Use the first matching case:
 
 ## Terminal states
 
-A workflow should stop only as one of these states:
+A routed task should end only as one of these states:
 
 - `EXTERNAL_REQUIRED` — the next required action cannot legitimately be performed in the current environment, but a complete executable handoff can resolve it.
 - `DECISION_REQUIRED` — a genuine human judgement or authority decision is required.
@@ -67,7 +67,7 @@ Review readiness, validation results, PR readiness, merge readiness and ordinary
 - Treat access or capability as distinct from permission.
 - Prefer the minimum safe change and fail closed when decision-critical evidence is missing.
 - Do not ask for routine `proceed` confirmations when existing authority and evidence already determine the safe action.
-- A fresh review disposition does not itself create mutation authority. After the review, continue through autonomous progression only when the governing task already permits that continuation and independence is no longer at risk.
+- A fresh review disposition does not itself create mutation authority. When fresh review is an intermediate gate under this router, record its single clear disposition and concise rationale, then continue through autonomous progression only when the governing task already permits that continuation and independence is no longer at risk; the review result alone is not a terminal state.
 - A requested handover is terminal for the current deliverable; execution belongs to the receiving context.
 - Do not invent adjacent work after the governed objective is complete.
 
