@@ -50,6 +50,32 @@ class PromptbookValidationTests(unittest.TestCase):
             errors = MODULE.validate_text_safety(path, "source: ai-prompt-library")
             self.assertTrue(errors)
 
+    def test_workflow_router_contract(self):
+        text = (ROOT / "prompts" / "workflows" / "README.md").read_text(encoding="utf-8")
+
+        for target in (
+            "autonomous-progression.md",
+            "fresh-independent-review.md",
+            "next-session-handover.md",
+        ):
+            self.assertIn(target, text)
+
+        for terminal_state in (
+            "EXTERNAL_REQUIRED",
+            "DECISION_REQUIRED",
+            "BLOCKED",
+            "COMPLETE",
+        ):
+            self.assertIn(terminal_state, text)
+
+        self.assertIn("fresh", text.lower())
+        self.assertIn("handover", text.lower())
+        self.assertIn("approval", text.lower())
+        self.assertIn("execution authority", text.lower())
+
+        for pattern in MODULE.PRIVATE_PATTERNS.values():
+            self.assertNotIn(pattern, text)
+
 
 if __name__ == "__main__":
     unittest.main()
