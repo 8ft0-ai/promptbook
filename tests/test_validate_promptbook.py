@@ -75,6 +75,7 @@ class PromptbookValidationTests(unittest.TestCase):
 
         for target in (
             "autonomous-progression.md",
+            "documentation-assessment.md",
             "fresh-independent-review.md",
             "next-session-handover.md",
             "../engineering/plan-an-issue.md",
@@ -108,6 +109,55 @@ class PromptbookValidationTests(unittest.TestCase):
 
         for pattern in MODULE.PRIVATE_PATTERNS.values():
             self.assertNotIn(pattern, text)
+
+    def test_documentation_assessment_workflow_contract(self):
+        workflow = (
+            ROOT / "prompts" / "workflows" / "documentation-assessment.md"
+        ).read_text(encoding="utf-8")
+        workflow_lower = workflow.lower()
+        router = (ROOT / "prompts" / "workflows" / "README.md").read_text(encoding="utf-8")
+        router_lower = router.lower()
+        single = (
+            ROOT / "prompts" / "documentation" / "repository-assessment.md"
+        ).read_text(encoding="utf-8")
+        prompt_index = (ROOT / "prompts" / "README.md").read_text(encoding="utf-8")
+
+        self.assertIn("v0.1.2", workflow)
+        self.assertIn("c1e1982dd448b3574bb7e14667363ba9db326c5c", workflow)
+        self.assertIn("exact commit", workflow_lower)
+        self.assertIn("do not follow external `main`", workflow_lower)
+        self.assertIn("level 2", workflow_lower)
+        self.assertIn("level 1", workflow_lower)
+        self.assertIn("level 3", workflow_lower)
+        self.assertIn("DECISION_REQUIRED — Documentation assessment task set", workflow)
+        self.assertIn("Recommended: ACCEPT", workflow)
+        self.assertIn("ACCEPT — approve", workflow)
+        self.assertIn("CHANGE — revise", workflow)
+        self.assertIn("REJECT — stop", workflow)
+        self.assertIn("continue without routine `proceed` confirmations", workflow_lower)
+        self.assertIn("assessment does not create target-repository mutation authority", workflow_lower)
+        self.assertIn("normal promptbook planning/implementation lifecycle", workflow_lower)
+        self.assertIn("do not create or invoke a parallel external governance lifecycle", workflow_lower)
+        self.assertIn("issueops", workflow_lower)
+        self.assertIn("mandatory durable assessment publication", workflow_lower)
+        self.assertIn("mutation-class machinery", workflow_lower)
+
+        self.assertIn("documentation-assessment.md", router)
+        self.assertIn(
+            "representative reader tasks must be discovered, validated, or assessed together",
+            router_lower,
+        )
+        self.assertIn("reader/task discovery or multi-task validation", router_lower)
+        self.assertIn("no multi-task discovery or validation is needed", router_lower)
+        self.assertIn("ordinary bounded documentation edits", router_lower)
+        self.assertIn("known corrections", router_lower)
+        self.assertIn("explicit drafting tasks", router_lower)
+        self.assertIn("../documentation/repository-assessment.md", router)
+        self.assertEqual(PUBLIC_COMMANDS, declared_commands(router, "Shorthand commands"))
+
+        self.assertIn("level-1/single-task", single.lower())
+        self.assertIn("../workflows/documentation-assessment.md", single)
+        self.assertIn("workflows/documentation-assessment.md", prompt_index)
 
     def test_single_maintainer_router_contract(self):
         text = (ROOT / "prompts" / "workflows" / "README.md").read_text(encoding="utf-8")
