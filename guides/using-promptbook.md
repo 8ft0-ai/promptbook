@@ -1,6 +1,6 @@
 # Using Promptbook
 
-Promptbook supports three simple usage modes: copy, adapt, and compose.
+Promptbook supports four simple usage modes: copy, adapt, compose, and bootstrap.
 
 ## Copy and use
 
@@ -27,3 +27,9 @@ When guidance conflicts, apply this precedence:
 5. generic Promptbook guidance.
 
 If the conflict changes what is authorised or materially changes the intended outcome, resolve it explicitly rather than silently choosing the most convenient instruction.
+
+## Bootstrap repeated project use
+
+For project chats or other persistent workspaces, do not copy Promptbook prompt bodies into project instructions. Use a thin bootstrap that points the agent at repository-local instructions and the Promptbook workflow router, and let the repository declare any Promptbook version/pin. The router owns the public shorthand command vocabulary such as `/go`, `/review`, `/fix`, and `/status`.
+
+See [Project bootstrap and shorthand commands](project-bootstrap.md) for copyable bootstrap text, an `AGENTS.md` declaration pattern, command semantics, and versioning guidance.
