@@ -33,3 +33,5 @@ If the conflict changes what is authorised or materially changes the intended ou
 For project chats or other persistent workspaces, do not copy Promptbook prompt bodies into project instructions. Use a thin bootstrap that points the agent at repository-local instructions and the Promptbook workflow router, and let the repository declare any Promptbook version/pin. The router owns the public shorthand command vocabulary such as `/go`, `/review`, `/fix`, and `/status`.
 
 See [Project bootstrap and shorthand commands](project-bootstrap.md) for copyable bootstrap text, an `AGENTS.md` declaration pattern, command semantics, and versioning guidance.
+
+When the router reaches a genuine human choice, use the [decision capsule](decision-capsules.md) interaction rather than copying repository identifiers into an approval sentence. Recommendation-first choices and semantic `ACCEPT`, `REJECT`, `CHOOSE`, and `CHANGE` intents are designed to work consistently across keyboard, touch and voice while preserving bounded authority.
