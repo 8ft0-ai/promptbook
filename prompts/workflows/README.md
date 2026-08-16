@@ -50,7 +50,7 @@ Use the first matching case:
    - If the current context is not genuinely fresh → [Next-session handover](next-session-handover.md). Produce a complete fresh-context review handoff and stop as `EXTERNAL_REQUIRED`; do not substitute author-side reasoning for independent evidence.
 
 3. **A newly supplied bounded approval or execution authority applies to the current proposal or action** → [Autonomous progression](autonomous-progression.md).
-   - Identify the exact proposal or action being authorised.
+   - Identify the exact proposal or action being authorised. An unambiguous response to the current decision capsule, such as `A`, `accept`, `choose B`, or an equivalent natural-language/voice response, may supply that authority or choice.
    - Refresh decision-critical state and verify that the proposal/action and its authority boundary remain materially unchanged.
    - Consume the approval or authority once, only for that bounded object, then continue routine governed work through autonomous progression.
    - Do not treat approval as authority to expand scope, weaken controls or accept a materially changed proposal. Escalate a genuinely new human choice as `DECISION_REQUIRED`.
@@ -70,12 +70,61 @@ If the hosting platform refuses a formal self-review on an own PR, that platform
 
 For an intermediate `CHANGES REQUIRED`, perform an objectively determined, already-authorised minimum-safe remediation and validation before stopping. The context that performs that remediation is no longer fresh for the changed candidate, so route the exact remediated candidate to a new genuinely fresh context; that new context may still operate through the same maintainer account. For `APPROVED`, continue already-authorised merge, verification and close-out even when a formal self-approval cannot be recorded, unless repository rules make that formal status a real prerequisite.
 
+## Decision capsules
+
+When a genuine human decision is required, do not end with a repository identifier or approval sentence the user must copy. Present the smallest concrete decision as a compact recommendation-first **decision capsule**.
+
+For multiple meaningful alternatives, use compact option labels:
+
+```text
+DECISION_REQUIRED — Deployment mechanism
+
+Recommended: A
+
+A — GitHub Actions + Workload Identity
+B — Cloud Build
+C — Defer
+```
+
+For approval of one bounded proposal, use semantic choices rather than manufacturing A/B/C:
+
+```text
+DECISION_REQUIRED — Apply repository protection?
+
+Recommended: ACCEPT
+
+ACCEPT — Apply the approved bounded settings
+REJECT — Do not apply them
+CHANGE — Revise the proposal
+```
+
+Put recommendation and choices first. Add material authority, risk, or governance detail below the choices only when it affects the decision.
+
+The canonical response protocol is semantic intent, not slash-command syntax:
+
+- `ACCEPT` — accept the recommended bounded option;
+- `REJECT` — reject only the presented proposal or choice;
+- `CHOOSE <option>` — select a presented option;
+- `CHANGE <instruction>` — request a revision without approving the revision.
+
+Clear natural-language, short-form, touch, or voice equivalents may express the same intent when exactly one unresolved decision and its referent are unambiguous. Examples include `A`, `Choose A`, `yes`, `go ahead`, `accept the recommendation`, or naming the option directly. Slash aliases may be understood as conveniences, but they are not the protocol and are not added to the public shorthand-command vocabulary.
+
+Bind every capsule to one concrete unresolved decision and the authoritative proposal/evidence needed to interpret it: the decision target, proposal or revision identity, recommendation, and bounded authority/effect of acceptance. The user should not normally need to repeat those identifiers.
+
+Before consequential mutation after `ACCEPT` or `CHOOSE`, refresh decision-critical state. If the proposal materially changed, do not silently migrate the earlier response to the new proposal; re-present the decision. Consume accepted authority once for the bounded object only, then resume governed autonomous progression immediately when existing authority permits it.
+
+`REJECT` does not implicitly close the issue, abandon the objective, undo prior work, or choose another option. Re-route from the changed decision state and present another recommendation when one is safely determined. `CHANGE` requests revision; after revising, re-present the decision unless the user's wording explicitly grants authority for the revised proposal.
+
+If more than one unresolved decision exists, or a short response such as `yes`, `A`, or `accept` has more than one plausible referent, fail closed rather than guessing. Repository-local policy, validation, security controls, branch protection, and explicit task authority continue to take precedence.
+
+See [Decision capsules](../../guides/decision-capsules.md) for the device-neutral interaction pattern and examples.
+
 ## Terminal states
 
 A routed task should end only as one of these states:
 
 - `EXTERNAL_REQUIRED` — the next required action cannot legitimately be performed in the current environment, but a complete executable handoff can resolve it.
-- `DECISION_REQUIRED` — a genuine human judgement or authority decision is required.
+- `DECISION_REQUIRED` — a genuine human judgement or authority decision is required; present it as a recommendation-first decision capsule.
 - `BLOCKED` — no safe autonomous action, executable external handoff or concrete human decision can resolve the condition now.
 - `COMPLETE` — the governed objective is genuinely finished, including required verification and close-out.
 
@@ -89,6 +138,7 @@ Review readiness, validation results, PR readiness, merge readiness and ordinary
 - Treat access or capability as distinct from permission.
 - Prefer the minimum safe change and fail closed when decision-critical evidence is missing.
 - Do not ask for routine `proceed` confirmations when existing authority and evidence already determine the safe action.
+- When `DECISION_REQUIRED` applies, present the decision capsule instead of making the user copy an approval phrase or repository identifier. Once an unambiguous `ACCEPT` or `CHOOSE` response is safely bound and refreshed, continue any already-authorised routine work without another `proceed` confirmation.
 - Output or deliverable constraints inside a selected workflow apply to that workflow's record. They do not override this router's continuation semantics unless the user or governing task explicitly requested that workflow result as the final deliverable.
 - A fresh review disposition does not itself create mutation authority. When fresh review is an intermediate gate under this router, record its single clear disposition and concise rationale, then return control to the governing workflow. If `CHANGES REQUIRED` identifies a bounded defect whose minimum-safe remediation is objectively determined and already authorised, continue through autonomous progression to remediate and validate it without another routine approval. Because that context then authored the changed candidate, route the new candidate to a genuinely fresh review context before any gate requiring independence. A single-maintainer project may use the same GitHub identity in that new fresh context. If the disposition is `APPROVED`, continue already-authorised merge, verification and close-out work rather than stopping at review completion or at a platform refusal to record formal self-approval, unless repository-local rules make that approval status mandatory.
 - A requested handover is terminal for the current deliverable; execution belongs to the receiving context.

@@ -11,6 +11,7 @@ Promptbook is for engineers and technical practitioners who want AI assistants t
 | Turn an issue into an implementation plan | [Plan an issue](prompts/engineering/plan-an-issue.md) |
 | Review a pull request substantively | [Review a pull request](prompts/engineering/pr-review.md) |
 | Continue governed work or determine the next workflow | [Workflow router](prompts/workflows/README.md) |
+| Respond quickly to a genuine human decision | [Decision capsules](guides/decision-capsules.md) |
 | Set up recurring project-chat invocation | [Project bootstrap and shorthand commands](guides/project-bootstrap.md) |
 | Re-review work from a fresh context | [Fresh independent review](prompts/workflows/fresh-independent-review.md) |
 
@@ -40,6 +41,22 @@ Examples:
 ```
 
 Commands are shorthand intent selectors only. They do not grant authority or bypass repository-local instructions, validation, security controls, freshness, or independent-review requirements. See [Project bootstrap and shorthand commands](guides/project-bootstrap.md) for setup and the [Workflow router](prompts/workflows/README.md) for canonical command semantics.
+
+## Decision capsules
+
+When Promptbook genuinely needs a human judgement or authority decision, it presents the recommendation and choices first instead of making you copy an approval phrase or repository identifier:
+
+```text
+DECISION_REQUIRED — Deployment mechanism
+
+Recommended: A
+
+A — GitHub Actions + Workload Identity
+B — Cloud Build
+C — Defer
+```
+
+You can answer naturally with `A`, `Choose A`, `accept`, `go ahead`, or another clear equivalent when there is exactly one unambiguous pending decision. The stable protocol is semantic `ACCEPT`, `REJECT`, `CHOOSE`, and `CHANGE` intent, so the same interaction works from keyboard, touch, or voice. See [Decision capsules](guides/decision-capsules.md) for binding, ambiguity, stale-proposal, and continuation rules.
 
 ## How to use Promptbook
 
@@ -73,6 +90,7 @@ Status describes the evidence behind the Promptbook prompt. It is not a claim of
 
 - [Using Promptbook](guides/using-promptbook.md)
 - [Project bootstrap and shorthand commands](guides/project-bootstrap.md)
+- [Decision capsules](guides/decision-capsules.md)
 - [Adapting prompts](guides/adapting-prompts.md)
 - [Design principles](guides/design-principles.md)
 

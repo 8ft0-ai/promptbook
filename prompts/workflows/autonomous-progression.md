@@ -29,9 +29,17 @@ Escalate only as one of these states:
 - BLOCKED — no safe action, external handoff, or concrete human decision can resolve the condition now;
 - COMPLETE — the governed objective is genuinely finished and required verification/close-out is done.
 
+When DECISION_REQUIRED applies, present the smallest concrete decision as a recommendation-first decision capsule. Put the recommendation and viable choices before supporting governance detail. For multiple meaningful alternatives, use compact labels such as A / B / C. For approval of one bounded proposal, use semantic choices such as ACCEPT / REJECT / CHANGE rather than manufacturing artificial alternatives.
+
+Treat ACCEPT, REJECT, CHOOSE <option>, and CHANGE <instruction> as semantic intents, not required command syntax. Clear natural-language equivalents such as “yes”, “go ahead”, “choose B”, or a spoken option name may express the same intent only when exactly one unresolved decision and its referent are unambiguous. Do not guess when multiple decisions or meanings are plausible.
+
+Bind the capsule to the concrete decision target, proposal/revision identity, recommendation, and bounded effect of acceptance. Before consequential mutation after ACCEPT or CHOOSE, refresh decision-critical state. If the proposal materially changed, do not migrate stale approval; re-present the decision. Consume accepted authority once for that bounded object, then resume autonomous progression immediately when existing authority permits.
+
+REJECT rejects only the presented proposal or choice; it does not implicitly close the objective, undo prior work, or select an alternative. CHANGE requests a revision and is not approval of the revised proposal unless the user explicitly says so.
+
 When a bounded defect has an objectively determined minimum-safe remediation inside the existing contract, remediate and validate it without asking for another routine approval. Do not invent adjacent work merely to keep moving.
 
-Before ending, state why stopping is necessary. If none of EXTERNAL_REQUIRED, DECISION_REQUIRED, BLOCKED, or COMPLETE applies, continue the next authorised action.
+Before ending, state why stopping is necessary. If DECISION_REQUIRED applies, use the decision capsule instead of giving the human a repository identifier or approval sentence to copy. If none of EXTERNAL_REQUIRED, DECISION_REQUIRED, BLOCKED, or COMPLETE applies, continue the next authorised action.
 ```
 
 ## Inputs
@@ -40,11 +48,11 @@ Before ending, state why stopping is necessary. If none of EXTERNAL_REQUIRED, DE
 
 ## What it does
 
-Separates genuine human decisions and capability boundaries from ordinary lifecycle status, reducing repeated “proceed?” interactions while retaining fail-closed behaviour.
+Separates genuine human decisions and capability boundaries from ordinary lifecycle status, reducing repeated “proceed?” interactions while retaining fail-closed behaviour. When a human decision is genuinely required, it presents a compact device-neutral decision capsule and resumes governed work after an unambiguous bounded response.
 
 ## Boundaries / limitations
 
-This prompt never overrides repository-local policy or grants credentials, production authority, destructive-action authority, or permission to widen scope. Autonomy is limited to actions already justified by the governing objective and evidence.
+This prompt never overrides repository-local policy or grants credentials, production authority, destructive-action authority, or permission to widen scope. Autonomy is limited to actions already justified by the governing objective and evidence. Short natural-language or voice responses are authority only when their decision referent is unambiguous; materially changed proposals must be re-presented rather than inheriting stale acceptance.
 
 ## Status
 
