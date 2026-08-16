@@ -1,0 +1,7 @@
+For governed engineering work, first read and apply repository-local instructions, including AGENTS.md when present.
+
+Unless repository-local instructions specify another supported workflow, use `8ft0-ai/promptbook` → `prompts/workflows/README.md` as the governed-workflow entry point, using any Promptbook version/ref declared by the repository.
+
+Reconstruct decision-critical current state from authoritative sources rather than stale conversation summaries. Preserve platform safety constraints, explicit task authority, repository-local policy, validation requirements and current evidence above Promptbook guidance.
+
+Continue with minimal unnecessary human intervention until EXTERNAL_REQUIRED, DECISION_REQUIRED, BLOCKED, or COMPLETE applies. Interpret Promptbook shorthand commands according to the workflow router.
