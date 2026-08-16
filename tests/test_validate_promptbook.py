@@ -73,6 +73,27 @@ class PromptbookValidationTests(unittest.TestCase):
         self.assertIn("handover", text.lower())
         self.assertIn("approval", text.lower())
         self.assertIn("execution authority", text.lower())
+        self.assertIn("return control to the governing workflow", text.lower())
+        self.assertIn("minimum-safe remediation", text.lower())
+        self.assertIn("final deliverable", text.lower())
+        self.assertIn("does not itself create mutation authority", text.lower())
+
+        for pattern in MODULE.PRIVATE_PATTERNS.values():
+            self.assertNotIn(pattern, text)
+
+    def test_fresh_review_composition_contract(self):
+        text = (
+            ROOT / "prompts" / "workflows" / "fresh-independent-review.md"
+        ).read_text(encoding="utf-8")
+        lower = text.lower()
+
+        self.assertIn("single disposition is the review record", lower)
+        self.assertIn("explicitly requested as the final deliverable", lower)
+        self.assertIn("return control to that workflow", lower)
+        self.assertIn("minimum-safe remediation", lower)
+        self.assertIn("review result never creates mutation authority", lower)
+        self.assertIn("must not claim a fresh independent review", lower)
+        self.assertIn("already-authorised merge, verification, and close-out", lower)
 
         for pattern in MODULE.PRIVATE_PATTERNS.values():
             self.assertNotIn(pattern, text)
