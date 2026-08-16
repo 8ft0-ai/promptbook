@@ -16,6 +16,31 @@ Promptbook is for engineers and technical practitioners who want AI assistants t
 
 Browse the complete collection in [`prompts/`](prompts/README.md).
 
+## Quick commands
+
+Once Promptbook is configured for a project, common workflow intents can be invoked with:
+
+| Command | Intent |
+| --- | --- |
+| `/go [target]` | Continue governed work as far as safely possible |
+| `/review [target]` | Request a substantive independent review |
+| `/plan [target]` | Plan bounded work |
+| `/implement [target]` | Implement already-approved bounded work |
+| `/fix [target]` | Remediate bounded review findings |
+| `/handoff [target]` | Produce a continuation handoff without executing it |
+| `/status [target]` | Reconstruct and report authoritative current state, read-only |
+
+Examples:
+
+```text
+/go issue #42
+/review PR #43
+/fix
+/status
+```
+
+Commands are shorthand intent selectors only. They do not grant authority or bypass repository-local instructions, validation, security controls, freshness, or independent-review requirements. See [Project bootstrap and shorthand commands](guides/project-bootstrap.md) for setup and the [Workflow router](prompts/workflows/README.md) for canonical command semantics.
+
 ## How to use Promptbook
 
 1. Open a prompt that matches the task you want to perform, or start from the [workflow router](prompts/workflows/README.md) when the next governed workflow should be selected from current state.
