@@ -11,6 +11,7 @@ Promptbook is organised by the task a user wants to perform.
 
 ## Workflows
 
+- [Workflow router — start here for governed continuation](workflows/README.md)
 - [Autonomous progression](workflows/autonomous-progression.md)
 - [Fresh independent review](workflows/fresh-independent-review.md)
 - [Next-session handover](workflows/next-session-handover.md)

@@ -10,16 +10,16 @@ Promptbook is for engineers and technical practitioners who want AI assistants t
 | --- | --- |
 | Turn an issue into an implementation plan | [Plan an issue](prompts/engineering/plan-an-issue.md) |
 | Review a pull request substantively | [Review a pull request](prompts/engineering/pr-review.md) |
-| Continue governed work with minimal intervention | [Autonomous progression](prompts/workflows/autonomous-progression.md) |
+| Continue governed work or determine the next workflow | [Workflow router](prompts/workflows/README.md) |
 | Re-review work from a fresh context | [Fresh independent review](prompts/workflows/fresh-independent-review.md) |
 
 Browse the complete collection in [`prompts/`](prompts/README.md).
 
 ## How to use Promptbook
 
-1. Open a prompt that matches the task you want to perform.
-2. Copy the text in its **Prompt** section.
-3. Replace the declared `<PLACEHOLDERS>` with your actual context.
+1. Open a prompt that matches the task you want to perform, or start from the [workflow router](prompts/workflows/README.md) when the next governed workflow should be selected from current state.
+2. Copy the text in its **Prompt** section when using an individual prompt, or follow the router invocation when using the workflow entrypoint.
+3. Replace the declared `<PLACEHOLDERS>` with your actual context where applicable.
 4. Give the prompt to the AI assistant or agent that has the capabilities needed for the task.
 5. Keep repository-local instructions, platform safety rules, and explicit task authority above generic Promptbook guidance.
 
