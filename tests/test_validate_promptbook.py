@@ -143,7 +143,12 @@ class PromptbookValidationTests(unittest.TestCase):
         self.assertIn("mutation-class machinery", workflow_lower)
 
         self.assertIn("documentation-assessment.md", router)
-        self.assertIn("representative reader tasks are not already known", router_lower)
+        self.assertIn(
+            "representative reader tasks must be discovered, validated, or assessed together",
+            router_lower,
+        )
+        self.assertIn("reader/task discovery or multi-task validation", router_lower)
+        self.assertIn("no multi-task discovery or validation is needed", router_lower)
         self.assertIn("ordinary bounded documentation edits", router_lower)
         self.assertIn("known corrections", router_lower)
         self.assertIn("explicit drafting tasks", router_lower)
