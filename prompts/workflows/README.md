@@ -55,10 +55,15 @@ Use the first matching case:
    - Consume the approval or authority once, only for that bounded object, then continue routine governed work through autonomous progression.
    - Do not treat approval as authority to expand scope, weaken controls or accept a materially changed proposal. Escalate a genuinely new human choice as `DECISION_REQUIRED`.
 
-4. **Ordinary governed continuation** → [Autonomous progression](autonomous-progression.md).
+4. **A substantive repository documentation assessment is needed and the representative reader tasks are not already known** → [Documentation assessment workflow](documentation-assessment.md).
+   - Use this route for broad documentation-quality assessment, navigation or authority problems, or deciding the smallest justified documentation response when reader/task discovery is part of the work.
+   - Do not route ordinary bounded documentation edits, known corrections or explicit drafting tasks through assessment merely because documentation is involved.
+   - If one concrete reader task is already known and no multi-task discovery is needed, use [Repository documentation assessment](../documentation/repository-assessment.md) as the proportionate single-task path.
+
+5. **Ordinary governed continuation** → [Autonomous progression](autonomous-progression.md).
    - Continue while current policy, evidence, scope and available capabilities safely determine the next action.
 
-5. **No safe route fits** → fail closed.
+6. **No safe route fits** → fail closed.
    - Do not invent work, authority or a workflow mapping merely to keep moving.
    - Use the terminal-state rules below to identify the real boundary.
 
@@ -147,5 +152,6 @@ Review readiness, validation results, PR readiness, merge readiness and ordinary
 ## Current workflows
 
 - [Autonomous progression](autonomous-progression.md) — continue already-governed work with minimal human orchestration.
+- [Documentation assessment workflow](documentation-assessment.md) — discover and approve representative reader tasks, then continue a substantive documentation assessment with a pinned external method.
 - [Fresh independent review](fresh-independent-review.md) — reconstruct and adjudicate a candidate from a genuinely fresh context.
 - [Next-session handover](next-session-handover.md) — create the shortest safe continuation prompt for another context or capability boundary.
