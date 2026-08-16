@@ -22,6 +22,20 @@ Approved — proceed.
 
 Do not manually choose a workflow when this router can determine the route from current evidence.
 
+## Shorthand commands
+
+When a user message begins with one of these commands, treat it as a concise intent selector. Resolve an omitted target from the current conversation and authoritative repository/task state only when that is unambiguous. Commands do not grant authority, bypass repository policy, weaken freshness or independence requirements, or turn unavailable capabilities into available ones.
+
+- `/go [target]` — continue the governed objective through this router. If the target is already established, `/go` alone means perform the next authorised, safely decidable action rather than merely describing the next gate or asking for a routine `proceed` confirmation. Natural-language qualifiers such as `/go until the next genuinely fresh review boundary` are allowed.
+- `/review [target]` — request a substantive independent review using [Fresh independent review](fresh-independent-review.md). Treat the review disposition as the requested final deliverable unless the user explicitly asks to continue afterwards. If the current context is not genuinely fresh for the required decision, use [Next-session handover](next-session-handover.md) and stop as `EXTERNAL_REQUIRED` rather than substituting author-side reasoning.
+- `/plan [target]` — use [Plan an issue](../engineering/plan-an-issue.md). Planning remains non-implementation work unless separate authority says otherwise.
+- `/implement [target]` — use [Implement an approved issue](../engineering/implement-an-approved-issue.md). The target must already be sufficiently approved/determined and repository mutation must already be authorised.
+- `/fix [target]` — use [Remediate review findings](../engineering/remediate-review-findings.md) for objectively bounded findings under existing authority. Preserve any required fresh re-review boundary after changing the candidate.
+- `/handoff [target]` — use [Next-session handover](next-session-handover.md). The handoff is the final deliverable; do not execute the handed-off task in the current context.
+- `/status [target]` — reconstruct decision-critical current state and report concise authoritative status read-only. Do not mutate, merge, dispatch, or otherwise continue the governed task unless the user separately requests continuation.
+
+Keep the command set small. Prefer natural-language qualifiers over inventing flags or a larger command grammar.
+
 ## Routing
 
 Before routing, inspect the current conversation and the authoritative repository or task state needed for the next decision. Stale summaries are navigation aids, not authority. Select exactly one primary workflow and apply it immediately; routing itself is not a stop point.
