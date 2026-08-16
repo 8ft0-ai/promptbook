@@ -109,6 +109,18 @@ class PromptbookValidationTests(unittest.TestCase):
         for pattern in MODULE.PRIVATE_PATTERNS.values():
             self.assertNotIn(pattern, text)
 
+    def test_single_maintainer_router_contract(self):
+        text = (ROOT / "prompts" / "workflows" / "README.md").read_text(encoding="utf-8")
+        lower = text.lower()
+
+        self.assertIn("single-maintainer repositories", lower)
+        self.assertIn("same repository owner/github identity", lower)
+        self.assertIn("platform limitation is not a terminal state by itself", lower)
+        self.assertIn("durable repository-local comment", lower)
+        self.assertIn("may still operate through the same maintainer account", lower)
+        self.assertIn("branch protection", lower)
+        self.assertIn("does not itself create mutation authority", lower)
+
     def test_fresh_review_composition_contract(self):
         text = (
             ROOT / "prompts" / "workflows" / "fresh-independent-review.md"
@@ -125,6 +137,21 @@ class PromptbookValidationTests(unittest.TestCase):
 
         for pattern in MODULE.PRIVATE_PATTERNS.values():
             self.assertNotIn(pattern, text)
+
+    def test_single_maintainer_fresh_review_contract(self):
+        text = (
+            ROOT / "prompts" / "workflows" / "fresh-independent-review.md"
+        ).read_text(encoding="utf-8")
+        lower = text.lower()
+
+        self.assertIn("not automatically of the github account", lower)
+        self.assertIn("same maintainer account", lower)
+        self.assertIn("recording limitation rather than a governance stop by itself", lower)
+        self.assertIn("durable pr comment", lower)
+        self.assertIn("must not claim a fresh independent review", lower)
+        self.assertIn("same github maintainer identity", lower)
+        self.assertIn("distinct reviewer identity", lower)
+        self.assertIn("review result never creates mutation authority", lower)
 
     def test_project_bootstrap_contract(self):
         path = ROOT / "guides" / "project-bootstrap.md"
@@ -156,6 +183,18 @@ class PromptbookValidationTests(unittest.TestCase):
 
         for pattern in MODULE.PRIVATE_PATTERNS.values():
             self.assertNotIn(pattern, text)
+
+    def test_single_maintainer_bootstrap_guidance(self):
+        text = (ROOT / "guides" / "project-bootstrap.md").read_text(encoding="utf-8")
+        lower = text.lower()
+
+        self.assertIn("single-maintainer projects", lower)
+        self.assertIn("does not need to invent a second github identity", lower)
+        self.assertIn("fresh chat/session", lower)
+        self.assertIn("durable repository-local comment", lower)
+        self.assertIn("must not bypass branch protection", lower)
+        self.assertIn("same github account", lower)
+        self.assertIn("separation-of-duties", lower)
 
     def test_public_command_docs_stay_aligned(self):
         surfaces = (
