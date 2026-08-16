@@ -46,7 +46,7 @@ Use the first matching case:
    - Produce the handover only. Do not reinterpret a request for a prompt as authority to execute the handed-off task in the current context.
 
 2. **An independent substantive review is required now**.
-   - If the current context is genuinely fresh for that decision → [Fresh independent review](fresh-independent-review.md). Reconstruct the decision from the actual candidate and evidence rather than inheriting the authoring conclusion.
+   - If the current context is genuinely fresh for that decision → [Fresh independent review](fresh-independent-review.md). Reconstruct the decision from the actual candidate and evidence rather than inheriting the authoring conclusion. Freshness is about the context/evidence boundary; it does not require a different GitHub account unless repository-local policy explicitly requires a distinct reviewer identity.
    - If the current context is not genuinely fresh → [Next-session handover](next-session-handover.md). Produce a complete fresh-context review handoff and stop as `EXTERNAL_REQUIRED`; do not substitute author-side reasoning for independent evidence.
 
 3. **A newly supplied bounded approval or execution authority applies to the current proposal or action** → [Autonomous progression](autonomous-progression.md).
@@ -61,6 +61,14 @@ Use the first matching case:
 5. **No safe route fits** → fail closed.
    - Do not invent work, authority or a workflow mapping merely to keep moving.
    - Use the terminal-state rules below to identify the real boundary.
+
+## Single-maintainer repositories
+
+A single-person project may preserve independent review by using a genuinely fresh context while reusing the same repository owner/GitHub identity. Do not equate a distinct reviewer account with a fresh reasoning context unless repository-local policy, branch protection, regulation, or explicit task authority actually requires distinct identities.
+
+If the hosting platform refuses a formal self-review on an own PR, that platform limitation is not a terminal state by itself. Record the exact `APPROVED` / `CHANGES REQUIRED` disposition and concise rationale in a durable repository-local comment or other permitted record, then continue the governing workflow according to existing authority. Do not invent another account, fake formal approval, or bypass a rule that genuinely requires a formal or distinct-person approval.
+
+For an intermediate `CHANGES REQUIRED`, perform an objectively determined, already-authorised minimum-safe remediation and validation before stopping. The context that performs that remediation is no longer fresh for the changed candidate, so route the exact remediated candidate to a new genuinely fresh context; that new context may still operate through the same maintainer account. For `APPROVED`, continue already-authorised merge, verification and close-out even when a formal self-approval cannot be recorded, unless repository rules make that formal status a real prerequisite.
 
 ## Terminal states
 
@@ -82,7 +90,7 @@ Review readiness, validation results, PR readiness, merge readiness and ordinary
 - Prefer the minimum safe change and fail closed when decision-critical evidence is missing.
 - Do not ask for routine `proceed` confirmations when existing authority and evidence already determine the safe action.
 - Output or deliverable constraints inside a selected workflow apply to that workflow's record. They do not override this router's continuation semantics unless the user or governing task explicitly requested that workflow result as the final deliverable.
-- A fresh review disposition does not itself create mutation authority. When fresh review is an intermediate gate under this router, record its single clear disposition and concise rationale, then return control to the governing workflow. If `CHANGES REQUIRED` identifies a bounded defect whose minimum-safe remediation is objectively determined and already authorised, continue through autonomous progression to remediate and validate it without another routine approval. Because that context then authored the changed candidate, route the new candidate to a genuinely fresh review context before any gate requiring independence. If the disposition is `APPROVED`, continue already-authorised merge, verification and close-out work rather than stopping at review completion.
+- A fresh review disposition does not itself create mutation authority. When fresh review is an intermediate gate under this router, record its single clear disposition and concise rationale, then return control to the governing workflow. If `CHANGES REQUIRED` identifies a bounded defect whose minimum-safe remediation is objectively determined and already authorised, continue through autonomous progression to remediate and validate it without another routine approval. Because that context then authored the changed candidate, route the new candidate to a genuinely fresh review context before any gate requiring independence. A single-maintainer project may use the same GitHub identity in that new fresh context. If the disposition is `APPROVED`, continue already-authorised merge, verification and close-out work rather than stopping at review completion or at a platform refusal to record formal self-approval, unless repository-local rules make that approval status mandatory.
 - A requested handover is terminal for the current deliverable; execution belongs to the receiving context.
 - Do not invent adjacent work after the governed objective is complete.
 
