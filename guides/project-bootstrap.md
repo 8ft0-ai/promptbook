@@ -48,6 +48,16 @@ Use the shorthand commands defined by the pinned Promptbook workflow router; do 
 
 Pinning a stable release makes the workflow dependency reproducible and reviewable. A repository may deliberately track `main` instead, but that opts into behaviour changes as Promptbook evolves. Keep the project-level bootstrap version-neutral and let the repository own the pin or override.
 
+## Single-maintainer projects
+
+A repository with one maintainer does not need to invent a second GitHub identity merely to obtain fresh review. Promptbook treats independence as a property of the reviewing context and evidence boundary. A fresh chat/session that independently reconstructs the candidate may still use the same maintainer account that authored the PR.
+
+If GitHub refuses a formal `APPROVE` or `REQUEST_CHANGES` review on the maintainer's own PR, record the exact disposition and rationale in a durable repository-local comment and continue the governing workflow when existing authority permits. That fallback is not a formal platform approval and must not bypass branch protection or repository policy that genuinely requires a distinct reviewer or approval status.
+
+After a fresh reviewer applies a bounded remediation, that context has become an authoring context for the changed candidate and cannot independently re-review its own change. Use another genuinely fresh context for the next independence-required gate; in a single-maintainer project that fresh context may still operate through the same GitHub account.
+
+Repositories with stronger separation-of-duties requirements should state them explicitly in `AGENTS.md` or other repository-local policy. Those requirements take precedence over this solo-maintainer default.
+
 ## Shorthand commands
 
 The canonical command semantics live in [`prompts/workflows/README.md`](../prompts/workflows/README.md). The small public vocabulary is:
