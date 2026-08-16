@@ -69,6 +69,7 @@ class PromptbookValidationTests(unittest.TestCase):
             self.assertIn(terminal_state, text)
 
         self.assertIn("fresh", text.lower())
+        self.assertIn("not genuinely fresh", text.lower())
         self.assertIn("handover", text.lower())
         self.assertIn("approval", text.lower())
         self.assertIn("execution authority", text.lower())
