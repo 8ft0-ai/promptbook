@@ -67,7 +67,8 @@ Review readiness, validation results, PR readiness, merge readiness and ordinary
 - Treat access or capability as distinct from permission.
 - Prefer the minimum safe change and fail closed when decision-critical evidence is missing.
 - Do not ask for routine `proceed` confirmations when existing authority and evidence already determine the safe action.
-- A fresh review disposition does not itself create mutation authority. When fresh review is an intermediate gate under this router, record its single clear disposition and concise rationale, then continue through autonomous progression only when the governing task already permits that continuation and independence is no longer at risk; the review result alone is not a terminal state.
+- Output or deliverable constraints inside a selected workflow apply to that workflow's record. They do not override this router's continuation semantics unless the user or governing task explicitly requested that workflow result as the final deliverable.
+- A fresh review disposition does not itself create mutation authority. When fresh review is an intermediate gate under this router, record its single clear disposition and concise rationale, then return control to the governing workflow. If `CHANGES REQUIRED` identifies a bounded defect whose minimum-safe remediation is objectively determined and already authorised, continue through autonomous progression to remediate and validate it without another routine approval. Because that context then authored the changed candidate, route the new candidate to a genuinely fresh review context before any gate requiring independence. If the disposition is `APPROVED`, continue already-authorised merge, verification and close-out work rather than stopping at review completion.
 - A requested handover is terminal for the current deliverable; execution belongs to the receiving context.
 - Do not invent adjacent work after the governed objective is complete.
 
