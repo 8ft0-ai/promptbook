@@ -21,7 +21,7 @@ Promptbook remains the governing workflow and authority layer. Repository-local 
 
 Adoption level
 
-Use Level 2 task evidence by default for a substantive repository assessment. If one narrow reader task or documentation question is already known and can be assessed proportionately, use the existing Promptbook single-task assessment instead. Use Level 3 controls only when method evaluation, higher-risk execution, repository-local policy or a separately governed experiment actually requires them.
+Use Level 2 task evidence by default for a substantive repository assessment. If one narrow reader task or documentation question is already known and can be assessed proportionately, use the existing Promptbook Level 1 single-task assessment instead. Use Level 3 controls only when method evaluation, higher-risk execution, repository-local policy or a separately governed experiment actually requires them.
 
 Assessment setup
 
