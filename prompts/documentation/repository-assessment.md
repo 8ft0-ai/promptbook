@@ -2,11 +2,11 @@
 
 ## Purpose
 
-Assess whether repository documentation lets a defined reader complete a real task safely, rather than reviewing documentation for style or coverage in the abstract.
+Assess whether repository documentation lets a defined reader complete one known task safely, rather than reviewing documentation for style or coverage in the abstract.
 
 ## When to use
 
-Use when you need evidence about navigation, authority, missing/contradictory documentation, or the smallest useful documentation improvement for a repository task.
+Use as the proportionate Level-1/single-task path when the concrete reader task is already known and you need evidence about navigation, authority, missing/contradictory documentation, or the smallest useful documentation improvement for that task. For broader repository assessment where reader groups or representative tasks still need to be discovered or approved, use the [Documentation assessment workflow](../workflows/documentation-assessment.md).
 
 ## Prompt
 
@@ -40,11 +40,11 @@ Return one primary result: COMPLETE, PARTIAL, BLOCKED, or NOT TESTED, with conci
 
 ## What it does
 
-Evaluates documentation through an actual task path, preserves authority boundaries, and allows “no change” or “blocked by missing decision” to be valid outcomes.
+Evaluates documentation through one actual task path, preserves authority boundaries, and allows “no change” or “blocked by missing decision” to be valid outcomes. It intentionally avoids the reader/task discovery and approval machinery needed for a broader Level-2 assessment.
 
 ## Boundaries / limitations
 
-This is an assessment prompt, not automatic remediation authority. The quality of the result depends on a realistic reader task and access to the documentation sources that actually govern it.
+This is an assessment prompt, not automatic remediation authority. The quality of the result depends on a realistic, already-known reader task and access to the documentation sources that actually govern it. If the reader task itself is still uncertain, use the broader documentation-assessment workflow first.
 
 ## Status
 
