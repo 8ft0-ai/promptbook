@@ -1,4 +1,5 @@
 import importlib.util
+import re
 import tempfile
 import unittest
 from pathlib import Path
@@ -10,6 +11,24 @@ SPEC = importlib.util.spec_from_file_location(
 MODULE = importlib.util.module_from_spec(SPEC)
 assert SPEC.loader is not None
 SPEC.loader.exec_module(MODULE)
+
+PUBLIC_COMMANDS = {
+    "/go",
+    "/review",
+    "/plan",
+    "/implement",
+    "/fix",
+    "/handoff",
+    "/status",
+}
+COMMAND_RE = re.compile(r"`(/[-a-z]+)(?:\s[^`]*)?`")
+
+
+def declared_commands(text: str, heading: str) -> set[str]:
+    return {
+        match.group(1)
+        for match in COMMAND_RE.finditer(MODULE.section(text, heading))
+    }
 
 
 class PromptbookValidationTests(unittest.TestCase):
@@ -72,16 +91,7 @@ class PromptbookValidationTests(unittest.TestCase):
         ):
             self.assertIn(terminal_state, text)
 
-        for command in (
-            "/go",
-            "/review",
-            "/plan",
-            "/implement",
-            "/fix",
-            "/handoff",
-            "/status",
-        ):
-            self.assertIn(command, text)
+        self.assertEqual(PUBLIC_COMMANDS, declared_commands(text, "Shorthand commands"))
 
         self.assertIn("fresh", lower)
         self.assertIn("not genuinely fresh", lower)
@@ -137,16 +147,7 @@ class PromptbookValidationTests(unittest.TestCase):
         ):
             self.assertIn(terminal_state, text)
 
-        for command in (
-            "/go",
-            "/review",
-            "/plan",
-            "/implement",
-            "/fix",
-            "/handoff",
-            "/status",
-        ):
-            self.assertIn(command, text)
+        self.assertEqual(PUBLIC_COMMANDS, declared_commands(text, "Shorthand commands"))
 
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
         using = (ROOT / "guides" / "using-promptbook.md").read_text(encoding="utf-8")
@@ -155,6 +156,44 @@ class PromptbookValidationTests(unittest.TestCase):
 
         for pattern in MODULE.PRIVATE_PATTERNS.values():
             self.assertNotIn(pattern, text)
+
+    def test_public_command_docs_stay_aligned(self):
+        surfaces = (
+            (ROOT / "README.md", "Quick commands"),
+            (ROOT / "guides" / "project-bootstrap.md", "Shorthand commands"),
+            (ROOT / "prompts" / "workflows" / "README.md", "Shorthand commands"),
+            (ROOT / "AGENTS.md", "Public interface maintenance"),
+        )
+
+        for path, heading in surfaces:
+            text = path.read_text(encoding="utf-8")
+            self.assertEqual(
+                PUBLIC_COMMANDS,
+                declared_commands(text, heading),
+                f"public command vocabulary drifted in {path}",
+            )
+
+    def test_bootstrap_copy_stays_aligned_with_guide(self):
+        bootstrap = (ROOT / "BOOTSTRAP").read_text(encoding="utf-8").strip()
+        guide = (ROOT / "guides" / "project-bootstrap.md").read_text(encoding="utf-8")
+
+        self.assertIn(
+            f"```text\n{bootstrap}\n```",
+            guide,
+            "BOOTSTRAP must match the copyable project bootstrap block in the guide",
+        )
+
+    def test_agents_declares_public_interface_maintenance(self):
+        text = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+        lower = text.lower()
+
+        self.assertIn("prompts/workflows/README.md", text)
+        self.assertIn("README.md", text)
+        self.assertIn("guides/project-bootstrap.md", text)
+        self.assertIn("BOOTSTRAP", text)
+        self.assertIn("regression coverage", lower)
+        self.assertIn("ci fails on accidental drift", lower)
+        self.assertIn("fresh-review", lower)
 
 
 if __name__ == "__main__":
