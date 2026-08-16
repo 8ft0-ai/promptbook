@@ -55,10 +55,10 @@ Use the first matching case:
    - Consume the approval or authority once, only for that bounded object, then continue routine governed work through autonomous progression.
    - Do not treat approval as authority to expand scope, weaken controls or accept a materially changed proposal. Escalate a genuinely new human choice as `DECISION_REQUIRED`.
 
-4. **A substantive repository documentation assessment is needed and the representative reader tasks are not already known** → [Documentation assessment workflow](documentation-assessment.md).
-   - Use this route for broad documentation-quality assessment, navigation or authority problems, or deciding the smallest justified documentation response when reader/task discovery is part of the work.
+4. **A substantive repository documentation assessment is needed and representative reader tasks must be discovered, validated, or assessed together** → [Documentation assessment workflow](documentation-assessment.md).
+   - Use this route for broad documentation-quality assessment, navigation or authority problems, or deciding the smallest justified documentation response when reader/task discovery or multi-task validation is part of the work.
    - Do not route ordinary bounded documentation edits, known corrections or explicit drafting tasks through assessment merely because documentation is involved.
-   - If one concrete reader task is already known and no multi-task discovery is needed, use [Repository documentation assessment](../documentation/repository-assessment.md) as the proportionate single-task path.
+   - If one concrete reader task is already known and no multi-task discovery or validation is needed, use [Repository documentation assessment](../documentation/repository-assessment.md) as the proportionate single-task path.
 
 5. **Ordinary governed continuation** → [Autonomous progression](autonomous-progression.md).
    - Continue while current policy, evidence, scope and available capabilities safely determine the next action.
