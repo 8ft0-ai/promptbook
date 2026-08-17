@@ -106,6 +106,11 @@ class PromptbookValidationTests(unittest.TestCase):
         self.assertIn("commands do not grant authority", lower)
         self.assertIn("read-only", lower)
         self.assertIn("routine `proceed` confirmation", lower)
+        self.assertIn("one concrete complete external action", lower)
+        self.assertIn("complete copy/paste script or exact commands", lower)
+        self.assertIn("exact browser/ui steps", lower)
+        self.assertIn("exact evidence/output", lower)
+        self.assertIn("do not make the human ask how to continue", lower)
 
         for pattern in MODULE.PRIVATE_PATTERNS.values():
             self.assertNotIn(pattern, text)
@@ -212,6 +217,37 @@ class PromptbookValidationTests(unittest.TestCase):
         self.assertIn("resume autonomous progression immediately", lower)
         self.assertIn("reject rejects only the presented proposal", lower)
         self.assertIn("change requests a revision", lower)
+
+    def test_external_required_handoff_contract(self):
+        autonomous = (
+            ROOT / "prompts" / "workflows" / "autonomous-progression.md"
+        ).read_text(encoding="utf-8")
+        autonomous_lower = autonomous.lower()
+        handover = (
+            ROOT / "prompts" / "workflows" / "next-session-handover.md"
+        ).read_text(encoding="utf-8")
+        handover_lower = handover.lower()
+
+        self.assertIn("one concrete external action", autonomous_lower)
+        self.assertIn("complete copy/paste script or exact commands", autonomous_lower)
+        self.assertIn("exact browser or ui steps", autonomous_lower)
+        self.assertIn("exact evidence or output", autonomous_lower)
+        self.assertIn("do not make the human ask how to perform the external action", autonomous_lower)
+        self.assertIn("syntactically complete and self-contained", autonomous_lower)
+        self.assertIn("capability limitation with sufficient existing authority", autonomous_lower)
+        self.assertIn("reuse that handoff", autonomous_lower)
+
+        self.assertIn("fresh review, new chat/session, or another agent context", handover_lower)
+        self.assertIn("human-operated external execution", handover_lower)
+        self.assertIn("complete copy/paste script or exact commands", handover_lower)
+        self.assertIn("exact browser/ui steps", handover_lower)
+        self.assertIn("exact output/evidence", handover_lower)
+        self.assertIn("truncated scripts", handover_lower)
+        self.assertIn("do not require the human to ask how to perform the external action", handover_lower)
+        self.assertIn("do not turn an already-authorised capability transfer into a new decision request", handover_lower)
+        self.assertIn("reuse it after refreshing any guards", handover_lower)
+        self.assertIn("directly copyable as the next prompt", handover_lower)
+        self.assertIn("directly executable as the required action", handover_lower)
 
     def test_fresh_review_composition_contract(self):
         text = (
