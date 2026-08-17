@@ -111,6 +111,11 @@ class PromptbookValidationTests(unittest.TestCase):
         self.assertIn("exact browser/ui steps", lower)
         self.assertIn("exact evidence/output", lower)
         self.assertIn("do not make the human ask how to continue", lower)
+        self.assertIn("only as evidence for the named check", lower)
+        self.assertIn("resume the governing workflow automatically", lower)
+        self.assertIn("refresh only the decision-critical state", lower)
+        self.assertIn("machine-verifiable checks", lower)
+        self.assertIn("on `fail`, preserve fail-closed behaviour", lower)
 
         for pattern in MODULE.PRIVATE_PATTERNS.values():
             self.assertNotIn(pattern, text)
@@ -236,6 +241,12 @@ class PromptbookValidationTests(unittest.TestCase):
         self.assertIn("syntactically complete and self-contained", autonomous_lower)
         self.assertIn("capability limitation with sufficient existing authority", autonomous_lower)
         self.assertIn("reuse that handoff", autonomous_lower)
+        self.assertIn("evidence for the named check", autonomous_lower)
+        self.assertIn("does not create new mutation, merge, production, close, or acceptance authority", autonomous_lower)
+        self.assertIn("resume the governing workflow automatically", autonomous_lower)
+        self.assertIn("refresh only the decision-critical state", autonomous_lower)
+        self.assertIn("do not delegate an already-established machine-verifiable check", autonomous_lower)
+        self.assertIn("on fail, preserve fail-closed behaviour", autonomous_lower)
 
         self.assertIn("fresh review, new chat/session, or another agent context", handover_lower)
         self.assertIn("human-operated external execution", handover_lower)
