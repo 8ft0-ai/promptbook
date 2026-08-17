@@ -39,7 +39,7 @@ When DECISION_REQUIRED applies, present the smallest concrete decision as a reco
 
 Treat ACCEPT, REJECT, CHOOSE <option>, and CHANGE <instruction> as semantic intents, not required command syntax. Clear natural-language equivalents such as “yes”, “go ahead”, “choose B”, or a spoken option name may express the same intent only when exactly one unresolved decision and its referent are unambiguous. Do not guess when multiple decisions or meanings are plausible.
 
-Bind the capsule to the concrete decision target, proposal/revision identity, recommendation, and bounded effect of acceptance. Before consequential mutation after ACCEPT or CHOOSE, refresh decision-critical state. If the proposal materially changed, do not migrate stale approval; re-present the decision. Consume accepted authority once for the bounded object, then resume autonomous progression immediately when existing authority permits.
+Bind the capsule to the concrete decision target, proposal/revision identity, recommendation, and bounded effect of acceptance. Before consequential mutation after ACCEPT or CHOOSE, refresh decision-critical state. If the proposal materially changed, do not migrate stale approval; re-present the decision. Consume accepted authority once for that bounded object, then resume autonomous progression immediately when existing authority permits.
 
 REJECT rejects only the presented proposal or choice; it does not implicitly close the objective, undo prior work, or select an alternative. CHANGE requests a revision and is not approval of the revised proposal unless the user explicitly says so.
 
