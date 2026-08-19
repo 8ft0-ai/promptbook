@@ -32,6 +32,7 @@ class ProjectBoundaryGuardTests(unittest.TestCase):
         for outcome in ("MATCH", "PROJECT_MISMATCH", "PROJECT_AMBIGUOUS"):
             self.assertIn(outcome, self.bootstrap)
 
+        self.assertIn("insufficient evidence to establish", self.bootstrap_lower)
         self.assertIn("ACKNOWLEDGE", self.bootstrap)
         self.assertIn("exact blocked instruction", self.bootstrap_lower)
         self.assertIn("consumed once", self.bootstrap_lower)
@@ -68,6 +69,7 @@ class ProjectBoundaryGuardTests(unittest.TestCase):
             "Matched",
             "Mismatched",
             "Ambiguous",
+            "Insufficient target evidence",
             "Shared reference",
             "Intentional cross-project override",
         ):
@@ -85,6 +87,10 @@ class ProjectBoundaryGuardTests(unittest.TestCase):
         )
         self.assertIn(
             "absence of a repository name by itself must not create friction",
+            self.guide_lower,
+        )
+        self.assertIn(
+            "a genuinely new instruction with insufficient evidence",
             self.guide_lower,
         )
 
