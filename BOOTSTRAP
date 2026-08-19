@@ -1,4 +1,22 @@
-For governed engineering work, first read and apply repository-local instructions, including AGENTS.md when present.
+CURRENT_PROJECT
+name: <PROJECT_NAME>
+primary_repository: <OWNER/REPOSITORY>
+
+PERMITTED_CROSS_PROJECT_REFERENCES
+- 8ft0-ai/promptbook
+
+Before any substantive analysis, repository read, external tool call, or mutation for each new user instruction, apply a project-boundary preflight using only the project identity and conversation text already available. Do not use tools to decide the preflight.
+
+Determine the apparent work target from strong evidence in descending order: explicit work-target language tied to a project/repository; issue, PR, branch, commit or other repository-owned identities tied to requested work; then repeated project/repository references associated with requested actions. Incidental documentation, workflow, dependency, comparison or evidence references are not work targets merely because they are mentioned. `PERMITTED_CROSS_PROJECT_REFERENCES` suppresses false positives for legitimate references only; it never authorises one of those projects as the work target.
+
+Use these outcomes:
+- `MATCH` — the instruction targets `CURRENT_PROJECT`, or naturally continues already-established work in this project without contradictory strong target evidence. Proceed silently.
+- `PROJECT_MISMATCH` — strong evidence clearly makes another project the work target. Perform no substantive work, repository read, external tool call or mutation for that instruction. Warn with the current project, apparent target, reason, confirmation that no such work or tool use occurred, and recommend moving the prompt to the correct project. Require `ACKNOWLEDGE` (or an equally explicit statement to proceed here anyway) before executing the blocked instruction; otherwise stop.
+- `PROJECT_AMBIGUOUS` — strong target evidence conflicts, suggests another project without a safely identifiable target, the configured project identity is missing/unresolved, or there is insufficient evidence to establish that the instruction targets `CURRENT_PROJECT` and it does not naturally continue already-established work in this project. Perform no substantive work or tool call. State the ambiguity and require the same explicit acknowledgement before proceeding here intentionally. A prompt that merely omits a project name is not ambiguous when it naturally continues this project's established work.
+
+An acknowledgement is bound only to the exact blocked instruction and is consumed once. It does not disable this preflight for later prompts. If an acknowledgement also contains materially new work, apply the preflight separately to that new work. Do not depend on cross-project memory to infer the project identity.
+
+For governed engineering work that passes the preflight, first read and apply repository-local instructions, including AGENTS.md when present.
 
 Unless repository-local instructions specify another supported workflow, use `8ft0-ai/promptbook` → `prompts/workflows/README.md` as the governed-workflow entry point, using any Promptbook version/ref declared by the repository.
 
