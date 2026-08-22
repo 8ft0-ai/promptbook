@@ -135,6 +135,34 @@ A routed task should end only as one of these states:
 
 Review readiness, validation results, PR readiness, merge readiness and ordinary next actions are not terminal states by themselves.
 
+## Next-invocation guidance
+
+When a requested workflow intentionally stops while a broader governed objective remains active, append the **smallest safely determined next invocation** after the workflow result. That invocation is navigation metadata only: it identifies how another context can resume from authoritative state, does not execute continuation in the current context, and does not grant approval, mutation, merge, implementation, execution, credential, production, or other authority. The receiving context must reconstruct the decision-critical current state and authority before acting.
+
+Use `Next chat:` when a genuinely fresh context is itself the required boundary. When the exact review target is durably identifiable and sufficient for reconstruction, the handoff may be only:
+
+```text
+EXTERNAL_REQUIRED — fresh context required
+
+Next chat:
+  /review <exact review target>
+```
+
+Opening a fresh context is different from human-operated external execution. A shorthand invocation may satisfy the former when durable authoritative sources contain the needed state; it must never replace the complete commands, browser/UI procedure, guards, cleanup/prohibitions, and evidence-to-return required for the latter.
+
+When a bounded review was explicitly requested as the final deliverable, an appended `Next:` line does not violate that stop boundary or continue the workflow in the current context. If the review is `APPROVED` and the broader objective remains active, prefer the governing lifecycle object rather than the reviewed intermediate artefact when it lets the receiving context reconstruct the complete lifecycle:
+
+```text
+APPROVED
+
+Next:
+  /go <governing objective>
+```
+
+For `CHANGES REQUIRED`, suggest `/fix <target>` only when the governing contract and existing authority already make bounded remediation the safely determined next path. Do not use a convenience command to manufacture remediation authority.
+
+Fail closed when the next invocation is not safely determined. `DECISION_REQUIRED` keeps the decision capsule and must not be bypassed by a slash command. `BLOCKED` must not manufacture `/go`, `/fix`, or `/review` merely to provide a next step. `COMPLETE` must state that no further action is required rather than inventing continuation.
+
 ## Selection and continuation rules
 
 - Select one primary workflow rather than concatenating the prompt set.
