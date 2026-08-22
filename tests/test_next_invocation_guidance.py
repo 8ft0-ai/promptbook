@@ -49,13 +49,34 @@ class NextInvocationGuidanceTests(unittest.TestCase):
         self.assertIn("slash command is not a substitute", self.autonomous_lower)
         self.assertIn("complete human-operated external action", self.autonomous_lower)
 
-    def test_bounded_review_can_append_navigation_without_continuing(self):
+    def test_bounded_review_requires_safe_navigation_without_continuing(self):
         self.assertIn("explicitly requested as the final deliverable", self.fresh_lower)
-        self.assertIn("append one minimal `next:` invocation", self.fresh_lower)
+        self.assertIn(
+            "when the broader governed objective remains active and the next invocation "
+            "is safely determined from durable authoritative state, append one minimal "
+            "`next:` invocation",
+            self.fresh_lower,
+        )
+        self.assertNotIn("may append one minimal `next:` invocation", self.fresh_lower)
+        self.assertNotIn("may also provide minimal navigation", self.fresh_lower)
         self.assertIn("does not execute continuation in this context", self.fresh_lower)
-        self.assertIn("prefer `/go` targeting the governing objective", self.fresh_lower)
-        self.assertIn("suggest `/fix` only when bounded remediation is already", self.fresh_lower)
         self.assertIn("does not grant mutation authority", self.fresh_lower)
+
+    def test_bounded_review_positive_next_routes_preserve_authority(self):
+        self.assertIn(
+            "if the disposition is approved, prefer `/go` targeting the governing objective",
+            self.fresh_lower,
+        )
+        self.assertIn(
+            "if the disposition is changes required, suggest `/fix` only when bounded "
+            "remediation is already the safely authorised next path",
+            self.fresh_lower,
+        )
+        self.assertIn(
+            "otherwise expose the actual decision, blocker, or external boundary instead "
+            "of manufacturing remediation authority",
+            self.fresh_lower,
+        )
 
     def test_target_selection_prefers_governing_lifecycle(self):
         self.assertIn("prefer the governing lifecycle object", self.router_lower)
