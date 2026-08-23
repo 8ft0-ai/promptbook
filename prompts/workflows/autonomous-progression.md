@@ -15,6 +15,15 @@ Progress <TASK_OR_OBJECTIVE> as far as safely possible with minimal human interv
 
 Treat repository-local instructions, explicit task authority, accepted plans/decisions, current evidence, and platform safety constraints as authoritative.
 
+Before entering another workflow, resolve the effective continuation mode from the workflow router. Apply all hard governance constraints first; continuation mode is only a preference among actions already permitted by those constraints. It never creates mutation, merge, deploy, credential, production, acceptance, review, validation, security, or scope authority.
+
+Use the router-defined modes as follows:
+- `auto` — enter the next safely authorised and executable same-context workflow automatically;
+- `suggest` — do not enter the next workflow; when a broader objective remains active, emit the smallest safely determined `Next:` / `Next chat:` navigation;
+- `stop` — end after the explicitly requested deliverable without suppressing any required terminal-state classification; when a broader objective is already active, expose safely determined navigation unless the user explicitly requested no continuation guidance.
+
+A specialised workflow's local disposition or record is a workflow record, not a conversational terminal state. After recording it, return control to the router and apply the effective continuation mode unless a higher-precedence hard constraint requires a boundary.
+
 Continue autonomously while the next action is:
 1. inside the current objective and scope;
 2. supported by sufficiently current evidence;
@@ -28,6 +37,8 @@ Escalate only as one of these states:
 - DECISION_REQUIRED — a genuine human judgement/authority decision is needed, such as material scope/outcome/architecture change, permission broadening, security weakening, destructive/production action, material cost, or acceptance of a known failed control;
 - BLOCKED — no safe action, external handoff, or concrete human decision can resolve the condition now;
 - COMPLETE — the governed objective is genuinely finished and required verification/close-out is done.
+
+Fresh independence, missing authority, failed or missing required validation, materially changed accepted proposals, repository/task policy requiring an explicit stop, and the terminal states above are hard boundaries. `auto` must not cross them merely to preserve momentum.
 
 When EXTERNAL_REQUIRED applies, do not merely name the missing capability, credential, receiving context, or external tool. State the one concrete external action the human must perform and provide the smallest complete procedure in the same response. Use a complete copy/paste script or exact commands when command-line execution is appropriate; otherwise give exact browser or UI steps, or another concrete step-by-step procedure. Include material prerequisites, immutable identities, authority/safety guards, fail-closed checks, cleanup/revocation/restore steps, and prohibited actions. State the exact evidence or output the human should return so governed continuation can resume without reconstructing the prior conversation. Do not make the human ask how to perform the external action.
 
@@ -49,7 +60,7 @@ REJECT rejects only the presented proposal or choice; it does not implicitly clo
 
 When a bounded defect has an objectively determined minimum-safe remediation inside the existing contract, remediate and validate it without asking for another routine approval. Do not invent adjacent work merely to keep moving.
 
-Before ending, state why stopping is necessary. If another requested workflow intentionally stops while a broader governed objective remains active and a safe next invocation is durably reconstructible, append the smallest `Next:` or `Next chat:` navigation without executing it in the current context. Prefer the governing objective for `/go` when an intermediate artefact is not the complete lifecycle target, and use `/fix` only when bounded remediation is already authorised. If EXTERNAL_REQUIRED is human-operated external execution, include the explicit executable external action and the evidence to return; a slash command is not a substitute. If DECISION_REQUIRED applies, use the decision capsule and do not add a command that bypasses it. If BLOCKED applies, do not manufacture `/go`, `/fix`, or `/review` merely to offer motion. If COMPLETE applies, state that no further action is required. If none of EXTERNAL_REQUIRED, DECISION_REQUIRED, BLOCKED, or COMPLETE applies, continue the next authorised action.
+Before ending, state why stopping is necessary. If another requested workflow intentionally stops while a broader governed objective remains active and a safe next invocation is durably reconstructible, append the smallest `Next:` or `Next chat:` navigation without executing it in the current context. Prefer the governing objective for `/go` when an intermediate artefact is not the complete lifecycle target, and use `/fix` only when bounded remediation is already authorised. If EXTERNAL_REQUIRED is human-operated external execution, include the explicit executable external action and the evidence to return; a slash command is not a substitute. If DECISION_REQUIRED applies, use the decision capsule and do not add a command that bypasses it. If BLOCKED applies, do not manufacture `/go`, `/fix`, or `/review` merely to offer motion. If COMPLETE applies, state that no further action is required. If none of EXTERNAL_REQUIRED, DECISION_REQUIRED, BLOCKED, or COMPLETE applies, apply the effective continuation mode: under `auto`, continue the next authorised same-context action; under `suggest`, emit the smallest safe navigation without entering the next workflow; under `stop`, end the requested deliverable while preserving any router-required navigation.
 ```
 
 ## Inputs
@@ -58,11 +69,11 @@ Before ending, state why stopping is necessary. If another requested workflow in
 
 ## What it does
 
-Separates genuine human decisions and capability boundaries from ordinary lifecycle status, reducing repeated “proceed?” interactions while retaining fail-closed behaviour. When a capability boundary genuinely requires human-operated external execution, it reduces the human role to performing one explicit, complete action and returning the requested evidence rather than working out how to continue. A genuine context-transfer boundary may instead use a minimal reconstructible next invocation without weakening the external-execution contract. Returned external evidence is scoped to the named check and governed work resumes automatically when existing authority already determines what follows. When a human decision is genuinely required, it presents a compact device-neutral decision capsule and resumes governed autonomous progression after an unambiguous bounded response.
+Separates genuine human decisions and capability boundaries from ordinary lifecycle status, reducing repeated “proceed?” interactions while retaining fail-closed behaviour. It applies the router-owned continuation preference only after hard constraints have been satisfied, so local workflow records do not accidentally become terminal states and `auto` cannot manufacture authority. When a capability boundary genuinely requires human-operated external execution, it reduces the human role to performing one explicit, complete action and returning the requested evidence rather than working out how to continue. A genuine context-transfer boundary may instead use a minimal reconstructible next invocation without weakening the external-execution contract. Returned external evidence is scoped to the named check and governed work resumes automatically when existing authority already determines what follows. When a human decision is genuinely required, it presents a compact device-neutral decision capsule and resumes governed autonomous progression after an unambiguous bounded response.
 
 ## Boundaries / limitations
 
-This prompt never overrides repository-local policy or grants credentials, production authority, destructive-action authority, or permission to widen scope. Autonomy is limited to actions already justified by the governing objective and evidence. Suggested next invocations are navigation only. An external handoff must not expose secret values, invent an unsafe procedure, or substitute shorthand navigation for a complete human-operated external action merely to avoid a stop. Returned observations are evidence, not new authority. Short natural-language or voice responses are authority only when their decision referent is unambiguous; materially changed proposals must be re-presented rather than inheriting stale acceptance.
+This prompt never overrides repository-local policy or grants credentials, production authority, destructive-action authority, or permission to widen scope. Autonomy is limited to actions already justified by the governing objective and evidence. Continuation mode is a preference, never authority. Suggested next invocations are navigation only. An external handoff must not expose secret values, invent an unsafe procedure, or substitute shorthand navigation for a complete human-operated external action merely to avoid a stop. Returned observations are evidence, not new authority. Short natural-language or voice responses are authority only when their decision referent is unambiguous; materially changed proposals must be re-presented rather than inheriting stale acceptance.
 
 ## Status
 
