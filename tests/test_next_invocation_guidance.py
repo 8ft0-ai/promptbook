@@ -5,6 +5,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 WORKFLOWS = ROOT / "prompts" / "workflows"
 ENGINEERING = ROOT / "prompts" / "engineering"
+DOCUMENTATION = ROOT / "prompts" / "documentation"
 
 
 class NextInvocationGuidanceTests(unittest.TestCase):
@@ -24,6 +25,10 @@ class NextInvocationGuidanceTests(unittest.TestCase):
             encoding="utf-8"
         )
         cls.autonomous_lower = cls.autonomous.lower()
+        cls.documentation_assessment = (
+            WORKFLOWS / "documentation-assessment.md"
+        ).read_text(encoding="utf-8")
+        cls.documentation_assessment_lower = cls.documentation_assessment.lower()
         cls.plan = (ENGINEERING / "plan-an-issue.md").read_text(encoding="utf-8")
         cls.plan_lower = cls.plan.lower()
         cls.implement = (ENGINEERING / "implement-an-approved-issue.md").read_text(
@@ -34,6 +39,10 @@ class NextInvocationGuidanceTests(unittest.TestCase):
             encoding="utf-8"
         )
         cls.remediate_lower = cls.remediate.lower()
+        cls.repository_assessment = (
+            DOCUMENTATION / "repository-assessment.md"
+        ).read_text(encoding="utf-8")
+        cls.repository_assessment_lower = cls.repository_assessment.lower()
 
     def test_router_defines_navigation_not_authority(self):
         self.assertIn("## Next-invocation guidance", self.router)
@@ -135,11 +144,46 @@ class NextInvocationGuidanceTests(unittest.TestCase):
                 "first distinguish the handover type",
                 "directly copyable as the next prompt",
             ),
+            "documentation assessment": (
+                self.documentation_assessment_lower,
+                "assessment does not create target-repository mutation authority",
+                "return control to promptbook's normal workflow router",
+            ),
+            "repository assessment": (
+                self.repository_assessment_lower,
+                "return one primary result: complete, partial, blocked, or not tested",
+                "smallest sufficient next action",
+            ),
         }
         for name, (text, record_marker, composition_marker) in matrix.items():
             with self.subTest(workflow=name):
                 self.assertIn(record_marker, text)
                 self.assertIn(composition_marker, text)
+
+    def test_documentation_assessment_paths_obey_router_postcondition(self):
+        self.assertIn(
+            "[documentation assessment workflow](documentation-assessment.md)",
+            self.router_lower,
+        )
+        self.assertIn(
+            "[repository documentation assessment](../documentation/repository-assessment.md)",
+            self.router_lower,
+        )
+        self.assertIn(
+            "return control to promptbook's normal workflow router",
+            self.documentation_assessment_lower,
+        )
+        self.assertIn(
+            "return one primary result: complete, partial, blocked, or not tested",
+            self.repository_assessment_lower,
+        )
+        self.assertIn(
+            "a specialised workflow's local output, disposition, implementation record, "
+            "remediation record, or other workflow record is not permission to end a "
+            "routed objective",
+            self.router_lower,
+        )
+        self.assertIn("apply the effective continuation mode", self.router_lower)
 
     def test_plan_and_go_positive_composition(self):
         self.assertIn("| `/plan` | `suggest` |", self.router)
