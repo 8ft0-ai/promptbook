@@ -29,6 +29,8 @@ Otherwise produce the smallest sufficient implementation plan covering:
 - whether the work is one coherent change or should be decomposed.
 
 Do not begin implementation while planning. End with one disposition: READY FOR IMPLEMENTATION, BLOCKED PENDING DECISION/EVIDENCE, or DECOMPOSE BEFORE IMPLEMENTATION.
+
+That disposition is the planning record. When this workflow is invoked through the workflow router, return control to the router after recording the disposition; do not treat `READY FOR IMPLEMENTATION` or another local planning disposition as a conversational terminal state. The router's effective continuation mode determines whether to enter the next authorised workflow, suggest the smallest safe next invocation, or stop after the requested deliverable. The planning record does not itself grant implementation or repository-mutation authority.
 ```
 
 ## Inputs
@@ -37,11 +39,11 @@ Do not begin implementation while planning. End with one disposition: READY FOR 
 
 ## What it does
 
-Forces the plan to be grounded in current repository evidence and ties each acceptance criterion to both work and validation rather than producing a generic checklist.
+Forces the plan to be grounded in current repository evidence and ties each acceptance criterion to both work and validation rather than producing a generic checklist. When routed as part of a broader governed objective, it leaves continuation to the router rather than turning the planning disposition into an accidental stop.
 
 ## Boundaries / limitations
 
-The prompt does not resolve genuinely missing product or authority decisions. It assumes the assistant can inspect the relevant repository or that the user supplies equivalent evidence.
+The prompt does not resolve genuinely missing product or authority decisions. It assumes the assistant can inspect the relevant repository or that the user supplies equivalent evidence. A planning disposition never supplies implementation authority.
 
 ## Status
 
