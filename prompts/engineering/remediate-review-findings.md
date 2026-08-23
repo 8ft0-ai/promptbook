@@ -24,7 +24,9 @@ Implement the bounded corrections, add or adjust regression coverage that would 
 
 Return a remediation record mapping each blocking finding to the change and proof that resolves it. Clearly identify any finding that still requires a separate decision rather than pretending remediation is complete.
 
-Preserve any required independent re-review boundary; do not present author-side remediation as fresh approval evidence.
+That remediation record is the workflow record, not a routed terminal state. When this workflow is invoked through the workflow router, return control to the router after recording it so the router can apply the effective continuation mode.
+
+Preserve any required independent re-review boundary; do not present author-side remediation as fresh approval evidence. If this context changed the candidate and independent re-review is required, do not enter that review here. Treat the re-review as a hard fresh-context boundary and, when the durable target is sufficient for reconstruction, hand it off as `Next chat: /review <REVIEWED_CANDIDATE>`. That navigation is not review or merge authority.
 ```
 
 ## Inputs
@@ -33,11 +35,11 @@ Preserve any required independent re-review boundary; do not present author-side
 
 ## What it does
 
-Keeps remediation narrow, makes review findings traceable to regression evidence, and prevents a repair cycle from becoming an unbounded redesign.
+Keeps remediation narrow, makes review findings traceable to regression evidence, and prevents a repair cycle from becoming an unbounded redesign. When routed, it returns the remediation record to the governing workflow while preserving the mandatory fresh-context boundary for re-review of a candidate changed in this context.
 
 ## Boundaries / limitations
 
-Use only where the expected correction is objectively bounded by existing requirements. Materially new architecture, authority, security, product, or scope decisions should be resolved separately.
+Use only where the expected correction is objectively bounded by existing requirements. Materially new architecture, authority, security, product, or scope decisions should be resolved separately. Author-side remediation cannot substitute for fresh independent review when that gate is required.
 
 ## Status
 

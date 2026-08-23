@@ -36,6 +36,39 @@ When a user message begins with one of these commands, treat it as a concise int
 
 Keep the command set small. Prefer natural-language qualifiers over inventing flags or a larger command grammar.
 
+## Continuation policy
+
+Continuation mode is a preference layer owned by this router. Apply it only after all hard governance constraints have been satisfied. A specialised workflow's local output, disposition, implementation record, remediation record, or other workflow record is not permission to end a routed objective in an unexplained intermediate state.
+
+The supported continuation modes are:
+
+- `auto` — enter the next safely authorised and executable same-context workflow automatically. `auto` cannot cross a required fresh-context boundary or another hard stop.
+- `suggest` — do not enter the next workflow in this invocation. When a broader objective remains active, emit the smallest safely determined `Next:` or `Next chat:` navigation.
+- `stop` — treat the explicitly requested deliverable as the end of this invocation and do not enter another workflow. `stop` does not suppress required terminal-state classification. When a broader governed objective is already active and its next invocation is safely determined, router postconditions may still expose that navigation unless the user explicitly requested no continuation guidance.
+
+Hard constraints always win over continuation preferences. These include platform safety, explicit task authority, repository-local mandatory policy, fresh-independence requirements, required validation, current authoritative evidence, accepted governance records that require a stop or hand-off, and any other mandatory control established by the governing task. A continuation preference cannot create or bypass mutation, merge, deploy, credential, production, acceptance, review, validation, security, or scope authority.
+
+Within the remaining continuation-preference layer, resolve the effective mode in this order:
+
+1. explicit current-user qualifier, such as `review only`, `continue afterwards`, or `/go until ...`;
+2. repository/task-specific continuation preference, when one exists and is not already a mandatory hard constraint;
+3. managed Project continuation preference, when one exists;
+4. Promptbook command default.
+
+The command defaults are:
+
+| Command | Default continuation mode |
+| --- | --- |
+| `/go` | `auto` |
+| `/implement` | `auto` |
+| `/fix` | `auto` |
+| `/review` | `suggest` |
+| `/plan` | `suggest` |
+| `/status` | `stop` |
+| `/handoff` | `stop` |
+
+A lower-precedence preference may choose only among actions already permitted by higher-precedence constraints. Navigation emitted under `suggest` or `stop` is navigation metadata only and never supplies authority to the receiving invocation.
+
 ## Routing
 
 Before routing, inspect the current conversation and the authoritative repository or task state needed for the next decision. Stale summaries are navigation aids, not authority. Select exactly one primary workflow and apply it immediately; routing itself is not a stop point.
@@ -174,7 +207,7 @@ Fail closed when the next invocation is not safely determined. `DECISION_REQUIRE
 - When `EXTERNAL_REQUIRED` applies, reduce the human role to performing one explicit external action and returning its requested evidence. Scripts or command sequences presented as executable must be complete and self-contained for the stated operation; never expose secret values or present a truncated fragment as the handoff. If an equivalent valid external handoff is already durable and decision-critical state has not materially changed, reuse it after refreshing stale-able guards instead of repeating capability discovery. A capability limitation with sufficient authority is not itself `DECISION_REQUIRED`; if the safe external procedure cannot be determined completely, surface the real decision or blocker instead of a vague handoff.
 - Treat an unambiguous returned external observation such as `PASS` or `FAIL <material defect>` only as evidence for the named check, never as new mutation, merge, production, close, or acceptance authority. After such evidence returns, resume the governing workflow automatically when existing authority already determines the next action; before any consequential mutation, refresh only the decision-critical state capable of invalidating that evidence or action. Do not delegate already-established machine-verifiable checks to the human. On `FAIL`, preserve fail-closed behaviour and route the defect through the existing governed scope and authority rather than treating the observation as acceptance.
 - When `DECISION_REQUIRED` applies, present the decision capsule instead of making the user copy an approval phrase or repository identifier. Once an unambiguous `ACCEPT` or `CHOOSE` response is safely bound and refreshed, continue any already-authorised routine work without another `proceed` confirmation.
-- Output or deliverable constraints inside a selected workflow apply to that workflow's record. They do not override this router's continuation semantics unless the user or governing task explicitly requested that workflow result as the final deliverable.
+- Output or deliverable constraints inside a selected workflow apply to that workflow's record. They do not override this router's continuation semantics. After recording the local workflow result, return control to the router and apply the effective continuation mode unless a higher-precedence hard constraint or explicit current-user qualifier requires stopping.
 - A fresh review disposition does not itself create mutation authority. When fresh review is an intermediate gate under this router, record its single clear disposition and concise rationale, then return control to the governing workflow. If `CHANGES REQUIRED` identifies a bounded defect whose minimum-safe remediation is objectively determined and already authorised, continue through autonomous progression to remediate and validate it without another routine approval. Because that context then authored the changed candidate, route the new candidate to a genuinely fresh review context before any gate requiring independence. A single-maintainer project may use the same GitHub identity in that new fresh context. If the disposition is `APPROVED`, continue already-authorised merge, verification and close-out work rather than stopping at review completion or at a platform refusal to record formal self-approval, unless repository-local rules make that approval status mandatory.
 - A requested handover is terminal for the current deliverable; execution belongs to the receiving context.
 - Do not invent adjacent work after the governed objective is complete.
