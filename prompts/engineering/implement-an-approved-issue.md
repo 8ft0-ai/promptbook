@@ -29,7 +29,9 @@ Before declaring completion:
 
 Return a concise implementation record: outcome delivered, principal changes, acceptance-criterion coverage, validation and results, justified plan deviations, and remaining limitations.
 
-Do not merge, deploy, release, or broaden scope unless that action is already authorised separately.
+That implementation record is the workflow record, not a routed terminal state. When this workflow is invoked through the workflow router, return control to the router after recording it so the router can apply the effective continuation mode to the next governed gate. If required independent review is the next gate and this context authored or materially shaped the candidate, preserve the fresh-context boundary rather than reviewing the candidate here; a durable target may be handed off as `Next chat: /review <APPROVED_TASK>` when that target is sufficient for reconstruction.
+
+Do not merge, deploy, release, or broaden scope unless that action is already authorised separately. Continuation metadata never creates that authority.
 ```
 
 ## Inputs
@@ -39,11 +41,11 @@ Do not merge, deploy, release, or broaden scope unless that action is already au
 
 ## What it does
 
-Keeps implementation tied to the approved outcome, makes validation part of completion, and forces plan drift to be reconciled before speculative code changes.
+Keeps implementation tied to the approved outcome, makes validation part of completion, and forces plan drift to be reconciled before speculative code changes. When routed, the implementation record returns control to the governing workflow instead of accidentally ending the broader objective.
 
 ## Boundaries / limitations
 
-This prompt does not grant repository mutation, merge, deployment, credential, or production authority. The receiving environment must already have those capabilities and permissions where needed.
+This prompt does not grant repository mutation, merge, deployment, credential, or production authority. The receiving environment must already have those capabilities and permissions where needed. A required fresh independent review remains a hard boundary after this context authors or materially shapes the candidate.
 
 ## Status
 
