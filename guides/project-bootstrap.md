@@ -43,7 +43,7 @@ Unless repository-local instructions specify another supported workflow, use `8f
 
 Reconstruct decision-critical current state from authoritative sources rather than stale conversation summaries. Preserve platform safety constraints, explicit task authority, repository-local policy, validation requirements and current evidence above Promptbook guidance.
 
-Continue with minimal unnecessary human intervention until `EXTERNAL_REQUIRED`, `DECISION_REQUIRED`, `BLOCKED`, or `COMPLETE` applies. Interpret Promptbook shorthand commands according to the workflow router. The bootstrap and commands select workflow intent only: they do not grant additional authority or bypass freshness, independence, validation or fail-closed behaviour.
+Continue with minimal unnecessary human intervention until `EXTERNAL_REQUIRED`, `DECISION_REQUIRED`, `BLOCKED`, or `COMPLETE` applies. Interpret Promptbook shorthand commands according to the workflow router. The bootstrap selects workflow intent only. A shorthand command may carry only the narrow authority intrinsic to the operation defined by the router; neither the bootstrap nor a command grants unrelated authority or bypasses freshness, independence, validation or fail-closed behaviour.
 ```
 
 The project-specific substitutions are mandatory for the guard to work. If `CURRENT_PROJECT` is missing or unresolved, governed or tool-using work should fail closed as `PROJECT_AMBIGUOUS` rather than pretending the current project boundary is known.
@@ -112,7 +112,7 @@ This repository uses `8ft0-ai/promptbook@vX.Y.Z` for reusable governed-workflow 
 
 Workflow entry point: `prompts/workflows/README.md`.
 
-Repository-local instructions, explicit task authority, security policy and validation requirements take precedence over Promptbook. Promptbook and its shorthand commands do not grant additional authority.
+Repository-local instructions, explicit task authority, security policy and validation requirements take precedence over Promptbook. Promptbook shorthand commands do not grant unrelated authority; a command may carry only the narrow operation authority defined by the pinned Promptbook router.
 
 Use the shorthand commands defined by the pinned Promptbook workflow router; do not copy their implementation into this repository.
 ```
@@ -125,7 +125,7 @@ The ChatGPT Project identity and repository Promptbook declaration serve differe
 
 A repository with one maintainer does not need to invent a second GitHub identity merely to obtain fresh review. Promptbook treats independence as a property of the reviewing context and evidence boundary. A fresh chat/session that independently reconstructs the candidate may still use the same maintainer account that authored the PR.
 
-If GitHub refuses a formal `APPROVE` or `REQUEST_CHANGES` review on the maintainer's own PR, record the exact disposition and rationale in a durable repository-local comment and continue the governing workflow when existing authority permits. That fallback is not a formal platform approval and must not bypass branch protection or repository policy that genuinely requires a distinct reviewer or approval status.
+When ordinary `/review` write-back is active and GitHub cannot record a formal self-`APPROVE` or self-`REQUEST_CHANGES`, record the exact disposition and rationale through a permitted `COMMENT` review or durable repository-local comment when the Promptbook single-maintainer preconditions hold. That fallback is not a formal platform approval and must not bypass branch protection or repository policy that genuinely requires a distinct reviewer or approval status. When `/review --read-only` or an equivalent zero-write instruction is active, do not create the fallback record.
 
 After a fresh reviewer applies a bounded remediation, that context has become an authoring context for the changed candidate and cannot independently re-review its own change. Use another genuinely fresh context for the next independence-required gate; in a single-maintainer project that fresh context may still operate through the same GitHub account.
 
@@ -136,26 +136,27 @@ Repositories with stronger separation-of-duties requirements should state them e
 The canonical command semantics live in [`prompts/workflows/README.md`](../prompts/workflows/README.md). The small public vocabulary is:
 
 - `/go [target]` — continue the governed objective through the router; when the target is already clear, `/go` alone means perform the next authorised, safely decidable action rather than merely describe the next gate.
-- `/review [target]` — request a substantive fresh review as the current deliverable, preserving the fresh-context boundary.
+- `/review [target]` — request a substantive fresh review as the current deliverable. For a GitHub pull request, record the requested review on GitHub by default; use `/review --read-only [target]` or an unambiguous natural-language zero-write qualifier to report only in chat. Review recording does not grant merge, remediation, release, deployment, settings, credential, production, or other unrelated authority.
 - `/plan [target]` — plan bounded work using the Promptbook planning prompt.
 - `/implement [target]` — implement already-approved bounded work using the Promptbook implementation prompt.
 - `/fix [target]` — remediate current bounded review findings using existing authority.
 - `/handoff [target]` — produce the shortest safe continuation handoff without executing the handed-off task.
 - `/status [target]` — reconstruct and report authoritative current state read-only; do not mutate unless the user separately requests continuation.
 
-Commands are intentionally not a mini CLI. Add natural-language qualifiers when needed, for example:
+Commands are intentionally not a mini CLI. The explicit `/review --read-only` modifier exists because it changes the write-back boundary; otherwise add natural-language qualifiers when needed, for example:
 
 ```text
 /go until the next genuinely fresh review boundary
 /status issue #42
 /review PR #17
+/review --read-only PR #17
 ```
 
 If the target is omitted, resolve it from the current conversation and authoritative repository state. If that is not safely possible, fail closed rather than guessing.
 
 ## Direct prompt escape hatch
 
-The router is the default for ordinary continuation. A caller may still explicitly name an individual Promptbook prompt when that exact standalone deliverable is wanted. Explicit prompt selection does not weaken repository-local precedence or create authority that the task does not already have.
+The router is the default for ordinary continuation. A caller may still explicitly name an individual Promptbook prompt when that exact standalone deliverable is wanted. Explicit prompt selection does not weaken repository-local precedence or create authority that the task does not already have. In particular, selecting the standalone analytical pull-request review prompt does not implicitly select router `/review` write-back behaviour.
 
 ## Updating the dependency
 
