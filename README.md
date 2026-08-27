@@ -24,7 +24,7 @@ Once Promptbook is configured for a project, common workflow intents can be invo
 | Command | Intent |
 | --- | --- |
 | `/go [target]` | Continue governed work as far as safely possible |
-| `/review [target]` | Request a substantive independent review |
+| `/review [target]` | Review a pull request and record the requested GitHub review by default |
 | `/plan [target]` | Plan bounded work |
 | `/implement [target]` | Implement already-approved bounded work |
 | `/fix [target]` | Remediate bounded review findings |
@@ -36,11 +36,12 @@ Examples:
 ```text
 /go issue #42
 /review PR #43
+/review --read-only PR #43
 /fix
 /status
 ```
 
-Commands are shorthand intent selectors only. They do not grant authority or bypass repository-local instructions, validation, security controls, freshness, or independent-review requirements. See [Project bootstrap and shorthand commands](guides/project-bootstrap.md) for setup and the [Workflow router](prompts/workflows/README.md) for canonical command semantics.
+Commands are shorthand intent selectors with only the narrow authority intrinsic to the operation defined by the workflow router. For a GitHub pull request, ordinary `/review` includes the bounded write needed to record the requested review; `/review --read-only` or an unambiguous natural-language zero-write qualifier reports only in chat. Commands do not grant unrelated authority or bypass repository-local instructions, validation, security controls, freshness, or independent-review requirements. See [Project bootstrap and shorthand commands](guides/project-bootstrap.md) for setup and the [Workflow router](prompts/workflows/README.md) for canonical command semantics.
 
 ## Decision capsules
 
