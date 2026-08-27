@@ -103,7 +103,9 @@ class PromptbookValidationTests(unittest.TestCase):
         self.assertIn("minimum-safe remediation", lower)
         self.assertIn("final deliverable", lower)
         self.assertIn("does not itself create mutation authority", lower)
-        self.assertIn("commands do not grant authority", lower)
+        self.assertIn("commands do not grant authority beyond the narrow operation authority", lower)
+        self.assertIn("ordinary `/review` includes the narrow authority", lower)
+        self.assertIn("zero github write-back", lower)
         self.assertIn("read-only", lower)
         self.assertIn("routine `proceed` confirmation", lower)
         self.assertIn("one concrete complete external action", lower)
@@ -302,7 +304,9 @@ class PromptbookValidationTests(unittest.TestCase):
         self.assertIn("8ft0-ai/promptbook@vX.Y.Z", text)
         self.assertIn("stable release", lower)
         self.assertIn("track `main`", lower)
-        self.assertIn("do not grant additional authority", lower)
+        self.assertIn("narrow authority intrinsic to the operation", lower)
+        self.assertIn("does not grant unrelated authority", lower)
+        self.assertIn("`/review --read-only [target]`", text)
         self.assertIn("read-only", lower)
 
         for terminal_state in (
