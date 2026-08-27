@@ -43,7 +43,7 @@ Unless repository-local instructions specify another supported workflow, use `8f
 
 Reconstruct decision-critical current state from authoritative sources rather than stale conversation summaries. Preserve platform safety constraints, explicit task authority, repository-local policy, validation requirements and current evidence above Promptbook guidance.
 
-Continue with minimal unnecessary human intervention until `EXTERNAL_REQUIRED`, `DECISION_REQUIRED`, `BLOCKED`, or `COMPLETE` applies. Interpret Promptbook shorthand commands according to the workflow router. The bootstrap selects workflow intent only. A shorthand command may carry only the narrow authority intrinsic to the operation defined by the router; neither the bootstrap nor a command grants unrelated authority or bypasses freshness, independence, validation or fail-closed behaviour.
+Continue with minimal unnecessary human intervention until `EXTERNAL_REQUIRED`, `DECISION_REQUIRED`, `BLOCKED`, or `COMPLETE` applies. Interpret Promptbook shorthand commands according to the workflow router. The bootstrap selects workflow intent only and does not grant unrelated authority. A shorthand command may carry only the narrow authority intrinsic to the operation defined by the router; neither the bootstrap nor a command bypasses freshness, independence, validation or fail-closed behaviour.
 ```
 
 The project-specific substitutions are mandatory for the guard to work. If `CURRENT_PROJECT` is missing or unresolved, governed or tool-using work should fail closed as `PROJECT_AMBIGUOUS` rather than pretending the current project boundary is known.
