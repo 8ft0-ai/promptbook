@@ -66,7 +66,7 @@ class ResolvedAgentRunContextTests(unittest.TestCase):
         ):
             self.assertIn(forbidden, self.contract_lower)
         self.assertIn("access and permission are distinct", self.contract_lower)
-        self.assertIn("read_only_review_capabilities", self.contract)
+        self.assertIn("read_only_review_capabilities", self.contract_lower)
         self.assertIn("requires an explicit owner decision", self.contract_lower)
 
     def test_instruction_provenance_and_evidence_are_reconstructable(self):
