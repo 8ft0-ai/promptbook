@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Turn blocking review findings into the minimum safe correction without reopening unrelated design work.
+Turn blocking review findings into the minimum safe correction without reopening unrelated design work, using explicit reconstructable mutation authority rather than tool availability or remembered conversation state.
 
 ## When to use
 
@@ -13,16 +13,41 @@ Use after a substantive review has identified concrete defects and the existing 
 ```text
 Remediate the blocking findings on <REVIEWED_CANDIDATE>.
 
-First re-read the exact findings, the governing task/design, and the current candidate. Classify each finding as:
+First re-read the exact findings, the governing task/design, the current candidate, applicable repository instructions, and current authority. Before substantive mutation, resolve the `/fix` Resolved Agent Run Context defined by `prompts/workflows/resolved-agent-run-context.md` from current authoritative inputs rather than conversation memory.
+
+Bind the run context to the repository/work item, exact starting candidate identity, authority sources, instruction provenance, bounded remediation scope, effective and prohibited capabilities, owner-decision boundaries, required validation, and required evidence. Treat the context as ephemeral derived execution state, not as a new authority source.
+
+Immediately before the first material write, refresh the starting candidate identity. If it moved, invalidate the stale candidate-specific context and re-resolve before applying findings to unexpected bytes.
+
+Classify each finding as:
 - valid and bounded by the existing contract;
 - invalid or already resolved by current evidence; or
-- requiring a genuinely new product, architecture, authority, or scope decision.
+- requiring a genuinely new product, architecture, authority, security, or scope decision.
 
 For every valid bounded finding, derive the smallest safe correction. Do not broaden scope, redesign adjacent components, weaken validation, or treat review suggestions as requirements unless the governing contract makes them necessary.
 
-Implement the bounded corrections, add or adjust regression coverage that would have caught the defect, run the relevant validation, and inspect the complete resulting diff for accidental scope expansion.
+Before each material action, apply the `/fix` action gateway and classify the action as:
+- `ALLOW` — current authoritative sources permit the action within the resolved remediation scope and `/fix` operation ceiling;
+- `REQUIRE OWNER / SEPARATE AUTHORITY` — the action is outside the resolved remediation scope or needs missing product, architecture, security, scope, owner, or other separate authority;
+- `FORBID` — higher-precedence authority or the `/fix` operation ceiling prohibits the action under this `/fix` authority.
 
-Return a remediation record mapping each blocking finding to the change and proof that resolves it. Clearly identify any finding that still requires a separate decision rather than pretending remediation is complete.
+Missing or ambiguous authority never defaults to `ALLOW`. Keep authority classification separate from execution feasibility: a technically available tool never grants authority, while an `ALLOW` action whose required execution capability is unavailable follows the governing router's capability/external-action boundary without inventing a new owner decision.
+
+Execute only `ALLOW` actions that are actually available. Implement the bounded corrections, add or adjust regression coverage that would have caught the defect, run the relevant required validation, and inspect the complete resulting diff for accidental scope expansion. If unexpected external candidate movement is detected during remediation, fail closed and reconcile/re-resolve before continuing.
+
+Treat remediation as an immutable candidate transition: starting candidate A plus authorised bounded remediation produces candidate B. Once bytes change, candidate-A-specific review and validation do not silently transfer to B. Bind the resulting validation and evidence to B's exact immutable identity.
+
+Return a remediation record reconstructable as:
+- governing finding/remediation authority;
+- starting candidate identity;
+- bounded implementation delta;
+- resulting candidate identity;
+- validation/evidence bound to the resulting candidate;
+- any `REQUIRE OWNER / SEPARATE AUTHORITY` or `FORBID` boundaries encountered;
+- any authorised action that could not execute because of a capability boundary;
+- remaining boundaries and next governed state.
+
+Classify evidence honestly as `STATIC`, `EXECUTED`, or `DURABLE` according to the Resolved Agent Run Context contract. Do not imply execution occurred where only static reasoning was performed. Clearly identify any finding that still requires a separate decision rather than pretending remediation is complete.
 
 That remediation record is the workflow record, not a routed terminal state. When this workflow is invoked through the workflow router, return control to the router after recording it so the router can apply the effective continuation mode.
 
@@ -35,11 +60,15 @@ Preserve any required independent re-review boundary; do not present author-side
 
 ## What it does
 
-Keeps remediation narrow, makes review findings traceable to regression evidence, and prevents a repair cycle from becoming an unbounded redesign. When routed, it returns the remediation record to the governing workflow while preserving the mandatory fresh-context boundary for re-review of a candidate changed in this context.
+Keeps remediation narrow, makes mutation authority explicit, classifies material actions before execution, makes review findings traceable to regression evidence, and prevents a repair cycle from becoming an unbounded redesign. It binds remediation to starting candidate A and the resulting validation/evidence to candidate B, preventing candidate-specific review or validation from silently carrying across changed bytes.
+
+When routed, it returns the remediation record to the governing workflow while preserving the mandatory fresh-context boundary for re-review of a candidate changed in this context.
 
 ## Boundaries / limitations
 
-Use only where the expected correction is objectively bounded by existing requirements. Materially new architecture, authority, security, product, or scope decisions should be resolved separately. Author-side remediation cannot substitute for fresh independent review when that gate is required.
+Use only where the expected correction is objectively bounded by existing requirements and authority. Materially new architecture, authority, security, product, or scope decisions should be resolved separately. Merge, release/tag, deployment, unrelated repository mutation, infrastructure/provider mutation, and settings/credential/secret mutation are not granted by this workflow merely because a capability exists.
+
+Author-side remediation cannot substitute for fresh independent review when that gate is required. The action gateway is a workflow contract, not a new approval service, sandbox, or persisted policy object.
 
 ## Status
 
