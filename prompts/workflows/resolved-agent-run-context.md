@@ -38,7 +38,7 @@ tool available
 action authorised
 ```
 
-## Common inputs and authority resolution
+## Inputs
 
 Resolve the context from the authoritative inputs that apply to the operation. At minimum, consider:
 
