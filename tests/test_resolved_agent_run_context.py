@@ -149,7 +149,7 @@ class ResolvedAgentRunContextTests(unittest.TestCase):
         self.assertIn("if unexpected external candidate movement is detected", self.contract_lower)
 
     def test_candidate_a_review_and_validation_expire_for_b(self):
-        self.assertIn("candidate-a-specific review and validation", self.contract_lower)
+        self.assertIn("prior candidate-specific review and validation attached to candidate a expire for b", self.contract_lower)
         self.assertIn("must not silently transfer as review or validation of b", self.contract_lower)
         self.assertIn("bind the observed result to `resulting_candidate_identity`", self.contract_lower)
         self.assertIn("fresh-context boundary", self.contract_lower)
