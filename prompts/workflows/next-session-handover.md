@@ -36,6 +36,8 @@ For human-operated external execution, also include:
 - the exact output/evidence the human must return for governed continuation;
 - no secret values, truncated scripts, omitted command tails, or placeholders whose values are already known from authoritative state.
 
+For human-operated command-line execution, apply [Operational artifact hand-off](operational-artifact-handoff.md). Keep a genuinely atomic, transcript-independent command inline. When execution fragility, guard coupling, or evidence complexity is material, hand off a materialised/downloadable artifact plus simple staging/invocation instructions and bounded `RESULT` / `EVIDENCE` output rather than using the conversation transcript as executable state. The artifact must preserve the governing read-only or mutation authority exactly, handle its target/working directory explicitly, and fail closed on material identity, prerequisite, integrity, collision, or authority guard failure. If downloadable-file delivery is unavailable, use only the contract's safe degraded paths; do not silently replace the artifact with a large fragile transcript program.
+
 Do not let a shorthand next invocation replace a required human-operated external procedure. Do not require the human to ask how to perform the external action. Do not turn an already-authorised capability transfer into a new decision request. If the required external procedure cannot be determined safely and completely, report the real blocker or decision instead of presenting a vague EXTERNAL_REQUIRED handoff.
 
 If an equivalent valid external handoff already exists and decision-critical state has not materially changed, reuse it after refreshing any guards that can become stale rather than repeating capability discovery.
@@ -51,11 +53,11 @@ For a fresh-context handoff, the result must be directly copyable as the next pr
 
 ## What it does
 
-Turns a long working session into a minimal continuation contract while preserving the evidence and authority needed to avoid unsafe guessing. It prefers a reconstructible public shorthand invocation for genuine context transfer when durable sources already contain the needed state, and it retains a fuller handover only when reconstruction would be insufficient. It separately preserves complete human-operated external execution handoffs so capability boundaries expose the exact action to perform rather than only naming the receiving environment.
+Turns a long working session into a minimal continuation contract while preserving the evidence and authority needed to avoid unsafe guessing. It prefers a reconstructible public shorthand invocation for genuine context transfer when durable sources already contain the needed state, and it retains a fuller handover only when reconstruction would be insufficient. It separately preserves complete human-operated external execution handoffs so capability boundaries expose the exact action to perform rather than only naming the receiving environment. For complex command-line execution, the operational-artifact contract materialises execution state and coupled guards while retaining the atomic-inline exception.
 
 ## Boundaries / limitations
 
-Do not use handover compression to omit active blockers, required authority, security boundaries, or identities that the next decision genuinely depends on. A shorthand invocation is navigation, never authority. Do not expose credentials or secret values, do not manufacture a command sequence when the safe external procedure is not sufficiently determined, and never substitute a slash command for a complete executable external action when human-operated execution is the actual boundary.
+Do not use handover compression to omit active blockers, required authority, security boundaries, or identities that the next decision genuinely depends on. A shorthand invocation is navigation, never authority. Do not expose credentials or secret values, do not manufacture a command sequence when the safe external procedure is not sufficiently determined, and never substitute a slash command for a complete executable external action when human-operated execution is the actual boundary. Artifact delivery never creates authority, and unavailable file delivery must not be answered with a large fragile transcript-dependent executable block.
 
 ## Status
 
