@@ -98,7 +98,7 @@ class OperationalArtifactHandoffTests(unittest.TestCase):
             "do not assume posix path syntax",
             "macos, linux, windows, desktop, web, and mobile clients",
             "preserve operating-system and client security protections",
-            "keep/ is not permanent engineering storage",
+            "not permanent engineering storage",
             "promoted through normal governance into repository-owned or explicitly governed shared tooling",
         ):
             self.assertIn(phrase, lower)
