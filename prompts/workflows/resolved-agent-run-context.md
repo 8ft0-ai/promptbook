@@ -6,6 +6,24 @@ Define the reusable Promptbook contract for deriving the effective execution sta
 
 Promptbook is the canonical owner of this workflow contract. The context is ephemeral derived state, not a new durable authority source and not a replacement for repository-native instructions, issue or pull-request authority, immutable Git identity, CI evidence, or other durable records.
 
+## When to use
+
+Use this contract before substantive `/review` adjudication so the review operates from explicit repository/work authority, immutable candidate identity, capability boundaries, instruction provenance, and required evidence rather than remembered conversation state.
+
+Future workflows may reuse the same model only when their own authority and capability semantics are deliberately defined. This first slice does not generalise `/review` permissions to `/fix`, `/go`, or other operations.
+
+## Prompt
+
+```text
+Before substantive review adjudication, resolve an ephemeral Resolved Agent Run Context from current authoritative inputs.
+
+Bind the operation to the repository, work item, immutable candidate where applicable, resolved authority sources, applicable repository instructions and their provenance, effective and prohibited capabilities, owner-decision boundaries, and required evidence.
+
+Treat the resolved context as derived execution state rather than a new authority source. Do not fill missing authority or evidence from conversation memory. Intersect available capabilities with the read-only review boundary, adding only the narrow review-publication capability explicitly carried by the governing review mode.
+
+Collect bounded reconstructable evidence, distinguish static observation from executed and durable evidence, bind material findings and the disposition to the immutable candidate, and re-resolve candidate-specific state if that identity changes.
+```
+
 ## Core rule
 
 A governed operation must execute from explicit, reconstructable authority and capability state rather than treating the conversation transcript as executable state.
@@ -31,9 +49,9 @@ required_evidence
 
 The representation may be textual or structured. It need not be committed for every run. Whatever representation is used, equivalent authoritative inputs must resolve to equivalent effective authority, candidate identity, capability boundaries, and evidence requirements.
 
-## Authority resolution
+## Inputs
 
-Resolve the context from current authoritative inputs in precedence order appropriate to the repository and operation. At minimum, consider:
+Resolve the context from the authoritative inputs that apply to the operation. At minimum, consider:
 
 - platform safety and explicit current-user authority;
 - the Promptbook workflow selected for the operation;
@@ -41,6 +59,12 @@ Resolve the context from current authoritative inputs in precedence order approp
 - the governing issue, pull request, design, specification, or other work-item authority;
 - the immutable candidate being assessed;
 - current CI, checks, review state, and other decision-critical durable evidence.
+
+Conversation history may help locate those sources, but it is not a substitute for refreshing them when correctness depends on current state.
+
+## Authority resolution
+
+Resolve the context from current authoritative inputs in precedence order appropriate to the repository and operation.
 
 Record enough provenance to identify where each applicable instruction or material rule came from. A resolved context does not create authority absent from those sources.
 
@@ -129,6 +153,12 @@ For evidence, distinguish at least:
 
 A finding may use more than one evidence class. Do not upgrade one class into another merely to strengthen the conclusion.
 
+## What it does
+
+Makes the effective `/review` execution state explicit and reconstructable without introducing a new durable per-run artefact. It separates authority from capability, binds candidate-specific reasoning to immutable identity, preserves repository-instruction provenance, and requires evidence-bearing findings whose decisive support can be distinguished as static, executed, or durable.
+
+It also keeps the existing Promptbook review-recording model intact: ordinary router `/review` may publish only the requested review record, while `/review --read-only` remains zero-write.
+
 ## `/review` lifecycle
 
 A representative review should be reconstructable as:
@@ -166,7 +196,7 @@ child_authority ⊆ parent_authority
 
 This issue does not introduce subagent infrastructure; the invariant is recorded so future implementations preserve the same authority model.
 
-## Boundaries
+## Boundaries / limitations
 
 This first contract does not define `/fix` or `/go` run contexts, a Switchboard schema, operating-system or network sandboxing, Guardian-style approval automation, native subagents, agentctl policy ownership, or Watchtower workflow ownership.
 
