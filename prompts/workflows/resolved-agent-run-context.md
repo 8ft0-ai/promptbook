@@ -2,26 +2,30 @@
 
 ## Purpose
 
-Define the reusable Promptbook contract for deriving the effective execution state of a governed agent operation from current authoritative inputs. The explicitly supported operations are `/review` and `/fix`, each with its own capability and lifecycle profile under one common authority/evidence model.
+Define the reusable Promptbook contract for deriving the effective execution state of a governed agent operation from current authoritative inputs. The explicitly supported operations are `/review`, `/fix`, and `/go`, each with its own capability and lifecycle profile under one common authority/evidence model.
 
-Promptbook is the canonical owner of this workflow contract. The context is ephemeral derived state, not a new durable authority source and not a replacement for repository-native instructions, issue or pull-request authority, immutable Git identity, CI evidence, or other durable records.
+Promptbook is the canonical owner of this workflow contract. The context is ephemeral derived state, not a new durable authority source and not a replacement for repository-native instructions, issue or pull-request authority, immutable Git identity, CI evidence, accepted decisions, or other durable records.
 
 ## When to use
 
-Use this contract before substantive `/review` adjudication and before substantive `/fix` mutation so the operation executes from explicit repository/work authority, candidate identity, capability boundaries, instruction provenance, and required evidence rather than remembered conversation state.
+Use this contract before substantive `/review` adjudication, before substantive `/fix` mutation, and before substantive `/go` lifecycle progression so the operation executes from explicit repository/work authority, relevant immutable identity, capability boundaries, instruction provenance, current lifecycle state, and required evidence rather than remembered conversation state.
 
-An operation may reuse the common model only when its own authority and capability semantics are deliberately defined here. Supporting `/fix` does not generalise `/review` permissions to mutation, and neither profile defines `/go` authority.
+An operation may reuse the common model only when its own authority and capability semantics are deliberately defined here. Supporting one profile does not generalise another operation's permissions.
 
 ## Prompt
 
 ```text
 Before substantive governed execution, resolve an ephemeral Resolved Agent Run Context from current authoritative inputs for the selected operation.
 
-Bind the operation to the repository, work item, immutable candidate identity where applicable, resolved authority sources, applicable repository instructions and their provenance, effective and prohibited capabilities, owner-decision boundaries, and required evidence. For `/fix`, also bind the starting candidate, remediation scope, and required validation before substantive mutation.
+Bind the operation to the repository, governing work identity, immutable candidate or lifecycle identity where applicable, resolved authority sources, applicable repository instructions and their provenance, effective and prohibited capabilities, owner-decision boundaries, and required evidence.
+
+For `/fix`, also bind the starting candidate, remediation scope, required validation, and candidate transition before substantive mutation.
+
+For `/go`, also bind the governing objective, current lifecycle state, current candidate and review disposition where applicable, continuation mode, proposed next governed action, required preconditions, required evidence, and completion conditions. Before every consequential `/go` transition, classify the exact proposed action through the `/go` action gateway and execute only an `ALLOW` action that remains executable after refreshing decision-critical state.
 
 Treat the resolved context as derived execution state rather than a new authority source. Do not fill missing authority or evidence from conversation memory. Technical capability availability may only narrow executable capability; it must never create authority.
 
-Use the operation-specific capability profile and lifecycle below. Collect bounded reconstructable evidence, distinguish static observation from executed and durable evidence, and bind candidate-specific evidence to the immutable candidate for which it was actually observed.
+Use the operation-specific capability profile and lifecycle below. Collect bounded reconstructable evidence, distinguish static observation from executed and durable evidence, and bind candidate- or result-specific evidence to the immutable state for which it was actually observed.
 ```
 
 ## Core rule
@@ -38,6 +42,22 @@ tool available
 action authorised
 ```
 
+For lifecycle progression, preserve the stronger distinction:
+
+```text
+candidate approved
+    ≠
+merge authorised
+    ≠
+release authorised
+    ≠
+deployment authorised
+    ≠
+production mutation authorised
+```
+
+Authority or acceptance for one consequential transition must not silently become authority for a later transition.
+
 ## Inputs
 
 Resolve the context from the authoritative inputs that apply to the operation. At minimum, consider:
@@ -45,9 +65,9 @@ Resolve the context from the authoritative inputs that apply to the operation. A
 - platform safety and explicit current-user authority;
 - the Promptbook workflow selected for the operation;
 - repository-local instructions and mandatory policy;
-- the governing issue, pull request, design, specification, accepted plan, review finding, or other work-item authority;
-- the immutable candidate being reviewed or remediated where applicable;
-- current CI, checks, review state, and other decision-critical durable evidence.
+- the governing issue, pull request, design, specification, accepted plan, review finding, accepted decision, or other work-item authority;
+- the immutable candidate being reviewed or remediated, or the current lifecycle/result identity being progressed, where applicable;
+- current CI, checks, review state, branch/repository policy, and other decision-critical durable evidence.
 
 Conversation history may help locate those sources, but it is not a substitute for refreshing them when correctness depends on current state.
 
@@ -55,7 +75,7 @@ Resolve the context from current authoritative inputs in precedence order approp
 
 If a required authority source cannot be resolved, fail closed or hand off according to the governing workflow rather than filling the gap from conversation memory.
 
-The representation may be textual or structured. It need not be committed for every run. Whatever representation is used, equivalent authoritative inputs must resolve to equivalent effective authority, candidate identity, capability boundaries, and evidence requirements for the same operation.
+The representation may be textual or structured. It need not be committed for every run. Whatever representation is used, equivalent authoritative inputs must resolve to equivalent effective authority, relevant identity, capability boundaries, and evidence requirements for the same operation.
 
 ## `/review` required context
 
@@ -241,17 +261,195 @@ next_governed_state
 
 The record should make clear which material actions were `ALLOW`, which proposed actions were `REQUIRE OWNER / SEPARATE AUTHORITY` or `FORBID`, and which authorised actions could not be executed because of a capability boundary.
 
+## `/go` required context
+
+Before substantive `/go` progression, resolve at least:
+
+```text
+operation
+repository_identity
+governing_objective_identity
+current_lifecycle_state
+current_candidate_identity
+current_review_disposition
+resolved_authority_sources
+applicable_repository_instructions
+effective_capabilities
+prohibited_capabilities
+owner_decision_boundaries
+continuation_mode
+next_governed_action
+required_preconditions
+required_evidence
+completion_conditions
+```
+
+`governing_objective_identity` should normally identify the lifecycle object that can reconstruct the complete governed objective, such as the governing issue, rather than collapsing `/go` onto one intermediate pull request when post-merge verification or close-out remains part of the objective.
+
+`current_candidate_identity` and `current_review_disposition` may be absent when the current lifecycle state has no candidate/review concept, but their absence must be explicit rather than silently filled from conversation memory.
+
+`next_governed_action` is a proposed transition, not permission to execute it. The exact action must still pass the `/go` action gateway immediately before consequential execution.
+
+## `/go` capability derivation
+
+Derive `/go` capability by monotonic narrowing:
+
+```text
+effective_go_capabilities =
+    technically_available_capabilities
+    ∩
+    authority_derived_capabilities
+    ∩
+    GO_OPERATION_CEILING
+```
+
+Technical availability may remove executable capability but must never grant authority. Delegation or an external executor may narrow the effective set further but must never widen it.
+
+`GO_OPERATION_CEILING` is an upper bound on what `/go` may execute; it is not an authority grant. A capability category is effective only when current authoritative sources separately permit the exact action within the governing objective.
+
+The ceiling may admit, when separately authorised and otherwise permitted:
+
+```text
+ELIGIBLE ONLY WHEN SEPARATELY AUTHORISED
+- repository/work-item reads required for progression
+- routine lifecycle metadata updates within the governing objective
+- branch/PR state transitions already authorised by the governing workflow
+- merge of the exact candidate when merge authority is independently established
+- required post-action validation and evidence collection
+- issue/work-item close-out when governing completion conditions and close-out authority are satisfied
+- continuation into another Promptbook workflow when current authority and continuation mode permit it
+```
+
+The existence of `/go`, a successful prior workflow, or technical capability must not intrinsically grant:
+
+```text
+NOT INTRINSICALLY AUTHORISED
+- merge
+- release or tag publication
+- deployment
+- infrastructure or provider mutation
+- repository settings changes
+- credential or secret mutation or use beyond separately established authority
+- production-data mutation
+- destructive actions
+- material cost commitments
+- unrelated scope expansion
+```
+
+A separately governed contract may authorise an otherwise permissible consequential action, but `/go` must resolve and consume that authority explicitly for that action; it must not infer it from an earlier approval or from tool availability.
+
+## `/go` action gateway
+
+Before every consequential lifecycle transition, classify the exact proposed action using this precedence:
+
+```text
+1. If higher-precedence authority or the /go operation ceiling prohibits it:
+   FORBID
+
+2. Else if current authority is insufficient, ambiguous, stale, or requires a
+   genuine owner/product/architecture/security/scope decision:
+   REQUIRE OWNER / SEPARATE AUTHORITY
+
+3. Else if current authoritative sources permit the exact action within the
+   governing objective:
+   ALLOW
+
+4. Missing or ambiguous authority never defaults to ALLOW.
+```
+
+`FORBID` means the action cannot execute under the current `/go` contract. `REQUIRE OWNER / SEPARATE AUTHORITY` means the action may be legitimate but current resolved authority is insufficient for it. `ALLOW` means the exact action is authorised within the current objective, subject to execution feasibility and refreshed preconditions.
+
+Keep authority classification separate from execution feasibility. If an action is `ALLOW` but the required execution capability is unavailable, follow the router's capability / `EXTERNAL_REQUIRED` boundary rather than manufacturing a new owner-authority decision. Technical availability never changes an unauthorised action into `ALLOW`.
+
+## `/go` bounded approval consumption
+
+A human `ACCEPT` or `CHOOSE` decision is an authority input only for the concrete proposal/action presented by the governing decision capsule. It must bind to the exact decision target, proposal identity, candidate or lifecycle identity where relevant, and bounded effect of acceptance.
+
+Before consequential execution after `ACCEPT` or `CHOOSE`, refresh the decision-critical state capable of invalidating that decision. If the candidate, material proposal, applicable policy, required checks, governing authority, or repository instructions have changed so the accepted action is no longer the same valid proposal, invalidate the stale approval and re-present the changed decision rather than migrating authority silently.
+
+Accepted authority is consumed once for that bounded action. In particular:
+
+```text
+approved candidate A
+    + owner authorises merge of A
+    → refresh A / review / checks / authority
+    → merge A if unchanged
+
+merge authority for A
+    ≠
+release authority
+    ≠
+deployment authority
+```
+
+## `/go` lifecycle identity and stale-state invalidation
+
+Treat consequential `/go` progression as explicit transitions between lifecycle states and immutable identities rather than one continuously valid context:
+
+```text
+approved candidate A
+    → authorised merge
+    → merge commit M
+    → post-merge validation on M
+    → close-out decision/state
+```
+
+Candidate-bound review, checks, or other evidence for A do not become post-merge evidence for M merely because the merge succeeded. Bind new observations to the resulting identity for which they were actually observed.
+
+Immediately before a consequential action, refresh the decision-critical inputs capable of invalidating it, including where applicable:
+
+- target/current candidate identity;
+- base or governing repository state;
+- review disposition;
+- required checks/CI;
+- branch or repository policy relevant to the action;
+- governing issue/task authority;
+- the exact accepted proposal/decision; and
+- materially changed repository instructions.
+
+If those inputs change so the proposed action is no longer valid, invalidate the stale run context or approval and re-resolve before execution. After a consequential transition creates a new material state or immutable identity, bind the result/evidence to that new state and re-resolve before another consequential transition.
+
+## `/go` progression result
+
+A material `/go` step should be reconstructable as the logical equivalent of:
+
+```text
+governing_objective_identity
+starting_lifecycle_state
+proposed_action
+action_authority_classification
+action_taken
+resulting_lifecycle_state
+resulting_identity
+validation_and_evidence
+remaining_boundaries
+next_governed_action
+```
+
+The record should distinguish proposed actions that were `ALLOW`, `REQUIRE OWNER / SEPARATE AUTHORITY`, or `FORBID`, and authorised actions that could not execute because of a capability boundary.
+
+A successful intermediate action is not automatically objective completion:
+
+```text
+merge succeeded
+    ≠
+objective complete
+```
+
+`COMPLETE` requires the governing outcome, required post-action verification, completion conditions, and authorised close-out to be satisfied. A failed required post-merge validation therefore prevents `COMPLETE` even when the merge itself succeeded.
+
 ## Required evidence
 
-Resolve the evidence necessary to support the requested operation before adjudicating or declaring remediation complete. Evidence should be proportionate, bounded, and reconstructable. Depending on the claim, it may include:
+Resolve the evidence necessary to support the requested operation before adjudicating, declaring remediation complete, or treating lifecycle progression as complete. Evidence should be proportionate, bounded, and reconstructable. Depending on the claim, it may include:
 
 - an exact command or tool invocation and result status;
 - bounded relevant output;
-- a CI or check result bound to the candidate;
+- a CI or check result bound to the candidate or resulting identity;
 - a reproducible test;
 - a static source observation;
 - an applicable repository-rule or authority citation;
-- for `/fix`, the bounded implementation delta and resulting candidate identity.
+- for `/fix`, the bounded implementation delta and resulting candidate identity;
+- for `/go`, the starting state, proposed action, authority classification, resulting state/identity, validation/evidence, and remaining boundaries.
 
 Do not fabricate executed evidence where only static analysis occurred. Identify static observations as static. If a material claim requires execution that was not performed, represent that absence rather than implying the execution succeeded.
 
@@ -261,7 +459,7 @@ For evidence, distinguish at least:
 - `EXECUTED` — a command, test, check, or tool action was actually run and its result observed;
 - `DURABLE` — repository-hosted CI, review, check, or other retained evidence was inspected.
 
-A finding or remediation record may use more than one evidence class. Do not upgrade one class into another merely to strengthen the conclusion.
+A finding, remediation record, or progression record may use more than one evidence class. Do not upgrade one class into another merely to strengthen the conclusion.
 
 ## Evidence-bearing review findings
 
@@ -282,11 +480,13 @@ The human-facing review may remain concise. It does not need to print a verbose 
 
 ## What it does
 
-Makes the effective execution state of supported governed operations explicit and reconstructable without introducing a new durable per-run artefact. It separates authority from capability, preserves repository-instruction provenance, and requires honest evidence classes bound to the candidate for which they were observed.
+Makes the effective execution state of supported governed operations explicit and reconstructable without introducing a new durable per-run artefact. It separates authority from capability, preserves repository-instruction provenance, and requires honest evidence classes bound to the candidate or resulting state for which they were observed.
 
 For `/review`, it keeps the existing Promptbook review-recording model intact: ordinary router `/review` may publish only the requested review record, while `/review --read-only` remains zero-write.
 
 For `/fix`, it permits only bounded remediation mutation derived from current authority, classifies material actions before execution, distinguishes candidate A from candidate B, and prevents A-specific review or validation from silently carrying forward after bytes change.
+
+For `/go`, it derives effective lifecycle capabilities by monotonic narrowing, classifies every consequential transition through an explicit authority gateway, consumes bounded decisions only for their exact effect, invalidates stale state across candidate/result transitions, and prevents a successful intermediate action from being mistaken for completion.
 
 ## `/review` lifecycle
 
@@ -346,6 +546,40 @@ Before substantive mutation:
 
 During remediation, classify each material action through the action gateway and execute only `ALLOW` actions that are actually available. After changed bytes produce B, invalidate A-specific review/validation for B, run the required validation against B, and record the resulting candidate/evidence without crossing a required fresh-review boundary.
 
+## `/go` lifecycle
+
+A representative `/go` progression should be reconstructable as:
+
+```text
+production routing
+→ resolved governing objective and current lifecycle state
+→ current candidate/result identity and review/evidence state where applicable
+→ applicable instruction and authority provenance
+→ effective/prohibited go capabilities
+→ proposed next governed action
+→ refresh decision-critical state
+→ pre-action gateway classification
+→ execute one available ALLOW transition only
+→ resulting lifecycle state and immutable identity
+→ result-bound validation/evidence
+→ re-resolve remaining authority and boundaries
+→ next governed action or correct terminal boundary
+```
+
+Before substantive progression:
+
+1. resolve the `/go` context from current authoritative inputs;
+2. bind `governing_objective_identity` and the current lifecycle/candidate/result identity;
+3. establish instruction and authority provenance, including any exact accepted decision that applies to the next action;
+4. derive effective/prohibited capabilities by monotonic narrowing;
+5. resolve the next proposed action, required preconditions/evidence, and completion conditions;
+6. refresh decision-critical state immediately before any consequential transition;
+7. classify that exact action through the `/go` action gateway.
+
+Execute only an `ALLOW` action that is actually available. If the action is authorised but unavailable, preserve the capability / `EXTERNAL_REQUIRED` boundary rather than inventing authority. If authority is missing or stale, surface the appropriate owner/separate-authority boundary. If higher-precedence policy forbids the action, do not execute it.
+
+After a consequential action, bind resulting evidence to the new state/identity, invalidate evidence that does not transfer, and re-resolve before another consequential action. Preserve fresh-review boundaries and independently gate any later merge, release, deployment, production mutation, or close-out rather than inheriting authority from the prior step.
+
 ## Delegation invariant
 
 Future delegated or child execution contexts must never gain authority merely through delegation:
@@ -358,9 +592,9 @@ An external execution substrate should receive only the resolved authorised subs
 
 ## Boundaries / limitations
 
-This contract does not define `/go` run contexts, a new Switchboard schema, operating-system or network sandboxing, Guardian-style approval automation, native subagents, agentctl policy ownership, or Watchtower workflow ownership.
+This contract defines `/review`, `/fix`, and `/go` run contexts, but it does not introduce a new Switchboard schema, operating-system or network sandboxing, Guardian-style approval automation, native subagents, agentctl policy ownership, Watchtower workflow ownership, or a universal persisted run-context schema.
 
-It does not grant merge, release, tag, deployment, infrastructure/provider, settings, credential, secret, production, or unrelated mutation authority. Those actions require a separate governing contract where they are permitted at all.
+It does not intrinsically grant merge, release, tag, deployment, infrastructure/provider, settings, credential, secret, production, destructive-action, material-cost, or unrelated mutation authority. Those actions require separate current authority where they are permitted at all, and `/go` must resolve that authority explicitly before execution.
 
 External mechanisms may enforce capability restrictions or collect evidence, but they do not become owners of Promptbook workflow policy.
 
