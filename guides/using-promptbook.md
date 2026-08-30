@@ -35,3 +35,25 @@ For project chats or other persistent workspaces, do not copy Promptbook prompt 
 See [Project bootstrap and shorthand commands](project-bootstrap.md) for copyable bootstrap text, an `AGENTS.md` declaration pattern, command semantics, and versioning guidance.
 
 When the router reaches a genuine human choice, use the [decision capsule](decision-capsules.md) interaction rather than copying repository identifiers into an approval sentence. Recommendation-first choices and semantic `ACCEPT`, `REJECT`, `CHOOSE`, and `CHANGE` intents are designed to work consistently across keyboard, touch and voice while preserving bounded authority.
+
+## Capability availability overrides
+
+When an external capability is known to be temporarily unavailable or unreliable, use the portable [Capability availability overrides](../prompts/workflows/capability-availability-overrides.md) contract instead of rewriting workflow semantics around a specific connector failure.
+
+The first supported key controls the technical draft-pull-request transition to ready-for-review state:
+
+```text
+capability_availability:
+  pull_request.mark_ready: disabled
+```
+
+A disabled value suppresses use of that capability; it does not change whether the underlying action is authorised. When the integration is healthy again, re-enable it through configuration alone:
+
+```text
+capability_availability:
+  pull_request.mark_ready: enabled
+```
+
+`enabled` means Promptbook is no longer suppressing the capability. It does not grant authority, prove that an executor supports the mechanism, or prove that an invocation succeeded. The governing workflow must still resolve action authority independently and verify the observed result after execution.
+
+Availability resolution uses explicit current task/user configuration before repository/task configuration, managed Project configuration, and finally the documented Promptbook default. Unknown, contradictory, stale, or otherwise unresolved effective configuration fails conservatively for the affected capability rather than silently widening behaviour.
