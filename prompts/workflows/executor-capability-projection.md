@@ -334,7 +334,7 @@ This contract does not implement an executor, sandbox, network policy engine, cr
 
 It does not change the authority semantics of `/review`, `/fix`, or `/go`; it only projects their already-resolved effective capabilities into a form that capability configuration and an executor can further restrict and enforce.
 
-External executors and availability configuration remain mechanisms, not Promptbook workflow-policy authorities.
+External executors remain mechanisms, not Promptbook workflow-policy authorities. Availability configuration is likewise an execution mechanism, not a policy authority source.
 
 ## Status
 
