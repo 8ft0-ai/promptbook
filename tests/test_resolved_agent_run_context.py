@@ -19,6 +19,10 @@ class ResolvedAgentRunContextTests(unittest.TestCase):
             ROOT / "prompts" / "engineering" / "remediate-review-findings.md"
         ).read_text(encoding="utf-8")
         cls.remediate_lower = cls.remediate.lower()
+        cls.autonomous = (
+            ROOT / "prompts" / "workflows" / "autonomous-progression.md"
+        ).read_text(encoding="utf-8")
+        cls.autonomous_lower = cls.autonomous.lower()
 
     def test_promptbook_is_canonical_owner_and_context_is_ephemeral(self):
         self.assertIn("promptbook is the canonical owner", self.contract_lower)
@@ -27,9 +31,16 @@ class ResolvedAgentRunContextTests(unittest.TestCase):
         self.assertIn("conversation transcript as executable state", self.contract_lower)
 
     def test_supported_operations_are_explicit_without_generalising_authority(self):
-        self.assertIn("explicitly supported operations are `/review` and `/fix`", self.contract_lower)
-        self.assertIn("supporting `/fix` does not generalise `/review` permissions", self.contract_lower)
-        self.assertIn("neither profile defines `/go` authority", self.contract_lower)
+        self.assertIn(
+            "explicitly supported operations are `/review`, `/fix`, and `/go`",
+            self.contract_lower,
+        )
+        self.assertIn(
+            "supporting one profile does not generalise another operation's permissions",
+            self.contract_lower,
+        )
+        for operation in ("`/review`", "`/fix`", "`/go`"):
+            self.assertIn(operation, self.contract)
 
     def test_review_context_has_required_fields(self):
         for field in (
@@ -62,6 +73,29 @@ class ResolvedAgentRunContextTests(unittest.TestCase):
             "required_evidence",
         ):
             self.assertIn(field, self.contract)
+
+    def test_go_context_has_required_fields(self):
+        for field in (
+            "operation",
+            "repository_identity",
+            "governing_objective_identity",
+            "current_lifecycle_state",
+            "current_candidate_identity",
+            "current_review_disposition",
+            "resolved_authority_sources",
+            "applicable_repository_instructions",
+            "effective_capabilities",
+            "prohibited_capabilities",
+            "owner_decision_boundaries",
+            "continuation_mode",
+            "next_governed_action",
+            "required_preconditions",
+            "required_evidence",
+            "completion_conditions",
+        ):
+            self.assertIn(field, self.contract)
+        self.assertIn("lifecycle object that can reconstruct the complete governed objective", self.contract_lower)
+        self.assertIn("not permission to execute it", self.contract_lower)
 
     def test_resolution_is_deterministic_from_authoritative_inputs(self):
         self.assertIn("equivalent authoritative inputs", self.contract_lower)
@@ -154,6 +188,134 @@ class ResolvedAgentRunContextTests(unittest.TestCase):
         self.assertIn("bind the observed result to `resulting_candidate_identity`", self.contract_lower)
         self.assertIn("fresh-context boundary", self.contract_lower)
 
+    def test_go_capabilities_are_monotonically_narrowed(self):
+        self.assertIn("effective_go_capabilities", self.contract)
+        self.assertIn("technically_available_capabilities", self.contract)
+        self.assertIn("authority_derived_capabilities", self.contract)
+        self.assertIn("GO_OPERATION_CEILING", self.contract)
+        self.assertIn("technical availability may remove executable capability", self.contract_lower)
+        self.assertIn("must never grant authority", self.contract_lower)
+        self.assertIn("may narrow the effective set further but must never widen it", self.contract_lower)
+        self.assertIn("upper bound on what `/go` may execute", self.contract_lower)
+        self.assertIn("it is not an authority grant", self.contract_lower)
+
+    def test_go_operation_ceiling_preserves_separate_consequential_authority(self):
+        for eligible in (
+            "repository/work-item reads required for progression",
+            "routine lifecycle metadata updates within the governing objective",
+            "branch/pr state transitions already authorised by the governing workflow",
+            "merge of the exact candidate when merge authority is independently established",
+            "required post-action validation and evidence collection",
+            "issue/work-item close-out when governing completion conditions and close-out authority are satisfied",
+            "continuation into another promptbook workflow when current authority and continuation mode permit it",
+        ):
+            self.assertIn(eligible, self.contract_lower)
+        for not_intrinsic in (
+            "release or tag publication",
+            "deployment",
+            "infrastructure or provider mutation",
+            "repository settings changes",
+            "production-data mutation",
+            "destructive actions",
+            "material cost commitments",
+            "unrelated scope expansion",
+        ):
+            self.assertIn(not_intrinsic, self.contract_lower)
+        self.assertIn("NOT INTRINSICALLY AUTHORISED", self.contract)
+
+    def test_go_action_gateway_is_explicit_ordered_and_fail_closed(self):
+        section = self.contract[self.contract.index("## `/go` action gateway"):]
+        forbid_pos = section.index("1. If higher-precedence authority")
+        owner_pos = section.index("2. Else if current authority is insufficient")
+        allow_pos = section.index("3. Else if current authoritative sources permit the exact action")
+        missing_pos = section.index("4. Missing or ambiguous authority never defaults to ALLOW")
+        self.assertLess(forbid_pos, owner_pos)
+        self.assertLess(owner_pos, allow_pos)
+        self.assertLess(allow_pos, missing_pos)
+        for classification in ("FORBID", "REQUIRE OWNER / SEPARATE AUTHORITY", "ALLOW"):
+            self.assertIn(classification, section)
+        self.assertIn("keep authority classification separate from execution feasibility", section.lower())
+
+    def test_go_approved_candidate_with_merge_authority_may_allow_merge(self):
+        self.assertIn(
+            "merge of the exact candidate when merge authority is independently established",
+            self.contract_lower,
+        )
+        self.assertIn("current authoritative sources permit the exact action", self.contract_lower)
+        self.assertIn("ALLOW", self.contract)
+
+    def test_go_candidate_approval_does_not_create_merge_authority(self):
+        self.assertIn("candidate approved", self.contract_lower)
+        self.assertIn("merge authorised", self.contract_lower)
+        candidate_pos = self.contract_lower.index("candidate approved")
+        merge_pos = self.contract_lower.index("merge authorised", candidate_pos)
+        self.assertLess(candidate_pos, merge_pos)
+        self.assertIn("≠", self.contract[candidate_pos:merge_pos + len("merge authorised")])
+        self.assertIn("REQUIRE OWNER / SEPARATE AUTHORITY", self.contract)
+
+    def test_go_exact_decision_is_bounded_and_consumed_once(self):
+        self.assertIn("## `/go` bounded approval consumption", self.contract)
+        self.assertIn("concrete proposal/action presented", self.contract_lower)
+        self.assertIn("exact decision target", self.contract_lower)
+        self.assertIn("proposal identity", self.contract_lower)
+        self.assertIn("bounded effect of acceptance", self.contract_lower)
+        self.assertIn("accepted authority is consumed once for that bounded action", self.contract_lower)
+
+    def test_go_material_change_invalidates_stale_approval(self):
+        self.assertIn("invalidate the stale approval", self.contract_lower)
+        self.assertIn("re-present the changed decision", self.contract_lower)
+        for stale_input in (
+            "candidate",
+            "material proposal",
+            "applicable policy",
+            "required checks",
+            "governing authority",
+            "repository instructions",
+        ):
+            self.assertIn(stale_input, self.contract_lower)
+
+    def test_go_merge_result_rebinds_identity_and_evidence(self):
+        self.assertIn("approved candidate a", self.contract_lower)
+        self.assertIn("merge commit m", self.contract_lower)
+        self.assertIn("candidate-bound review, checks, or other evidence for a do not become post-merge evidence for m", self.contract_lower)
+        self.assertIn("bind new observations to the resulting identity", self.contract_lower)
+        self.assertIn("re-resolve before another consequential transition", self.contract_lower)
+
+    def test_go_failed_post_merge_validation_prevents_complete(self):
+        self.assertIn("merge succeeded", self.contract_lower)
+        self.assertIn("objective complete", self.contract_lower)
+        self.assertIn("a failed required post-merge validation therefore prevents `complete`", self.contract_lower)
+        self.assertIn("required post-action verification", self.contract_lower)
+
+    def test_go_merge_authority_does_not_create_release_or_deploy_authority(self):
+        self.assertIn("merge authority for a", self.contract_lower)
+        self.assertIn("release authority", self.contract_lower)
+        self.assertIn("deployment authority", self.contract_lower)
+        self.assertIn("authority or acceptance for one consequential transition must not silently become authority for a later transition", self.contract_lower)
+
+    def test_go_technical_deployment_capability_cannot_create_authority(self):
+        self.assertIn("technical capability must not intrinsically grant", self.contract_lower)
+        self.assertIn("deployment", self.contract_lower)
+        self.assertIn("technical availability never changes an unauthorised action into `allow`", self.contract_lower)
+
+    def test_go_higher_precedence_prohibition_resolves_forbid(self):
+        section = self.contract[self.contract.index("## `/go` action gateway"):]
+        self.assertIn("If higher-precedence authority or the /go operation ceiling prohibits it", section)
+        self.assertIn("FORBID", section)
+        self.assertIn("cannot execute under the current `/go` contract", section)
+
+    def test_go_authorised_but_unavailable_uses_external_boundary(self):
+        self.assertIn("if an action is `allow` but the required execution capability is unavailable", self.contract_lower)
+        self.assertIn("capability / `external_required` boundary", self.contract_lower)
+        self.assertIn("rather than manufacturing a new owner-authority decision", self.contract_lower)
+
+    def test_go_closeout_requires_completion_conditions_and_authority(self):
+        self.assertIn(
+            "issue/work-item close-out when governing completion conditions and close-out authority are satisfied",
+            self.contract_lower,
+        )
+        self.assertIn("completion conditions, and authorised close-out", self.contract_lower)
+
     def test_instruction_provenance_and_evidence_are_reconstructable(self):
         self.assertIn("where each applicable instruction", self.contract_lower)
         self.assertIn("evidence should be proportionate, bounded, and reconstructable", self.contract_lower)
@@ -198,6 +360,21 @@ class ResolvedAgentRunContextTests(unittest.TestCase):
             "resulting immutable candidate b",
             "b-bound validation/evidence",
             "fresh-review boundary or other correct governed next state",
+        ):
+            self.assertIn(stage, self.contract_lower)
+
+    def test_go_lifecycle_is_explicit(self):
+        for stage in (
+            "resolved governing objective and current lifecycle state",
+            "current candidate/result identity and review/evidence state where applicable",
+            "effective/prohibited go capabilities",
+            "proposed next governed action",
+            "refresh decision-critical state",
+            "pre-action gateway classification",
+            "execute one available allow transition only",
+            "resulting lifecycle state and immutable identity",
+            "result-bound validation/evidence",
+            "re-resolve remaining authority and boundaries",
         ):
             self.assertIn(stage, self.contract_lower)
 
@@ -249,6 +426,31 @@ class ResolvedAgentRunContextTests(unittest.TestCase):
         self.assertIn("hard fresh-context boundary", self.remediate_lower)
         self.assertIn("next chat: /review <reviewed_candidate>", self.remediate_lower)
         self.assertIn("author-side remediation as fresh approval evidence", self.remediate_lower)
+
+    def test_autonomous_progression_resolves_go_context_before_progression(self):
+        self.assertIn("before substantive `/go` lifecycle progression", self.autonomous_lower)
+        self.assertIn("resolved agent run context", self.autonomous_lower)
+        self.assertIn("resolved-agent-run-context.md", self.autonomous)
+        self.assertIn("treat `next_governed_action` as a proposal", self.autonomous_lower)
+        self.assertIn("before every consequential `/go` transition", self.autonomous_lower)
+        for classification in (
+            "`ALLOW`",
+            "`REQUIRE OWNER / SEPARATE AUTHORITY`",
+            "`FORBID`",
+        ):
+            self.assertIn(classification, self.autonomous)
+
+    def test_autonomous_progression_does_not_infer_authority_from_prior_success(self):
+        self.assertIn("not authority for the next consequential transition", self.autonomous_lower)
+        self.assertIn("consequential transitions must not be inferred from the prior workflow's success record alone", self.autonomous_lower)
+        self.assertIn("candidate approval, merge authority, release authority, deployment authority", self.autonomous_lower)
+        self.assertIn("authority consumed for one consequential action is not ambient permission", self.autonomous_lower)
+
+    def test_autonomous_progression_rebinds_result_evidence_and_completion(self):
+        self.assertIn("bind the resulting lifecycle state, immutable identity, validation and evidence", self.autonomous_lower)
+        self.assertIn("candidate-bound evidence does not silently become result-bound evidence", self.autonomous_lower)
+        self.assertIn("re-resolve authority and remaining boundaries before another consequential transition", self.autonomous_lower)
+        self.assertIn("a successful intermediate action such as merge does not itself imply `complete`", self.autonomous_lower)
 
     def test_delegation_cannot_expand_authority(self):
         self.assertIn("child_authority ⊆ parent_authority", self.contract)
