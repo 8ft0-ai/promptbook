@@ -6,6 +6,36 @@ Define the Promptbook contract for projecting a resolved agent run context into 
 
 This contract is a companion to [Resolved agent run context](resolved-agent-run-context.md). Promptbook owns the workflow-side projection semantics. A consuming executor owns only its supported mechanisms, local safety policy, enforcement and evidence; it does not become a repository-policy, workflow-policy or owner-decision authority source.
 
+## When to use
+
+Use this contract only when a resolved operation is delegating or exposing one or more material capabilities to an execution substrate.
+
+Do not create a profile merely because an executor exists. Advisory reasoning or work that remains entirely inside the current governed context does not acquire an executor profile unless a capability is actually being exposed or delegated.
+
+For `/go`, projection at a consequential gate is action-specific. Do not project one broad lifecycle profile containing every capability that might eventually be useful.
+
+## Prompt
+
+```text
+Given a current Resolved Agent Run Context, project only the operation/action capabilities that are already effective authority and actually needed by the executor for this bounded step.
+
+Bind the projection to the exact decision-critical state and authority provenance from which it was derived. Preserve `ALLOW`, `REQUIRE OWNER / SEPARATE AUTHORITY`, and `FORBID`: only `ALLOW` capability may be eligible for projection, and neither tool availability nor executor-local support may add authority.
+
+Represent denied capability explicitly enough for a consuming executor to fail closed. Allow the executor to narrow the projected set further through its supported-capability and local-safety intersection, but never to widen it.
+
+Before execution, reject stale or mismatched profile state. After execution, return bounded evidence that distinguishes profile denial, executor unavailability, stale state, guard mismatch, and actual execution. Do not expose secrets or treat executor evidence as authority for a later workflow action.
+```
+
+## Inputs
+
+- the current Resolved Agent Run Context for `/review`, `/fix`, or `/go`;
+- the exact material action or bounded delegated step being considered;
+- the immutable candidate, lifecycle result, accepted proposal, or other decision-critical bound state;
+- the resolved action-gateway classification and current effective/prohibited capabilities;
+- any operation-specific filesystem, network, credential, provider, repository, branch, or external-service constraints that are already authoritative;
+- freshness, expiry, consumed-approval, or guard conditions that can invalidate execution; and
+- the bounded execution evidence required for safe governed continuation.
+
 ## Core invariant
 
 Projection may narrow authority but must never widen it:
@@ -36,14 +66,6 @@ executor has tool / credential / network / API access
     ≠
 executor is authorised to expose or use it
 ```
-
-## When to project
-
-Project an executor profile only when a resolved operation is delegating or exposing one or more material capabilities to an execution substrate.
-
-Do not create a profile merely because an executor exists. Advisory reasoning or work that remains entirely inside the current governed context does not acquire an executor profile unless a capability is actually being exposed or delegated.
-
-For `/go`, projection at a consequential gate is action-specific. Do not project one broad lifecycle profile containing every capability that might eventually be useful.
 
 ## Required profile
 
@@ -272,6 +294,12 @@ Capability projection is itself a policy contract. Documentary presence is `STAT
 
 Do not claim machine enforcement until a real executor has consumed the profile and demonstrated enforcement. A later executor implementation must be governed separately.
 
+## What it does
+
+Makes the already-resolved Promptbook authority boundary consumable by an executor without allowing the executor or environment to become a new authority source. It defines the portable profile, material capability vocabulary, state-binding and stale-profile rules, executor-side no-widening intersection, and bounded evidence needed to distinguish policy denial from unavailable or failed execution.
+
+It preserves the existing `/review`, `/fix`, and `/go` operation ceilings rather than creating new capability. A later executor can implement this contract independently and prove machine enforcement without requiring Promptbook to own the executor mechanism.
+
 ## Boundaries / limitations
 
 This contract does not implement an executor, sandbox, network policy engine, credential broker, secret distributor, remote worker, OCI runner, deployment framework, provider policy or production mutation policy.
@@ -282,4 +310,4 @@ External executors remain mechanisms, not Promptbook workflow-policy authorities
 
 ## Status
 
-`candidate`
+`experimental`
