@@ -6,7 +6,7 @@ Define the Promptbook contract for projecting a resolved agent run context into 
 
 This contract is a companion to [Resolved agent run context](resolved-agent-run-context.md). Promptbook owns the workflow-side projection semantics. A consuming executor owns only its supported mechanisms, local safety policy, enforcement and evidence; it does not become a repository-policy, workflow-policy or owner-decision authority source.
 
-When a projected capability has an explicit Promptbook availability key, also apply [Capability availability overrides](capability-availability-overrides.md). Availability may narrow an otherwise eligible projection but cannot widen resolved authority.
+When a projected capability has an explicit Promptbook availability key, also apply [Capability availability overrides](capability-availability-overrides.md). Promptbook resolves the applicable availability record before projection; availability may narrow an otherwise eligible projection but cannot widen resolved authority.
 
 ## When to use
 
@@ -23,9 +23,9 @@ Given a current Resolved Agent Run Context, project only the operation/action ca
 
 Bind the projection to the exact decision-critical state and authority provenance from which it was derived. Preserve `ALLOW`, `REQUIRE OWNER / SEPARATE AUTHORITY`, and `FORBID`: only `ALLOW` capability may be eligible for projection, and neither tool availability nor executor-local support may add authority.
 
-For a capability with an explicit availability key, resolve the applicable capability availability override after authority classification. A disabled or conservatively unresolved capability must not remain executable or be probed; an enabled value removes only the Promptbook suppression and does not create authority or prove executor support.
+For a capability with an explicit availability key, consume the Promptbook-resolved capability availability record produced after authority classification. Do not rediscover Project, repository, work-item, or conversational configuration inside the executor projection. A disabled or conservatively unresolved capability must not remain executable or be probed; an enabled value removes only the Promptbook suppression and does not create authority or prove executor support.
 
-Represent denied capability explicitly enough for a consuming executor to fail closed. Allow configuration and the executor to narrow the projected set further through availability, supported-capability and local-safety intersections, but never to widen it.
+Represent denied capability explicitly enough for a consuming executor to fail closed. Allow the executor to narrow the projected set further through supported-capability and local-safety intersections, but never to widen it.
 
 Before execution, reject stale or mismatched profile or availability state. After execution, return bounded evidence that distinguishes profile denial, configured unavailability, executor unavailability, stale state, guard mismatch, and actual execution. Do not expose secrets or treat executor evidence as authority for a later workflow action.
 ```
@@ -36,7 +36,7 @@ Before execution, reject stale or mismatched profile or availability state. Afte
 - the exact material action or bounded delegated step being considered;
 - the immutable candidate, lifecycle result, accepted proposal, or other decision-critical bound state;
 - the resolved action-gateway classification and current effective/prohibited capabilities;
-- any applicable capability-availability key, resolved value and provenance;
+- any applicable Promptbook-resolved capability-availability record, including key, value, result class and provenance;
 - any operation-specific filesystem, network, credential, provider, repository, branch, or external-service constraints that are already authoritative;
 - freshness, expiry, consumed-approval, availability, or guard conditions that can invalidate execution; and
 - the bounded execution evidence required for safe governed continuation.
@@ -105,7 +105,9 @@ projection_provenance
 
 `execution_constraints` may describe bounded repository, branch, filesystem, network, credential, provider or external-service limits when those limits are decision-critical. The profile must not contain secret values or unnecessary environment state.
 
-`capability_availability_provenance` is required only when an applicable availability declaration affected or could affect the executable capability. It identifies the effective capability key/value and source sufficiently to distinguish configured suppression from executor support or authority denial without turning configuration into an authority source.
+`capability_availability_provenance` is derived from the same Promptbook-resolved availability record used by the governing workflow. It is required only when an applicable availability declaration affected or could affect the executable capability. It identifies the effective capability key/value, result and source sufficiently to distinguish configured suppression from executor support or authority denial without turning configuration into an authority source.
+
+The executor is not a configuration-discovery authority. It may verify the resolved availability record's binding/freshness and may narrow capability further, but it must not independently search Project instructions, repository instructions, work items, or prior conversation for a different availability value.
 
 The profile is derived execution state, not a durable authority source. If it conflicts with current authoritative inputs, current authoritative inputs win and the profile is stale.
 
@@ -156,7 +158,7 @@ FORBID
   → capability must not be projected
 ```
 
-`ALLOW` is necessary but not sufficient. Project only capability needed for the current operation/action. For a named availability-controlled capability, resolve its effective availability after this authority classification. A disabled or conservatively unresolved availability state removes the capability from executable projection; it cannot change the action-gateway classification or manufacture an owner decision.
+`ALLOW` is necessary but not sufficient. Project only capability needed for the current operation/action. For a named availability-controlled capability, consume its effective Promptbook-resolved availability after this authority classification. A disabled or conservatively unresolved availability state removes the capability from executable projection; it cannot change the action-gateway classification or manufacture an owner decision.
 
 An executor may then remove projected capability because of unsupported mechanisms, stronger local policy, guard failure or stale state. Keep authority and feasibility distinct. A capability denied by Promptbook authority is not the same result as a capability that is authorised but configured unavailable or unsupported by the executor.
 
@@ -261,7 +263,7 @@ release or deploy profile for merge result M
 
 A consumed approval is not a reusable profile input. If a proposal materially changes before execution, stale approval must be re-resolved before capability can be projected again.
 
-A capability availability decision resolved for one work identity or configuration state must not silently carry over after that decision becomes stale. Re-resolve the affected availability key before execution rather than assuming a previous `enabled` state remains valid.
+A capability availability decision resolved for one work identity or configuration state must not silently carry over after that decision becomes stale. Promptbook must re-resolve the affected availability key before projection rather than an executor assuming a previous `enabled` state remains valid.
 
 ## Executor enforcement result
 
@@ -295,7 +297,7 @@ A compliant executor consumer must:
 
 1. verify the profile version and bound identities it understands;
 2. reject unknown or materially ambiguous capability semantics rather than widening them;
-3. apply any resolved Promptbook capability-availability suppression relevant to the requested action;
+3. consume the resolved Promptbook capability-availability suppression relevant to the requested action without rediscovering its carriers;
 4. intersect the remaining projected capabilities with supported capability and local safety policy;
 5. execute only the requested capability that survives those intersections and all required guards;
 6. never interpret arbitrary command text as authority when the projected contract names a bounded capability;

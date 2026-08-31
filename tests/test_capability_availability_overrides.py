@@ -33,12 +33,14 @@ class CapabilityAvailabilityOverrideTests(unittest.TestCase):
 
     def test_precedence_and_default_are_explicit(self):
         for source in (
-            "explicit current-user or task-scoped override",
-            "repository/task-specific configuration",
-            "managed Project configuration",
+            "Explicit current-instruction / bounded current-task override",
+            "Governing work-item declaration",
+            "Repository declaration",
+            "Managed Project declaration",
             "Promptbook documented default",
         ):
             self.assertIn(source, self.availability)
+        self.assertIn("repository/task-specific configuration", self.availability)
         self.assertIn("the documented default is", self.availability_lower)
         self.assertIn("enabled", self.availability)
         self.assertIn("missing configuration therefore preserves pre-existing behaviour", self.availability_lower)
@@ -107,12 +109,15 @@ class CapabilityAvailabilityOverrideTests(unittest.TestCase):
             "resolved_value",
             "source_class",
             "source_identity_or_reference",
+            "source_precedence",
+            "resolved_for_repository",
             "resolved_for_work_identity",
-            "resolved_at_or_freshness_bound",
+            "freshness_or_version_identity",
+            "resolution_result",
         ):
             self.assertIn(field, self.availability)
         self.assertIn("re-resolve", self.availability_lower)
-        self.assertIn("must not silently carry across", self.availability_lower)
+        self.assertIn("must not silently carry", self.availability_lower)
 
     def test_projection_has_narrow_state_transition_capability_and_availability_intersection(self):
         self.assertIn("work_item_state_transition", self.projection)
@@ -135,6 +140,7 @@ class CapabilityAvailabilityOverrideTests(unittest.TestCase):
         self.assertIn("disabled", self.using_guide_lower)
         self.assertIn("re-enable", self.using_guide_lower)
         self.assertIn("does not grant authority", self.using_guide_lower)
+        self.assertIn("capability-availability-configuration.md", self.using_guide)
 
 
 if __name__ == "__main__":
