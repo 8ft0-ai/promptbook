@@ -23,7 +23,7 @@ For `/fix`, also bind the starting candidate, remediation scope, required valida
 
 For `/go`, also bind the governing objective, current lifecycle state, current candidate and review disposition where applicable, continuation mode, proposed next governed action, required preconditions, required evidence, and completion conditions. Before every consequential `/go` transition, classify the exact proposed action through the `/go` action gateway and execute only an `ALLOW` action that remains executable after refreshing decision-critical state.
 
-Treat the resolved context as derived execution state rather than a new authority source. Do not fill missing authority or evidence from conversation memory. Technical capability availability may only narrow executable capability; it must never create authority.
+Treat the resolved context as derived execution state rather than a new authority source. Do not fill missing authority or evidence from conversation memory. Technical capability availability may only narrow executable capability; it must never create authority. When an applicable Promptbook capability-availability key is relevant to a `/fix` or `/go` action, resolve it once after action-authority classification using the capability-availability contract and attach that resolved record to the derived run state rather than letting downstream consumers rediscover configuration independently.
 
 Use the operation-specific capability profile and lifecycle below. Collect bounded reconstructable evidence, distinguish static observation from executed and durable evidence, and bind candidate- or result-specific evidence to the immutable state for which it was actually observed.
 ```
@@ -76,6 +76,22 @@ Resolve the context from current authoritative inputs in precedence order approp
 If a required authority source cannot be resolved, fail closed or hand off according to the governing workflow rather than filling the gap from conversation memory.
 
 The representation may be textual or structured. It need not be committed for every run. Whatever representation is used, equivalent authoritative inputs must resolve to equivalent effective authority, relevant identity, capability boundaries, and evidence requirements for the same operation.
+
+## Capability-availability integration
+
+When a material `/fix` or `/go` action has an explicit Promptbook capability-availability key, resolve availability only after the exact action has passed the operation's authority gateway. Use [Capability availability overrides](capability-availability-overrides.md) to derive one record equivalent to `resolved_capability_availability` for the current repository/work/action identity.
+
+The ordering is:
+
+```text
+resolve repository/work/action authority
+    → classify the exact action through the operation gateway
+    → resolve capability availability once
+    → derive effective executable capability
+    → execute locally or project to an executor
+```
+
+That availability record is derived execution state, not a new authority source. Autonomous progression and executor projection consume the same resolved record and its provenance; they must not independently search Project instructions, repository instructions, work items, or prior conversation for another value. If a decision-critical carrier changes, invalidate the affected derived availability state and re-resolve it before consequential use.
 
 ## `/review` required context
 
@@ -154,9 +170,12 @@ remediation_scope
 effective_capabilities
 prohibited_capabilities
 owner_decision_boundaries
+resolved_capability_availability
 required_validation
 required_evidence
 ```
+
+`resolved_capability_availability` is required only when the current material action has an explicit availability key; otherwise its absence is explicit and carries no meaning.
 
 `starting_candidate_identity` is the immutable reviewed candidate or equivalent revision to which the blocking findings and remediation authority apply. `remediation_scope` is derived from the governing findings, task/design, accepted plan where applicable, repository instructions, and explicit current authority. It is not inferred merely from what a tool could change.
 
@@ -176,6 +195,8 @@ effective_fix_capabilities =
 ```
 
 Technical availability can only remove executable capability; it cannot grant authority. Authority derived from current repository/task/user sources can authorise actions only within the `/fix` operation ceiling. Delegation or an external execution substrate may narrow the set further but must never widen it.
+
+For a named availability-controlled capability, apply the already-resolved configured availability as an additional narrowing after action-authority classification. A disabled or conservatively unresolved record removes executable capability but does not alter the action's authority classification.
 
 The `/fix` operation ceiling is logically equivalent to:
 
@@ -277,12 +298,15 @@ applicable_repository_instructions
 effective_capabilities
 prohibited_capabilities
 owner_decision_boundaries
+resolved_capability_availability
 continuation_mode
 next_governed_action
 required_preconditions
 required_evidence
 completion_conditions
 ```
+
+`resolved_capability_availability` is required only when the current proposed action has an explicit availability key. It must be the same resolved record consumed by autonomous progression or executor projection, not a separately rediscovered value.
 
 `governing_objective_identity` should normally identify the lifecycle object that can reconstruct the complete governed objective, such as the governing issue, rather than collapsing `/go` onto one intermediate pull request when post-merge verification or close-out remains part of the objective.
 
@@ -304,6 +328,8 @@ effective_go_capabilities =
 ```
 
 Technical availability may remove executable capability but must never grant authority. Delegation or an external executor may narrow the effective set further but must never widen it.
+
+For a named availability-controlled capability, apply the already-resolved configured availability as an additional narrowing after the action gateway returns `ALLOW`. Do not let availability manufacture an `ALLOW` classification or an owner decision.
 
 `GO_OPERATION_CEILING` is an upper bound on what `/go` may execute; it is not an authority grant. A capability category is effective only when current authoritative sources separately permit the exact action within the governing objective.
 
@@ -404,7 +430,8 @@ Immediately before a consequential action, refresh the decision-critical inputs 
 - required checks/CI;
 - branch or repository policy relevant to the action;
 - governing issue/task authority;
-- the exact accepted proposal/decision; and
+- the exact accepted proposal/decision;
+- applicable capability-availability carrier identity/freshness when the action has a named key; and
 - materially changed repository instructions.
 
 If those inputs change so the proposed action is no longer valid, invalidate the stale run context or approval and re-resolve before execution. After a consequential transition creates a new material state or immutable identity, bind the result/evidence to that new state and re-resolve before another consequential transition.
@@ -488,6 +515,8 @@ For `/fix`, it permits only bounded remediation mutation derived from current au
 
 For `/go`, it derives effective lifecycle capabilities by monotonic narrowing, classifies every consequential transition through an explicit authority gateway, consumes bounded decisions only for their exact effect, invalidates stale state across candidate/result transitions, and prevents a successful intermediate action from being mistaken for completion.
 
+When a named capability-availability key is relevant to `/fix` or `/go`, the run context carries one resolved availability record from Promptbook's deterministic carrier contract so local progression and delegated execution apply the same configuration decision.
+
 ## `/review` lifecycle
 
 A representative review should be reconstructable as:
@@ -527,6 +556,7 @@ production routing
 → bounded remediation scope
 → effective/prohibited capabilities
 → pre-action gateway classification
+→ resolved capability availability when applicable
 → bounded ALLOW mutations only
 → resulting immutable candidate B
 → B-bound validation/evidence
@@ -544,7 +574,7 @@ Before substantive mutation:
 6. resolve `required_validation` and `required_evidence`;
 7. refresh candidate A immediately before the first material write.
 
-During remediation, classify each material action through the action gateway and execute only `ALLOW` actions that are actually available. After changed bytes produce B, invalidate A-specific review/validation for B, run the required validation against B, and record the resulting candidate/evidence without crossing a required fresh-review boundary.
+During remediation, classify each material action through the action gateway and execute only `ALLOW` actions that are actually available. For a named availability-controlled action, consume the one resolved availability record after the gateway classification. After changed bytes produce B, invalidate A-specific review/validation for B, run the required validation against B, and record the resulting candidate/evidence without crossing a required fresh-review boundary.
 
 ## `/go` lifecycle
 
@@ -559,6 +589,7 @@ production routing
 → proposed next governed action
 → refresh decision-critical state
 → pre-action gateway classification
+→ resolved capability availability when applicable
 → execute one available ALLOW transition only
 → resulting lifecycle state and immutable identity
 → result-bound validation/evidence
@@ -574,7 +605,8 @@ Before substantive progression:
 4. derive effective/prohibited capabilities by monotonic narrowing;
 5. resolve the next proposed action, required preconditions/evidence, and completion conditions;
 6. refresh decision-critical state immediately before any consequential transition;
-7. classify that exact action through the `/go` action gateway.
+7. classify that exact action through the `/go` action gateway;
+8. when the action has an explicit availability key, resolve and bind the one applicable availability record before execution/projection.
 
 Execute only an `ALLOW` action that is actually available. If the action is authorised but unavailable, preserve the capability / `EXTERNAL_REQUIRED` boundary rather than inventing authority. If authority is missing or stale, surface the appropriate owner/separate-authority boundary. If higher-precedence policy forbids the action, do not execute it.
 
@@ -596,7 +628,7 @@ This contract defines `/review`, `/fix`, and `/go` run contexts, but it does not
 
 It does not intrinsically grant merge, release, tag, deployment, infrastructure/provider, settings, credential, secret, production, destructive-action, material-cost, or unrelated mutation authority. Those actions require separate current authority where they are permitted at all, and `/go` must resolve that authority explicitly before execution.
 
-External mechanisms may enforce capability restrictions or collect evidence, but they do not become owners of Promptbook workflow policy.
+External mechanisms may enforce capability restrictions or collect evidence, but they do not become owners of Promptbook workflow policy or independent discoverers of Promptbook availability configuration.
 
 ## Status
 
