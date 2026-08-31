@@ -47,16 +47,16 @@ The work-item identity is part of the configuration provenance. This declaration
 
 ## Repository declaration
 
-For a repository-wide override, place the declaration in repository-local instructions, preferably `AGENTS.md` when that is the repository's instruction entry point:
+For a repository-wide override, place the declaration in repository-local instructions, preferably `AGENTS.md` when that is the repository's instruction entry point. For example:
 
-```md
+````md
 ## Promptbook capability availability
 
 ```text
 capability_availability:
   pull_request.mark_ready: disabled
 ```
-```
+````
 
 A repository declaration applies only to that repository unless repository-local authority explicitly establishes a narrower valid scope. Do not search arbitrary repository files for hidden declarations. If the repository uses another configuration document, repository-local instructions must explicitly reference it before Promptbook treats it as a carrier.
 
