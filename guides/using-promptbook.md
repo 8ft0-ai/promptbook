@@ -56,4 +56,8 @@ capability_availability:
 
 `enabled` means Promptbook is no longer suppressing the capability. It does not grant authority, prove that an executor supports the mechanism, or prove that an invocation succeeded. The governing workflow must still resolve action authority independently and verify the observed result after execution.
 
-Availability resolution uses explicit current task/user configuration before repository/task configuration, managed Project configuration, and finally the documented Promptbook default. Unknown, contradictory, stale, or otherwise unresolved effective configuration fails conservatively for the affected capability rather than silently widening behaviour.
+Availability resolution is deterministic and reconstructable. Promptbook checks, in order: an explicit current-instruction/bounded-task override; a declaration in the governing work item; a repository declaration in repository-local instructions such as `AGENTS.md`; an optional persistent managed-Project declaration; and finally the documented Promptbook default.
+
+A missing optional declaration falls through to the next carrier. An applicable declaration that is invalid, contradictory at the same tier/scope, stale, target-mismatched, or required-but-unavailable fails conservatively for that capability rather than silently widening behaviour.
+
+For exact placement, inspection, disable and re-enable examples, see [Capability availability configuration](capability-availability-configuration.md). The standard Project bootstrap remains thin: managed-Project availability is an optional adjacent declaration, not a required bootstrap field or a repository-authority source.
