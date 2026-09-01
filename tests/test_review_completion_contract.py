@@ -61,7 +61,7 @@ class ReviewCompletionContractTests(unittest.TestCase):
             self.fresh_lower,
         )
         self.assertIn(
-            "complete the bounded decision-critical review surface for the exact "
+            "continue through the bounded decision-critical review surface for the exact "
             "candidate before recording the disposition",
             self.fresh_lower,
         )
