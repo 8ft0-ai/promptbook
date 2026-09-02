@@ -49,7 +49,9 @@ flowchart TD
     F -->|REQUIRE OWNER / SEPARATE AUTHORITY| H[DECISION_REQUIRED when a concrete human decision can resolve it]
     F -->|ALLOW| I{Capability executable?}
 
-    I -->|No, authority sufficient| J[EXTERNAL_REQUIRED]
+    I -->|No| J{Complete executable external hand-off can resolve it?}
+    J -->|Yes| U[EXTERNAL_REQUIRED]
+    J -->|No| G
     I -->|Yes| K[Refresh invalidating preconditions]
     K --> L{Proposal still valid?}
     L -->|No| C
@@ -66,7 +68,7 @@ flowchart TD
     S -->|No| T[BLOCKED when no safe action, external hand-off or concrete decision can resolve the condition]
 ```
 
-The diagram is conceptual. The router and operation-specific workflows determine the exact route for a real task.
+The diagram is conceptual. The router and operation-specific workflows determine the exact route for a real task. An unavailable capability reaches `EXTERNAL_REQUIRED` only when existing authority is sufficient and a complete bounded external hand-off can actually resolve the action. Otherwise the failed local route is re-evaluated; the real next boundary may be another safe action, `DECISION_REQUIRED`, or `BLOCKED`.
 
 ## Stages
 
@@ -135,7 +137,7 @@ action authorised
 action executable in the current environment
 ```
 
-Capability availability is therefore resolved after the action passes the authority gateway. A disabled, unavailable or conservatively unresolved capability can turn an authorised local action into an `EXTERNAL_REQUIRED` boundary, but it must not turn an unauthorised action into `ALLOW` or manufacture a new owner decision.
+Capability availability is therefore resolved after the action passes the authority gateway. A disabled, unavailable or conservatively unresolved capability may turn an authorised local action into an `EXTERNAL_REQUIRED` boundary only when a complete bounded external hand-off can resolve it. If no such hand-off exists, `/go` must re-route and surface the real boundary rather than emitting a vague `EXTERNAL_REQUIRED` or manufacturing a new owner approval.
 
 This separation is particularly important for fragile platform transitions: an unavailable connector operation is an execution constraint, not evidence that the human must re-approve an action that is already authorised.
 
@@ -189,6 +191,24 @@ resolve
 
 unless a real boundary requires that stop.
 
+## Operator input and reconstruction
+
+In the common case, the operator should need to supply only the operation and work target:
+
+```text
+/go <target>
+```
+
+Everything else that is decision-critical but safely reconstructable from authoritative sources should normally be derived rather than copied into the command. This can include exact candidate heads, validation run identities, durable review or comment identities, prior dispositions and current lifecycle state.
+
+That does not mean all explicit input is redundant. Classify additional input into three categories:
+
+1. **Essential assertions** — an explicit identity or constraint is materially part of the requested operation. For example, the user may deliberately require review against one exact head even if a newer candidate exists. Do not guess away or silently rewrite such an assertion.
+2. **Genuine human decisions / authority** — judgement, choice or permission that current authoritative state does not supply. These remain real `DECISION_REQUIRED` boundaries when needed.
+3. **Machine-reconstructable state** — durable evidence or lifecycle facts that can be recovered unambiguously from authoritative sources. These should not normally become mandatory operator input merely because the workflow implementation needs them internally.
+
+Reconstruction must remain fail closed. If a candidate identity, evidence record or governing objective cannot be reconstructed unambiguously, `/go` must surface the real uncertainty instead of guessing or treating stale conversation state as authority.
+
 ## Conversational terminal states
 
 A routed objective ends only in one of four terminal states:
@@ -197,7 +217,7 @@ A routed objective ends only in one of four terminal states:
 | --- | --- |
 | `COMPLETE` | The governed objective is genuinely finished, including required verification and close-out. |
 | `DECISION_REQUIRED` | A genuine human judgement or new authority decision is required. |
-| `EXTERNAL_REQUIRED` | Existing authority is sufficient, but the required action cannot legitimately execute in the current environment; the response must provide a complete bounded hand-off. A genuinely fresh-context hand-off is a special case. |
+| `EXTERNAL_REQUIRED` | Existing authority is sufficient, but the required action cannot legitimately execute in the current environment and a complete bounded hand-off can resolve it. A genuinely fresh-context hand-off is a special case. |
 | `BLOCKED` | No safe autonomous action, executable external hand-off or concrete human decision can resolve the condition now. |
 
 These are not terminal by themselves:
@@ -223,12 +243,13 @@ state reconstructed
   -> exact lifecycle transition proposed
   -> action gateway: ALLOW
   -> configured/runtime capability unavailable
-  -> EXTERNAL_REQUIRED with one bounded executable hand-off
+  -> complete executable external hand-off exists
+  -> EXTERNAL_REQUIRED with that bounded hand-off
 ```
 
 **Primary friction source:** capability availability or execution substrate.
 
-**Not an authority problem:** the owner should not be asked to approve the same already-authorised transition merely because the connector cannot perform it.
+**Not an authority problem:** the owner should not be asked to approve the same already-authorised transition merely because the connector cannot perform it. If a complete external hand-off cannot be produced, re-route and surface the real decision or blocker instead of labelling the condition `EXTERNAL_REQUIRED`.
 
 ### 2. Review changes required, bounded remediation, fresh re-review
 
@@ -316,9 +337,10 @@ When `/go` requires human intervention, classify the cause before changing the w
 | Cause | Typical symptom | Likely response |
 | --- | --- | --- |
 | Routing / continuation | Stops at an ordinary lifecycle gate although the next action is already safe and executable | Remove the accidental stop or restore router control under `auto`. |
+| Reconstructable operator input | Human must copy or restate durable heads, run IDs, comment/review IDs, prior dispositions or lifecycle facts that authoritative sources can recover unambiguously | Reconstruct that state internally; preserve only essential assertions and genuine decisions as operator input. |
 | Authority | Exact consequential action is not currently permitted | Preserve or present the bounded authority decision. |
 | Freshness | Current context authored or materially shaped a candidate requiring independent review | Preserve the fresh-context hand-off. |
-| Capability | Action is authorised but the local mechanism is unavailable or broken | Use the bounded `EXTERNAL_REQUIRED` path; do not manufacture re-approval. |
+| Capability | Action is authorised but the local mechanism is unavailable or broken | Use `EXTERNAL_REQUIRED` only when a complete executable hand-off exists; otherwise re-route to the real decision or blocker without manufacturing re-approval. |
 | Evidence identity | Previous evidence is attached to a different immutable state | Rebind or collect result-specific evidence, then continue. |
 | Validation | Required checks are missing, stale or failed | Refresh/run required validation; do not continue through a failed control. |
 | Irreconcilable governance | Higher-precedence rules prohibit the proposed path and no alternative is currently resolvable | Fail closed and use `BLOCKED` only when its full definition is met. |
@@ -329,15 +351,16 @@ When `/go` requires human intervention, classify the cause before changing the w
 The current architecture suggests several useful follow-on investigations. These are assessment findings, not behavioural changes made by this guide.
 
 1. **Eliminate ordinary intermediate conversational stops.** Audit places where a workflow returns a local success/status record but fails to return control to the router under `/go`'s `auto` continuation mode.
-2. **Standardise post-action resume.** After every consequential action, use one consistent result-binding and re-resolution pattern so merge, metadata transitions and other successful operations do not accidentally become terminal.
-3. **Keep capability failure out of the authority path.** Where an action is already `ALLOW`, an unavailable mechanism should consistently project to `EXTERNAL_REQUIRED` rather than a new `DECISION_REQUIRED` or repeated capability probe.
-4. **Make freshness boundaries explicit and narrow.** Preserve genuinely fresh re-review while avoiding broader context resets when only one decision surface requires independence.
-5. **Use transition traces as regression fixtures for later behaviour changes.** Behavioural changes should demonstrate which trace improves and which hard boundaries remain invariant.
+2. **Eliminate reconstructable command ceremony.** Identify `/go` inputs and hand-off details that are machine-reconstructable and make `/go <target>` sufficient in the common case while preserving explicit essential assertions.
+3. **Standardise post-action resume.** After every consequential action, use one consistent result-binding and re-resolution pattern so merge, metadata transitions and other successful operations do not accidentally become terminal.
+4. **Keep capability failure out of the authority path.** Where an action is already `ALLOW`, use a complete `EXTERNAL_REQUIRED` hand-off when one exists; otherwise re-route to the real boundary rather than manufacturing re-approval or a vague hand-off.
+5. **Make freshness boundaries explicit and narrow.** Preserve genuinely fresh re-review while avoiding broader context resets when only one decision surface requires independence.
+6. **Use transition traces as regression fixtures for later behaviour changes.** Behavioural changes should demonstrate which trace improves and which hard boundaries remain invariant.
 
 Any semantic change resulting from these investigations should be separately governed and should add targeted regression coverage to the relevant Promptbook workflow tests.
 
 ## Target operating principle
 
-> `/go` should continue automatically until it encounters a boundary that cannot safely be crossed without new human judgement, a different execution environment, a genuinely fresh context, or until the governed objective is complete.
+> In the common case, `/go <target>` should be enough: reconstruct everything safely reconstructable, continue automatically across routine authorised transitions, and surface only a genuine human-decision, execution-environment, fresh-context, blocked or completion boundary.
 
 The principle reduces unnecessary human orchestration without weakening authority, evidence, validation, security, freshness or fail-closed behaviour.
