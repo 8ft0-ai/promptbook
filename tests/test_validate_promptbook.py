@@ -69,6 +69,65 @@ class PromptbookValidationTests(unittest.TestCase):
             errors = MODULE.validate_text_safety(path, "source: ai-prompt-library")
             self.assertTrue(errors)
 
+    def test_prompt_index_lists_all_published_prompts(self):
+        prompt_root = ROOT / "prompts"
+        index_text = (prompt_root / "README.md").read_text(encoding="utf-8")
+
+        self.assertEqual([], MODULE.validate_prompt_index(prompt_root))
+        for target in (
+            "workflows/resolved-agent-run-context.md",
+            "workflows/executor-capability-projection.md",
+            "workflows/operational-artifact-handoff.md",
+        ):
+            self.assertIn(target, index_text)
+
+        workflow_lines = [
+            line
+            for line in MODULE.section(index_text, "Workflows").splitlines()
+            if line.strip()
+        ]
+        self.assertTrue(workflow_lines[0].startswith("- [Workflow router"))
+
+    def test_prompt_index_rejects_omitted_published_prompt(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            prompt_root = Path(tmp) / "prompts"
+            workflow_root = prompt_root / "workflows"
+            workflow_root.mkdir(parents=True)
+            (prompt_root / "README.md").write_text(
+                "# Prompts\n\n## Workflows\n\n",
+                encoding="utf-8",
+            )
+            (workflow_root / "missing.md").write_text(
+                "# Missing\n\n"
+                "## Purpose\nX\n\n## When to use\nX\n\n"
+                "## Prompt\n```text\nDo X\n```\n\n"
+                "## Inputs\nNone.\n\n## What it does\nX\n\n"
+                "## Boundaries / limitations\nX\n\n## Status\n`tested`\n",
+                encoding="utf-8",
+            )
+
+            errors = MODULE.validate_prompt_index(prompt_root)
+            self.assertTrue(
+                any(
+                    "published prompt missing from index: workflows/missing.md" in error
+                    for error in errors
+                )
+            )
+
+    def test_prompt_index_excludes_readme_support_files(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            prompt_root = Path(tmp) / "prompts"
+            workflow_root = prompt_root / "workflows"
+            workflow_root.mkdir(parents=True)
+            (prompt_root / "README.md").write_text("# Prompts\n", encoding="utf-8")
+            (workflow_root / "README.md").write_text(
+                "# Workflow support index\n",
+                encoding="utf-8",
+            )
+
+            self.assertEqual([], MODULE.published_prompt_files(prompt_root))
+            self.assertEqual([], MODULE.validate_prompt_index(prompt_root))
+
     def test_workflow_router_contract(self):
         text = (ROOT / "prompts" / "workflows" / "README.md").read_text(encoding="utf-8")
         lower = text.lower()

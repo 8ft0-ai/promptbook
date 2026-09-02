@@ -49,6 +49,12 @@ def section(text: str, heading: str) -> str:
     return text[start:] if next_heading < 0 else text[start:next_heading]
 
 
+def published_prompt_files(prompt_root: Path) -> list[Path]:
+    return sorted(
+        path for path in prompt_root.rglob("*.md") if path.name != "README.md"
+    )
+
+
 def validate_prompt_file(path: Path) -> list[str]:
     errors: list[str] = []
     text = path.read_text(encoding="utf-8")
@@ -77,6 +83,36 @@ def validate_prompt_file(path: Path) -> list[str]:
     if any(token in text for token in ("TODO", "TBD", "FIXME")):
         errors.append(f"{path}: unresolved TODO/TBD/FIXME marker")
 
+    return errors
+
+
+def validate_prompt_index(prompt_root: Path) -> list[str]:
+    index_path = prompt_root / "README.md"
+    if not index_path.exists():
+        return [f"missing prompt index: {index_path}"]
+
+    index_text = index_path.read_text(encoding="utf-8")
+    prompt_root_resolved = prompt_root.resolve()
+    indexed: set[Path] = set()
+
+    for raw in LINK_RE.findall(index_text):
+        target = raw.split("#", 1)[0].strip()
+        if not target or target.startswith(("http://", "https://", "mailto:")):
+            continue
+        resolved = (index_path.parent / unquote(target)).resolve()
+        try:
+            resolved.relative_to(prompt_root_resolved)
+        except ValueError:
+            continue
+        if resolved.suffix == ".md" and resolved.name != "README.md":
+            indexed.add(resolved)
+
+    errors: list[str] = []
+    for path in published_prompt_files(prompt_root):
+        resolved = path.resolve()
+        if resolved not in indexed:
+            relative = path.relative_to(prompt_root).as_posix()
+            errors.append(f"{index_path}: published prompt missing from index: {relative}")
     return errors
 
 
@@ -113,14 +149,15 @@ def validate_repository(root: Path = ROOT) -> list[str]:
             errors.append(f"missing required path: {relative}")
 
     prompt_root = root / "prompts"
-    prompt_files = sorted(
-        path for path in prompt_root.rglob("*.md") if path.name != "README.md"
-    ) if prompt_root.exists() else []
+    prompt_files = published_prompt_files(prompt_root) if prompt_root.exists() else []
     if len(prompt_files) < 8:
         errors.append(f"expected at least 8 published prompts, found {len(prompt_files)}")
 
     for path in prompt_files:
         errors.extend(validate_prompt_file(path))
+
+    if prompt_root.exists():
+        errors.extend(validate_prompt_index(prompt_root))
 
     public_text_paths = set(root.rglob("*.md"))
     bootstrap = root / "BOOTSTRAP"
