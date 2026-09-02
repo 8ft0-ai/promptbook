@@ -90,6 +90,7 @@ Status describes the evidence behind the Promptbook prompt. It is not a claim of
 ## Guides
 
 - [Using Promptbook](guides/using-promptbook.md)
+- [`/go` lifecycle](guides/go-lifecycle.md)
 - [Project bootstrap and shorthand commands](guides/project-bootstrap.md)
 - [Decision capsules](guides/decision-capsules.md)
 - [Adapting prompts](guides/adapting-prompts.md)
