@@ -24,7 +24,9 @@ Classify each finding as:
 - invalid or already resolved by current evidence; or
 - requiring a genuinely new product, architecture, authority, security, or scope decision.
 
-For every valid bounded finding, derive the smallest safe correction. Do not broaden scope, redesign adjacent components, weaken validation, or treat review suggestions as requirements unless the governing contract makes them necessary.
+When the review evidence identifies a material relationship among findings, preserve that diagnosis while deriving remediation. Determine whether the corrections are genuinely isolated local changes or one shared invariant/boundary correction. Do not count findings mechanically or infer redesign merely from recurrence.
+
+For every valid bounded finding, derive the smallest safe correction. The smallest safe correction is not necessarily the smallest textual or most local patch. Where a shared invariant/boundary correction is objectively determined by the governing contract and findings and is already within the resolved remediation scope and `/fix` authority, that correction may be the minimum safe change. If the appropriate invariant/boundary correction requires materially new product, architecture, security, scope, owner, or other separate authority, classify that boundary honestly rather than decomposing it into superficially local exceptions or silently redesigning. Do not broaden scope, redesign adjacent components, weaken validation, or treat review suggestions as requirements unless the governing contract makes them necessary.
 
 Before each material action, apply the `/fix` action gateway and classify the action as:
 - `ALLOW` — current authoritative sources permit the action within the resolved remediation scope and `/fix` operation ceiling;
@@ -60,13 +62,13 @@ Preserve any required independent re-review boundary; do not present author-side
 
 ## What it does
 
-Keeps remediation narrow, makes mutation authority explicit, classifies material actions before execution, makes review findings traceable to regression evidence, and prevents a repair cycle from becoming an unbounded redesign. It binds remediation to starting candidate A and the resulting validation/evidence to candidate B, preventing candidate-specific review or validation from silently carrying across changed bytes.
+Keeps remediation narrow, makes mutation authority explicit, classifies material actions before execution, makes review findings traceable to regression evidence, and prevents a repair cycle from becoming an unbounded redesign. It also preserves review-level diagnosis of materially related findings so an already-authorised invariant/boundary correction may be recognised as the minimum safe change instead of forcing repeated example-by-example patches. It binds remediation to starting candidate A and the resulting validation/evidence to candidate B, preventing candidate-specific review or validation from silently carrying across changed bytes.
 
 When routed, it returns the remediation record to the governing workflow while preserving the mandatory fresh-context boundary for re-review of a candidate changed in this context.
 
 ## Boundaries / limitations
 
-Use only where the expected correction is objectively bounded by existing requirements and authority. Materially new architecture, authority, security, product, or scope decisions should be resolved separately. Merge, release/tag, deployment, unrelated repository mutation, infrastructure/provider mutation, and settings/credential/secret mutation are not granted by this workflow merely because a capability exists.
+Use only where the expected correction is objectively bounded by existing requirements and authority. An invariant/boundary-level correction is permitted only when it is objectively determined by the governing contract/findings and already within the resolved remediation scope; materially new architecture, authority, security, product, or scope decisions should be resolved separately. Repeated findings never create redesign authority by themselves. Merge, release/tag, deployment, unrelated repository mutation, infrastructure/provider mutation, and settings/credential/secret mutation are not granted by this workflow merely because a capability exists.
 
 Author-side remediation cannot substitute for fresh independent review when that gate is required. The action gateway is a workflow contract, not a new approval service, sandbox, or persisted policy object.
 

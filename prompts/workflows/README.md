@@ -40,6 +40,8 @@ Keep the command set small. `--read-only` is the one explicit `/review` modifier
 
 For every substantive `/review`, discovering a material blocker ends approval eligibility but does not end the substantive inspection. Complete the bounded decision-critical review surface for the exact candidate before recording the disposition; for `CHANGES REQUIRED`, report all material blockers discovered across that completed surface. The detailed coverage model and re-review rules live in [Fresh independent review](fresh-independent-review.md); the router does not replace them with a universal checklist.
 
+When a completed review exposes materially related blockers, synthesise their relationship before recommending `/fix`: challenge whether they indicate a shared invariant, mechanism, trust boundary, or failing abstraction rather than treating recurrence mechanically. This relationship assessment does not widen `/fix`; an invariant/boundary correction is eligible only when it is objectively the minimum safe correction and already within existing remediation authority. Otherwise expose the real planning, decision, or authority boundary rather than silently converting a broader redesign into bounded remediation.
+
 ## Continuation policy
 
 Continuation mode is a preference layer owned by this router. Apply it only after all hard governance constraints have been satisfied. A specialised workflow's local output, disposition, implementation record, remediation record, or other workflow record is not permission to end a routed objective in an unexplained intermediate state.
