@@ -5,11 +5,11 @@ This guide is an architectural map of Promptbook's governed `/go` lifecycle. It 
 The normative owners remain:
 
 - [Workflow router](../prompts/workflows/README.md) for `/go` command semantics, routing, continuation modes, terminal states and next-invocation behaviour;
-- [Resolved Agent Run Context](../prompts/workflows/resolved-agent-run-context.md) for derived `/go` execution state, capability ceilings, the `/go` action gateway and execution-locality resolution;
-- [Autonomous progression](../prompts/workflows/autonomous-progression.md) for routine progression, locality-aware execution selection, re-resolution, evidence binding and escalation behaviour;
+- [Resolved Agent Run Context](../prompts/workflows/resolved-agent-run-context.md) for derived `/go` execution state, capability ceilings, the `/go` action gateway, execution-locality resolution and fresh-review child-context binding;
+- [Autonomous progression](../prompts/workflows/autonomous-progression.md) for routine progression, locality-aware execution selection, fresh-review context resolution, re-resolution, evidence binding and escalation behaviour;
 - [Capability availability overrides](../prompts/workflows/capability-availability-overrides.md) for deterministic capability-availability narrowing after action authority has been resolved;
-- [Executor capability projection](../prompts/workflows/executor-capability-projection.md) for no-widening action-specific capability projection into a selected executor; and
-- [Fresh independent review](../prompts/workflows/fresh-independent-review.md) for review freshness and independence boundaries.
+- [Executor capability projection](../prompts/workflows/executor-capability-projection.md) for no-widening action-specific capability projection into a selected executor or isolated review child; and
+- [Fresh independent review](../prompts/workflows/fresh-independent-review.md) for review freshness, delegated-review information boundaries and independence requirements.
 
 Repository-local instructions, explicit task authority, current authoritative evidence and platform safety constraints remain higher precedence than this explanatory guide.
 
@@ -25,9 +25,10 @@ intent
   -> propose exactly one next governed action
   -> classify that action through the /go action gateway
   -> resolve capability availability when applicable
-  -> resolve eligible execution locality/mechanism when the current mechanism is insufficient
+  -> resolve eligible execution locality/mechanism when an execution effect needs another mechanism
+  -> resolve eligible isolated fresh-review context when independent adjudication is required and current context is non-fresh
   -> refresh action-invalidating preconditions
-  -> execute one authorised transition
+  -> execute one authorised transition or bounded delegated review
   -> observe the actual result
   -> bind evidence to the resulting state / immutable identity
   -> invalidate evidence that does not transfer
@@ -35,7 +36,7 @@ intent
   -> continue while safely authorised and executable
 ```
 
-The loop exists because each consequential transition can create a new candidate, result identity, review state, validation state, capability condition, locality condition or authority boundary. Success at one step is evidence about that step; it is not ambient permission for what comes next.
+The loop exists because each consequential transition can create a new candidate, result identity, review state, validation state, capability condition, locality condition, fresh-review isolation condition or authority boundary. Success at one step is evidence about that step; it is not ambient permission for what comes next.
 
 ## State machine
 
@@ -49,7 +50,15 @@ flowchart TD
 
     F -->|FORBID| G[Fail closed on that action and re-route if another safe route exists]
     F -->|REQUIRE OWNER / SEPARATE AUTHORITY| H[DECISION_REQUIRED when a concrete human decision can resolve it]
-    F -->|ALLOW| I{Current mechanism executable after availability narrowing?}
+    F -->|ALLOW| X{Independent review required now?}
+
+    X -->|Yes, current context fresh| Y[Perform ordinary fresh review]
+    X -->|Yes, current context non-fresh| Z{Eligible isolated review context provable?}
+    Z -->|Yes| AA[Invoke bounded child /review; independently reconstruct state]
+    Z -->|No| AB[EXTERNAL_REQUIRED fresh-context fallback]
+    Y --> N
+    AA --> N
+    X -->|No| I{Current mechanism executable after availability narrowing?}
 
     I -->|Yes| K[Refresh invalidating preconditions]
     I -->|No| J{Eligible governed execution locality exists?}
@@ -62,7 +71,7 @@ flowchart TD
     K --> L{Proposal still valid?}
     L -->|No| C
     L -->|Yes| M[Execute transition]
-    M --> N[Observe resulting state]
+    M --> N[Observe resulting state/review evidence]
     N --> O[Bind evidence to resulting identity]
     O --> P[Invalidate non-transferable evidence]
     P --> Q{Objective complete?}
@@ -71,10 +80,12 @@ flowchart TD
 
     G --> S{Safe continuation exists?}
     S -->|Yes| C
-    S -->|No| T[BLOCKED when no safe action, eligible locality, external hand-off or concrete decision can resolve the condition]
+    S -->|No| T[BLOCKED when no safe action, eligible locality/reviewer, external hand-off or concrete decision can resolve the condition]
 ```
 
-The diagram is conceptual. The router and operation-specific workflows determine the exact route for a real task. One unavailable capability or preferred connector does not by itself reach `EXTERNAL_REQUIRED`. For human-operated execution, `/go` first resolves whether another already-governed no-widening locality can truthfully perform the same authorised action. `EXTERNAL_REQUIRED` applies only when no eligible governed locality can perform the required action and a complete bounded owner-operated hand-off can actually resolve it. A genuine fresh-context hand-off remains a distinct case and does not require execution-locality probing.
+The diagram is conceptual. The router and operation-specific workflows determine the exact route for a real task. One unavailable capability or preferred connector does not by itself reach `EXTERNAL_REQUIRED`. For human-operated execution, `/go` first resolves whether another already-governed no-widening locality can truthfully perform the same authorised action. `EXTERNAL_REQUIRED` applies only when no eligible governed locality can perform the required action and a complete bounded owner-operated hand-off can actually resolve it.
+
+A genuine fresh-review boundary is a separate information-boundary case. If the current context is non-fresh, `/go` first resolves whether an eligible isolated review context can be established without inheriting author-side substantive adjudication. If yes, the review proceeds there under the ordinary `/review` ceiling. If isolation is unavailable or unprovable, the existing `Next chat: /review <durable target>` hand-off remains the safe `EXTERNAL_REQUIRED` fallback. This does not add a fourth execution-locality class and does not make the authoring context fresh.
 
 ## Stages
 
@@ -87,12 +98,13 @@ The diagram is conceptual. The router and operation-specific workflows determine
 | Action proposal | Select exactly one next governed transition | `next_governed_action` is a proposal, not permission to execute. |
 | Action gateway | Classify authority for the exact transition | Only `ALLOW` may execute; missing or ambiguous authority never defaults to `ALLOW`. |
 | Capability narrowing | Determine which mechanisms remain eligible | Technical/configured availability can remove executable capability but cannot create authority. |
-| Execution locality | Choose where the same authorised action can truthfully execute | Prefer eligible governed mechanisms over owner transport; changing locality cannot widen projected capability or bypass suppression. |
-| Precondition refresh | Recheck the state that could invalidate execution | A moved candidate, changed policy, stale approval, stale locality assumption or failed check can invalidate the proposed transition. |
-| Execution | Perform one consequential action | Execute only the exact action that remains authorised and available through an eligible locality. |
-| Result reconciliation | Observe what actually happened | An attempted transition and a successful transition are different states. |
+| Execution locality | Choose where the same authorised effect can truthfully execute | Prefer eligible governed mechanisms over owner transport; changing locality cannot widen projected capability or bypass suppression. |
+| Fresh-review context resolution | Choose where independent adjudication can occur | When current context is non-fresh, use only a provably isolated child `/review` context; otherwise retain the manual fresh-context hand-off. Context creation is not authority. |
+| Precondition refresh | Recheck the state that could invalidate execution or review evidence | A moved candidate, changed policy, stale approval, stale locality assumption, stale isolation binding or failed check can invalidate the proposed transition. |
+| Execution / adjudication | Perform one consequential action or bounded review | Execute only the exact action that remains authorised, or review only through an eligible fresh context under the `/review` ceiling. |
+| Result reconciliation | Observe what actually happened | An attempted transition and a successful transition are different states; a review disposition is evidence, not later-lifecycle authority. |
 | Evidence binding | Attach evidence to the state for which it was observed | Candidate-bound evidence does not silently become result-bound evidence. |
-| Re-resolution | Derive the next current state | A consequential result invalidates stale derived execution state and independently gates later consequences. |
+| Re-resolution | Derive the next current state | A consequential result invalidates stale derived execution/review state and independently gates later consequences. |
 
 ## The action gateway
 
@@ -124,7 +136,7 @@ The three outcomes mean different things:
 - `REQUIRE OWNER / SEPARATE AUTHORITY` — the transition may be legitimate, but current authority is insufficient; and
 - `FORBID` — the transition cannot execute under the current `/go` contract or higher-precedence authority.
 
-`FORBID` is a classification of the proposed action, not automatically the conversational terminal state `BLOCKED`. The router may be able to choose another safe action. `BLOCKED` applies only when no safe autonomous action, eligible execution locality, complete external hand-off or concrete human decision can resolve the condition now.
+`FORBID` is a classification of the proposed action, not automatically the conversational terminal state `BLOCKED`. The router may be able to choose another safe action. `BLOCKED` applies only when no safe autonomous action, eligible execution locality, eligible isolated reviewer where required, complete external hand-off or concrete human decision can resolve the condition now.
 
 ## Authority, availability and locality are separate
 
@@ -149,6 +161,8 @@ Capability availability is therefore resolved after the action passes the author
 A disabled, unavailable or conservatively unresolved capability removes execution options. It does not automatically force owner-operated execution, because another already-governed capability or locality may be able to establish the same required result without widening authority. Conversely, an available hosted or owner-local executor cannot be selected unless the exact action and its action-specific projected capability already permit the required effects.
 
 This separation is particularly important for fragile platform transitions: an unavailable connector operation is an execution constraint, not evidence that the human must re-approve an action that is already authorised or become the default command transport.
+
+Fresh-review context resolution is deliberately separate again. It answers whether independent adjudication can occur without inheriting author-side reasoning; it does not answer where an authorised execution effect runs. An isolated context being technically available does not itself establish review authority or freshness, and an execution-locality label does not prove reasoning isolation.
 
 ## Execution locality before owner hand-off
 
@@ -178,6 +192,34 @@ Before generating a substantial owner-operated hand-off, inspect only authoritat
 
 Locality remains fail closed. Profile denial cannot be worked around by changing executors. Configured capability suppression cannot be bypassed by relabelling the same logical effect at another automated locality. Executor unsupported/unavailable results may trigger another locality only within the same current authority and projection. Stale-profile or guard-mismatch results require state refresh. An alternate locality needing broader credentials, network, mutation, provider or other effects is ineligible unless those effects are independently authorised and within the operation ceiling.
 
+## Fresh-review context before manual hand-off
+
+When independent review is required, apply this separate decision:
+
+```text
+independent review required
+    -> current context genuinely fresh?
+        -> yes: ordinary /review
+        -> no
+            -> eligible genuinely isolated review context can be established?
+                -> yes: invoke child /review there
+                -> no: EXTERNAL_REQUIRED manual fresh-context hand-off
+```
+
+An eligible child receives the minimal durable review target or equivalent reconstruction reference, independently bootstraps applicable authority, reconstructs the exact candidate/checks/review state, completes the full fresh-review surface, and returns a disposition/evidence record bound to the exact candidate it inspected. It does not receive author-side substantive conclusions, expected disposition, hidden conversational state or private reasoning as review evidence.
+
+Capability narrowing is independent of reasoning isolation. The child is resolved as `/review`, so:
+
+```text
+child_review_authority ⊆ effective_review_authority
+```
+
+It may receive ordinary review reads and `review_publish` only where the current `/review` mode permits it. Parent mutation, merge, release, deployment, settings, provider or production authority does not transfer.
+
+Same-maintainer GitHub identity remains compatible only under the existing single-maintainer semantics. An isolated context cannot simulate compliance with a repository rule that genuinely requires another human or formal reviewer. If isolation cannot be established, the target cannot safely reconstruct authority, the child would inherit author adjudication, policy requires stronger separation, or the returned candidate identity is stale, fail closed to the manual hand-off or the stronger repository boundary.
+
+Do not repeatedly create an equivalent failed fresh-review child when the target, isolation and bounded review-capability state have not changed.
+
 ## Immutable identity and evidence
 
 A consequential action frequently changes the identity to which evidence applies.
@@ -198,20 +240,20 @@ Examples include:
 - a deployment producing a runtime/result identity distinct from the build candidate; or
 - an external operation returning a new observed lifecycle state.
 
-After the transition, `/go` should bind the observed result to B, invalidate derived state that no longer transfers, and re-resolve before the next consequential action. This is why "approved candidate" and "objective complete" are intentionally different states.
+After the transition, `/go` should bind the observed result to B, invalidate derived state that no longer transfers, and re-resolve before the next consequential action. This is why "approved candidate" and "objective complete" are intentionally different states. The same rule applies to delegated review evidence: a review bound to candidate A cannot silently approve candidate A' after movement.
 
 ## Continuation
 
-The workflow router owns continuation preference. `/go` defaults to `auto`, which means it should enter the next safely authorised and executable same-context workflow without waiting for a routine human `proceed` message.
+The workflow router owns continuation preference. `/go` defaults to `auto`, which means it should enter the next safely authorised and executable workflow without waiting for a routine human `proceed` message.
 
-`auto` does not cross hard boundaries. In particular, it cannot create authority, weaken validation, bypass repository policy, ignore failed checks, cross a required genuinely fresh review boundary, bypass configured capability suppression, or convert an unavailable mechanism into a broader authorised capability.
+`auto` does not cross hard boundaries by pretending they do not exist. In particular, it cannot create authority, weaken validation, bypass repository policy, ignore failed checks, make a non-fresh authoring context review its own work, bypass configured capability suppression, or convert an unavailable mechanism into a broader authorised capability. It may satisfy a required fresh-review boundary through an eligible genuinely isolated child review context because the independent adjudication then occurs outside the authoring context; if no such context is eligible/provable, the manual fresh-context stop remains.
 
 The intended ordinary shape is:
 
 ```text
 resolve
-  -> authorised action
-  -> execute through eligible locality
+  -> authorised action or required independent review
+  -> execute through eligible locality or isolated review context
   -> observe result
   -> re-resolve internally
   -> next authorised action
@@ -245,7 +287,7 @@ That does not mean all explicit input is redundant. Classify additional input in
 2. **Genuine human decisions / authority** — judgement, choice or permission that current authoritative state does not supply. These remain real `DECISION_REQUIRED` boundaries when needed.
 3. **Machine-reconstructable state** — durable evidence or lifecycle facts that can be recovered unambiguously from authoritative sources. These should not normally become mandatory operator input merely because the workflow implementation needs them internally.
 
-Reconstruction must remain fail closed. If a candidate identity, evidence record, governing objective, availability decision or material locality dependency cannot be reconstructed unambiguously, `/go` must surface the real uncertainty instead of guessing or treating stale conversation state as authority.
+Reconstruction must remain fail closed. If a candidate identity, evidence record, governing objective, availability decision, material locality dependency or fresh-review isolation/target binding cannot be reconstructed unambiguously, `/go` must surface the real uncertainty instead of guessing or treating stale conversation state as authority.
 
 ## Conversational terminal states
 
@@ -255,8 +297,8 @@ A routed objective ends only in one of four terminal states:
 | --- | --- |
 | `COMPLETE` | The governed objective is genuinely finished, including required verification and close-out. |
 | `DECISION_REQUIRED` | A genuine human judgement or new authority decision is required. |
-| `EXTERNAL_REQUIRED` | Existing authority is sufficient, but the required action cannot legitimately execute through any eligible governed locality and a complete bounded hand-off can resolve it. A genuinely fresh-context hand-off is a distinct special case. |
-| `BLOCKED` | No safe autonomous action, eligible execution locality, executable external hand-off or concrete human decision can resolve the condition now. |
+| `EXTERNAL_REQUIRED` | Existing authority is sufficient, but either an execution effect cannot legitimately execute through any eligible governed locality and a complete bounded hand-off can resolve it, or a genuinely fresh review cannot be satisfied by an eligible/provable isolated context and the existing manual review-context hand-off can resolve it. |
+| `BLOCKED` | No safe autonomous action, eligible execution locality, eligible isolated reviewer where required, executable external hand-off or concrete human decision can resolve the condition now. |
 
 These are not terminal by themselves:
 
@@ -302,12 +344,15 @@ candidate A
   -> /fix produces candidate B
   -> validation bound to B
   -> authoring context is no longer fresh for B
-  -> EXTERNAL_REQUIRED: fresh-context /review of exact candidate B
+  -> resolve eligible isolated fresh-review context
+      -> if eligible: child /review independently reconstructs and reviews exact candidate B
+      -> if unavailable/unprovable: EXTERNAL_REQUIRED manual /review of exact candidate B
+  -> returned review evidence remains bound to exact candidate B
 ```
 
-**Primary friction source:** genuine freshness boundary.
+**Primary friction source:** genuine freshness boundary, with avoidable human context transport when isolation can be proved automatically.
 
-**Expected stop:** the fresh-context hand-off is not unnecessary orchestration; it protects independent review. This context-transfer case is distinct from human-operated execution locality and does not require probing hosted or owner-local executors first.
+**Control to preserve:** the authoring/remediation context never reviews B as independent evidence. Fresh-review context resolution is distinct from execution locality, does not require probing hosted or owner-local executors, and does not bypass a repository requirement for another human/formal reviewer.
 
 ### 3. Approved candidate, separately authorised merge, post-merge evidence
 
@@ -365,7 +410,7 @@ current state
   -> proposed action conflicts with higher-precedence policy
   -> action gateway: FORBID
   -> re-route if another safe governed action exists
-  -> otherwise BLOCKED when no safe action, eligible locality, external hand-off or concrete decision can resolve the condition
+  -> otherwise BLOCKED when no safe action, eligible locality/reviewer, external hand-off or concrete decision can resolve the condition
 ```
 
 **Primary friction source:** hard governance boundary or irreconcilable state.
@@ -381,7 +426,7 @@ When `/go` requires human intervention, classify the cause before changing the w
 | Routing / continuation | Stops at an ordinary lifecycle gate although the next action is already safe and executable | Remove the accidental stop or restore router control under `auto`. |
 | Reconstructable operator input | Human must copy or restate durable heads, run IDs, comment/review IDs, prior dispositions or lifecycle facts that authoritative sources can recover unambiguously | Reconstruct that state internally; preserve only essential assertions and genuine decisions as operator input. |
 | Authority | Exact consequential action is not currently permitted | Preserve or present the bounded authority decision. |
-| Freshness | Current context authored or materially shaped a candidate requiring independent review | Preserve the fresh-context hand-off. |
+| Freshness | Current context authored or materially shaped a candidate requiring independent review | Resolve a provably isolated child `/review` context first; retain manual fresh-context transport only when isolation is unavailable/unprovable or stronger repository policy requires it. |
 | Capability / locality | Action is authorised but one mechanism is unavailable or broken | Re-resolve among eligible governed localities without widening capability; use human-operated `EXTERNAL_REQUIRED` only after no eligible governed locality can truthfully perform the action and a complete hand-off exists. |
 | Owner-local dependency | Required truth materially depends on private/local state | Record the dependency; use a bounded owner-local executor when already governed, otherwise a complete owner-operated hand-off when legitimate. |
 | Evidence identity | Previous evidence is attached to a different immutable state | Rebind or collect result-specific evidence, then continue. |
@@ -397,13 +442,13 @@ The current architecture suggests several useful follow-on investigations. These
 2. **Eliminate reconstructable command ceremony.** Identify `/go` inputs and hand-off details that are machine-reconstructable and make `/go <target>` sufficient in the common case while preserving explicit essential assertions.
 3. **Standardise post-action resume.** After every consequential action, use one consistent result-binding and re-resolution pattern so merge, metadata transitions and other successful operations do not accidentally become terminal.
 4. **Surface repeated owner transport as a tooling gap.** If the same class of owner-operated execution recurs, preserve that observation as capability/tooling evidence rather than automatically creating an executor, daemon or infrastructure project.
-5. **Make freshness boundaries explicit and narrow.** Preserve genuinely fresh re-review while avoiding broader context resets when only one decision surface requires independence.
+5. **Keep freshness hard while reducing context transport.** Preserve genuinely fresh re-review and repository separation requirements, but resolve an eligible isolated reviewer before asking the owner to open another chat when no new human judgement or authority is needed.
 6. **Use transition traces as regression fixtures for later behaviour changes.** Behavioural changes should demonstrate which trace improves and which hard boundaries remain invariant.
 
 Any semantic change resulting from these follow-on investigations should be separately governed and should add targeted regression coverage to the relevant Promptbook workflow tests.
 
 ## Target operating principle
 
-> In the common case, `/go <target>` should be enough: reconstruct everything safely reconstructable, continue automatically across routine authorised transitions, prefer already-governed execution localities over owner transport, and surface only a genuine human-decision, unavoidable execution-environment, fresh-context, blocked or completion boundary.
+> In the common case, `/go <target>` should be enough: reconstruct everything safely reconstructable, continue automatically across routine authorised transitions, prefer already-governed execution localities over owner execution transport, prefer eligible genuinely isolated review contexts over owner review-context transport, and surface only a genuine human-decision, unavoidable execution-environment, unavoidable manual fresh-review, blocked or completion boundary.
 
-The principle reduces unnecessary human orchestration without weakening authority, evidence, validation, security, freshness, capability suppression, no-widening projection or fail-closed behaviour.
+The principle reduces unnecessary human orchestration without weakening authority, evidence, validation, security, freshness, capability suppression, no-widening projection, repository requirements for human/formal review or fail-closed behaviour.
