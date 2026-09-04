@@ -144,7 +144,10 @@ class FreshReviewContextResolutionTests(unittest.TestCase):
             "review-recording authority does not grant remediation, merge, release, deployment",
             self.router_lower,
         )
-        self.assertIn("independently gate any later remediation, merge, release, deployment", self.autonomous_lower)
+        self.assertIn(
+            "re-resolve any later remediation, merge, release, deployment, production or close-out authority independently",
+            self.autonomous_lower,
+        )
 
     def test_unavailable_or_unprovable_isolation_preserves_manual_fallback(self):
         self.assertIn("only when no eligible/provable isolated review context is available", self.router_lower)
