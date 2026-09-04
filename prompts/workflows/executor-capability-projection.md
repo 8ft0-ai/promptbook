@@ -4,7 +4,7 @@
 
 Define the Promptbook contract for projecting a resolved agent run context into a bounded executor-facing capability profile. The profile lets an execution substrate enforce no more than the capabilities already authorised for the resolved `/review`, `/fix`, or `/go` operation.
 
-This contract is a companion to [Resolved agent run context](resolved-agent-run-context.md). Promptbook owns the workflow-side projection semantics, including any `/go` execution-locality selection. A consuming executor owns only its supported mechanisms, local safety policy, enforcement and evidence; it does not become a repository-policy, workflow-policy, locality-selection or owner-decision authority source.
+This contract is a companion to [Resolved agent run context](resolved-agent-run-context.md). Promptbook owns the workflow-side projection semantics, including any `/go` execution-locality selection and the operation-specific projection used by an eligible isolated fresh-review child. A consuming executor owns only its supported mechanisms, local safety policy, enforcement and evidence; it does not become a repository-policy, workflow-policy, locality-selection, fresh-review-eligibility or owner-decision authority source.
 
 When a projected capability has an explicit Promptbook availability key, also apply [Capability availability overrides](capability-availability-overrides.md). Promptbook resolves the applicable availability record before projection; availability may narrow an otherwise eligible projection but cannot widen resolved authority.
 
@@ -15,6 +15,8 @@ Use this contract only when a resolved operation is delegating or exposing one o
 Do not create a profile merely because an executor exists. Advisory reasoning or work that remains entirely inside the current governed context does not acquire an executor profile unless a capability is actually being exposed or delegated.
 
 For `/go`, projection at a consequential gate is action-specific. Do not project one broad lifecycle profile containing every capability that might eventually be useful. If `/go` selects another execution locality, project the same exact governed action again only from current resolved state; changing locality never widens the action-specific capability set.
+
+When `/go`, `/implement`, or `/fix` reaches a required fresh-review boundary and an eligible isolated review context is established, do not project the originating operation's broader profile into that child. Resolve a new `/review` run context and project only the effective `/review` capability needed by that child. Fresh-review context creation is an information-boundary mechanism, not another execution-locality class or a reason to widen the capability vocabulary.
 
 ## Prompt
 
@@ -27,9 +29,11 @@ For a capability with an explicit availability key, consume the Promptbook-resol
 
 When `/go` has selected an execution locality, consume that selection as derived execution state. The selected connected/native, hosted/hermetic, or owner-local/bounded executor may receive only the action-specific capability already eligible for projection. Do not reinterpret locality, executor support, credential presence, network reachability, or owner-local state as permission to add a capability or bypass configured suppression.
 
+When an eligible isolated fresh-review context has been selected, consume its resolved isolation binding as derived review state. Project from the newly resolved child `/review` operation, not from the originating author's broader operation profile. Do not supply author-side mutation, merge, release, deploy, settings, provider, production or unrelated capability merely because the parent context possessed it. The child's information boundary and the capability projection must both remain valid; neither substitutes for the other.
+
 Represent denied capability explicitly enough for a consuming executor to fail closed. Allow the executor to narrow the projected set further through supported-capability and local-safety intersections, but never to widen it.
 
-Before execution, reject stale or mismatched profile, availability, locality binding or guard state. After execution, return bounded evidence that distinguishes profile denial, configured unavailability, executor unavailability, stale state, guard mismatch, and actual execution. Do not expose secrets or treat executor evidence as authority for a later workflow action.
+Before execution, reject stale or mismatched profile, availability, locality binding, fresh-review isolation binding or guard state. After execution, return bounded evidence that distinguishes profile denial, configured unavailability, executor unavailability, stale state, guard mismatch, and actual execution. Do not expose secrets or treat executor evidence as authority for a later workflow action.
 ```
 
 ## Inputs
@@ -40,8 +44,9 @@ Before execution, reject stale or mismatched profile, availability, locality bin
 - the resolved action-gateway classification and current effective/prohibited capabilities;
 - any applicable Promptbook-resolved capability-availability record, including key, value, result class and provenance;
 - for `/go`, any material `resolved_execution_locality` selection and evidence binding that determined which executor class is eligible;
+- for delegated fresh review, any material `resolved_fresh_review_context` isolation binding proving the child is eligible and resolved as `/review`;
 - any operation-specific filesystem, network, credential, provider, repository, branch, or external-service constraints that are already authoritative;
-- freshness, expiry, consumed-approval, availability, locality, or guard conditions that can invalidate execution; and
+- freshness, expiry, consumed-approval, availability, locality, fresh-review-isolation, or guard conditions that can invalidate execution; and
 - the bounded execution evidence required for safe governed continuation.
 
 ## Core invariant
@@ -74,7 +79,7 @@ actual_executor_capabilities =
     executor_local_safety_policy
 ```
 
-The availability, locality choice, or executor-side intersection cannot add a capability absent from the Promptbook projection. A configured `enabled` value means only that Promptbook is not suppressing that named capability; it cannot widen authority.
+The availability, locality choice, fresh-review context choice, or executor-side intersection cannot add a capability absent from the Promptbook projection. A configured `enabled` value means only that Promptbook is not suppressing that named capability; it cannot widen authority.
 
 Changing execution locality preserves the same invariant:
 
@@ -85,6 +90,16 @@ projected_executor_capabilities_for_exact_action
 ```
 
 An alternate locality that would require wider credential, network, mutation, provider, filesystem, or other effect capability is not eligible merely because that locality could technically perform the action.
+
+For fresh-review delegation, preserve the stricter operation boundary:
+
+```text
+child_review_authority
+    ⊆
+effective_review_authority
+```
+
+A child reviewer is not a narrowed `/go` or `/fix` executor profile. It is a separately resolved `/review` operation whose capabilities are limited by the `/review` ceiling and the current review recording mode.
 
 Technical availability is never authority:
 
@@ -110,6 +125,7 @@ denied_capabilities
 execution_constraints
 capability_availability_provenance
 execution_locality_binding
+fresh_review_isolation_binding
 stale_or_expiry_conditions
 required_execution_evidence
 projection_provenance
@@ -123,7 +139,9 @@ projection_provenance
 
 `execution_locality_binding` is required only when locality selection materially determined the executor for a `/go` action. It identifies the selected portable locality class and enough bound-state/provenance information to detect stale or mismatched delegation. It is derived execution state, never a new capability grant.
 
-The executor is not a configuration-discovery authority and is not a locality-selection authority. It may verify the resolved availability/locality record's binding and freshness and may narrow capability further, but it must not independently search Project instructions, repository instructions, work items, prior conversation, local credentials, or ambient environment state for a different availability value or a broader execution path.
+`fresh_review_isolation_binding` is required only when the profile belongs to an automatically delegated fresh-review child. It identifies enough of the eligible isolation decision, minimal target/reconstruction provenance and child `/review` operation binding to detect stale, mismatched or non-fresh delegation. It must not contain author-side private reasoning or hidden conversational state and is never an authority grant.
+
+The executor is not a configuration-discovery authority and is not a locality-selection or fresh-review-eligibility authority. It may verify the resolved availability/locality/isolation record's binding and freshness and may narrow capability further, but it must not independently search Project instructions, repository instructions, work items, prior conversation, local credentials, or ambient environment state for a different availability value, a broader execution path, or a reason to treat an ineligible context as fresh.
 
 The profile is derived execution state, not a durable authority source. If it conflicts with current authoritative inputs, current authoritative inputs win and the profile is stale.
 
@@ -159,6 +177,8 @@ A concrete executor may use a more specific internal vocabulary, but it must map
 
 Do not infer broad capability from a narrower class. For example, `repository_read` does not imply `candidate_write`, `work_item_state_transition` does not imply general work-item mutation, and `merge` does not imply `release_publish` or `deploy`.
 
+Fresh-review context resolution introduces no new capability class. The existing `/review` read/evidence/publication classes are sufficient; freshness is represented by the information-boundary/isolation binding, not by a capability that could accidentally be treated as authority.
+
 ## Projection from the action gateway
 
 For every material capability or exact action being delegated, preserve the resolved authority classification:
@@ -191,6 +211,7 @@ None of the following may widen a projection:
 - executor support for a capability;
 - an availability override being `enabled`;
 - an execution locality being technically reachable;
+- an isolated/fresh context being technically creatable;
 - owner-local/private state being present;
 - a previous operation having been authorised;
 - a prior approval whose bounded action has already been consumed; or
@@ -225,6 +246,8 @@ review_publish
 
 `review_publish` is the narrow router-authorised review-record write only. It does not imply candidate mutation, workflow dispatch, merge, release or deployment.
 
+When ordinary `/review` is performed in an automatically delegated isolated context, resolve this same profile anew for the child. Do not start from the originating `/go`, `/implement`, or `/fix` capabilities and subtract a few writes; the child operation itself is `/review`, so its ceiling excludes author-side `candidate_write`, remediation mutation, `merge`, `release_publish`, `deploy`, settings, provider and production effects. `/review --read-only` remains zero-write in a delegated context exactly as it does in a manually opened fresh context.
+
 ### `/fix`
 
 A representative bounded remediation projection may include:
@@ -247,6 +270,8 @@ An independently authorised transition of an exact draft pull request to ready-f
 
 If the initially selected executor is unsupported or unavailable, `/go` may select another already-eligible locality. That locality receives a newly projected profile for the same exact action and current bound state; it does not inherit any wider capability merely because the alternate executor supports more effects.
 
+If `/go` reaches independent review and the current context is non-fresh, the resulting child reviewer receives a new `/review` profile rather than a `/go` profile. A returned `APPROVED` or `CHANGES REQUIRED` disposition is review evidence only and does not add merge, remediation, release or deployment capability to the originating `/go` context.
+
 After merge creates result M, the A-bound profile is stale. A later release or deployment requires a newly resolved action gateway and a newly projected profile bound to the applicable resulting state and authority.
 
 ## Identity and stale-profile invalidation
@@ -261,6 +286,7 @@ Invalidate and re-project when a decision-critical input changes, including wher
 - operation or operation ceiling;
 - applicable capability-availability value, provenance or freshness;
 - selected execution locality or owner-local dependency evidence when material;
+- fresh-review isolation binding or minimal reconstruction target when material;
 - required checks or other freshness-sensitive preconditions;
 - repository instructions or policy that affect the action; or
 - declared expiry/freshness bounds.
@@ -290,6 +316,8 @@ A capability availability decision resolved for one work identity or configurati
 
 A locality selection resolved for one action, bound state or execution-constraint set must not silently carry into another. If locality evidence becomes stale, return control to Promptbook for re-resolution rather than choosing a broader path locally.
 
+A fresh-review isolation decision resolved for candidate A or one information-boundary state does not silently carry to candidate B or a materially different context. If the candidate, target, isolation evidence or repository review policy changes, return control to Promptbook for fresh-review context re-resolution rather than treating the old child as still eligible.
+
 ## Executor enforcement result
 
 The executor should return bounded evidence logically equivalent to:
@@ -314,9 +342,9 @@ Use distinct result classes when they affect governed continuation:
 - `GUARD_MISMATCH` — a required execution guard failed;
 - `EXECUTED` — the bounded capability executed and result/evidence was observed.
 
-The shareable result must not include raw secret values, broad environment dumps or private diagnostic content merely because the executor can observe them.
+The shareable result must not include raw secret values, broad environment dumps or private diagnostic content merely because the executor can observe them. A fresh-review child result likewise must not include hidden chain-of-thought or author-side private reasoning; return only the bounded review disposition/evidence and isolation/profile provenance needed for reconciliation.
 
-`EXECUTOR_UNSUPPORTED` may be evidence for Promptbook to re-resolve among already-eligible execution localities. `STALE_PROFILE` and `GUARD_MISMATCH` require decision-critical refresh before a consequential retry. `PROFILE_DENIED` and `CAPABILITY_DISABLED` remain denial/suppression evidence, not invitations to route around the boundary through a different executor.
+`EXECUTOR_UNSUPPORTED` may be evidence for Promptbook to re-resolve among already-eligible execution localities. `STALE_PROFILE` and `GUARD_MISMATCH` require decision-critical refresh before a consequential retry. `PROFILE_DENIED` and `CAPABILITY_DISABLED` remain denial/suppression evidence, not invitations to route around the boundary through a different executor. Fresh-review isolation failure is handled by the resolved-run-context/router freshness contract rather than by pretending it is an execution-locality result.
 
 ## Consumer contract
 
@@ -326,11 +354,12 @@ A compliant executor consumer must:
 2. reject unknown or materially ambiguous capability semantics rather than widening them;
 3. consume the resolved Promptbook capability-availability suppression relevant to the requested action without rediscovering its carriers;
 4. consume any Promptbook-selected execution-locality binding without treating it as new authority;
-5. intersect the remaining projected capabilities with supported capability and local safety policy;
-6. execute only the requested capability that survives those intersections and all required guards;
-7. never interpret arbitrary command text as authority when the projected contract names a bounded capability;
-8. return bounded enforcement evidence that distinguishes configured suppression from unsupported execution; and
-9. leave locality re-resolution, any next workflow, owner decision, merge/release/deploy progression or acceptance decision to the governing Promptbook/repository context.
+5. when operating as an eligible delegated fresh-review child, consume the resolved isolation binding and the newly derived `/review` profile without importing broader parent authority or author-side substantive adjudication;
+6. intersect the remaining projected capabilities with supported capability and local safety policy;
+7. execute only the requested capability that survives those intersections and all required guards;
+8. never interpret arbitrary command text as authority when the projected contract names a bounded capability;
+9. return bounded enforcement evidence that distinguishes configured suppression from unsupported execution; and
+10. leave locality re-resolution, fresh-review eligibility/fallback, any next workflow, owner decision, merge/release/deploy progression or acceptance decision to the governing Promptbook/repository context.
 
 Executor-local policy may be stricter than Promptbook projection. It must not be weaker in a way that widens executable authority.
 
@@ -344,27 +373,35 @@ child_authority ⊆ parent_authority
 
 A child or external executor profile must be a subset of the parent operation's current effective capabilities, further narrowed to the child action need. Delegation cannot refresh stale parent authority or manufacture new capability classes.
 
+For fresh review, the child is deliberately re-resolved under the `/review` operation ceiling, so the enforceable rule is:
+
+```text
+child_review_authority ⊆ effective_review_authority
+```
+
+This prevents a parent `/go`, `/implement`, or `/fix` context from transferring author-side mutation or later-lifecycle authority into the reviewer. Context isolation and capability narrowing are both required: one does not prove the other.
+
 This contract does not define native subagent infrastructure or a complete delegated-agent protocol.
 
 ## Evidence and limitations
 
 Capability projection is itself a policy contract. Documentary presence is `STATIC` evidence. Tests exercising the contract are `EXECUTED` evidence. Repository-hosted checks or retained execution records are `DURABLE` evidence when inspected.
 
-Do not claim machine enforcement until a real executor has consumed the profile and demonstrated enforcement. A later executor implementation must be governed separately.
+Do not claim machine enforcement until a real executor has consumed the profile and demonstrated enforcement. Likewise, do not claim a platform provides genuinely isolated fresh review unless its context boundary can actually be established. A later executor or delegated-context implementation must be governed separately.
 
 ## What it does
 
-Makes the already-resolved Promptbook authority boundary consumable by an executor without allowing the executor, environment, availability configuration or execution-locality choice to become a new authority source. It defines the portable profile, material capability vocabulary, state/locality binding and stale-profile rules, configuration/executor-side no-widening intersections, and bounded evidence needed to distinguish policy denial from configured, unavailable or failed execution.
+Makes the already-resolved Promptbook authority boundary consumable by an executor without allowing the executor, environment, availability configuration, execution-locality choice or fresh-context selection to become a new authority source. It defines the portable profile, material capability vocabulary, state/locality/isolation binding and stale-profile rules, configuration/executor-side no-widening intersections, and bounded evidence needed to distinguish policy denial from configured, unavailable or failed execution.
 
-It preserves the existing `/review`, `/fix`, and `/go` operation ceilings rather than creating new capability. A later executor can implement this contract independently and prove machine enforcement without requiring Promptbook to own the executor mechanism or a global locality registry.
+It preserves the existing `/review`, `/fix`, and `/go` operation ceilings rather than creating new capability. A delegated fresh reviewer is projected from the `/review` ceiling rather than inheriting a broader parent profile. A later executor can implement this contract independently and prove machine enforcement without requiring Promptbook to own the executor mechanism or a global locality/agent registry.
 
 ## Boundaries / limitations
 
-This contract does not implement an executor, sandbox, network policy engine, credential broker, secret distributor, remote worker, OCI runner, deployment framework, provider policy, production mutation policy, capability-health probing mechanism, global executor registry or arbitrary remote shell/argv dispatch.
+This contract does not implement an executor, sandbox, network policy engine, credential broker, secret distributor, remote worker, OCI runner, deployment framework, provider policy, production mutation policy, capability-health probing mechanism, global executor registry, global agent registry, native subagent infrastructure or arbitrary remote shell/argv dispatch.
 
-It does not change the authority semantics of `/review`, `/fix`, or `/go`; it only projects their already-resolved effective capabilities into a form that capability configuration, execution-locality selection and an executor can further restrict and enforce.
+It does not change the authority semantics of `/review`, `/fix`, or `/go`; it only projects their already-resolved effective capabilities into a form that capability configuration, execution-locality selection, fresh-review context resolution and an executor can further restrict and enforce.
 
-External executors remain mechanisms, not Promptbook workflow-policy or locality-selection authorities. Availability configuration and locality selection are likewise execution state, not policy authority sources.
+External executors remain mechanisms, not Promptbook workflow-policy, locality-selection or fresh-review-eligibility authorities. Availability configuration, locality selection and isolated-context selection are likewise derived execution/review state, not policy authority sources.
 
 ## Status
 
