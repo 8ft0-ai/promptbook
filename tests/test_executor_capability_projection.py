@@ -186,7 +186,10 @@ class ExecutorCapabilityProjectionTests(unittest.TestCase):
 
     def test_machine_enforcement_is_not_claimed_before_executor_proof(self):
         self.assertIn("do not claim machine enforcement", self.projection_lower)
-        self.assertIn("later executor implementation must be governed separately", self.projection_lower)
+        self.assertIn(
+            "later executor or delegated-context implementation must be governed separately",
+            self.projection_lower,
+        )
 
 
 if __name__ == "__main__":
