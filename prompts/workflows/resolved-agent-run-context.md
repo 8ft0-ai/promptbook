@@ -25,6 +25,8 @@ For `/go`, also bind the governing objective, current lifecycle state, current c
 
 Treat the resolved context as derived execution state rather than a new authority source. Do not fill missing authority or evidence from conversation memory. Technical capability availability may only narrow executable capability; it must never create authority. When an applicable Promptbook capability-availability key is relevant to a `/fix` or `/go` action, resolve it once after action-authority classification using the capability-availability contract and attach that resolved record to the derived run state rather than letting downstream consumers rediscover configuration independently.
 
+For an authorised `/go` action whose initially selected mechanism is unavailable or genuinely insufficient, resolve execution locality before selecting a human-operated `EXTERNAL_REQUIRED` hand-off. Prefer an eligible connected/native mechanism, then governed hosted/hermetic execution when the required truth does not depend on owner-private state, then a separately governed bounded owner-local executor when owner-local/private state is genuinely decision-critical. Locality selection may narrow mechanism and projected capability only; it must never create authority, bypass configured suppression, or widen credentials, network, mutation, or other effect boundaries.
+
 Use the operation-specific capability profile and lifecycle below. Collect bounded reconstructable evidence, distinguish static observation from executed and durable evidence, and bind candidate- or result-specific evidence to the immutable state for which it was actually observed.
 ```
 
@@ -88,10 +90,13 @@ resolve repository/work/action authority
     → classify the exact action through the operation gateway
     → resolve capability availability once
     → derive effective executable capability
-    → execute locally or project to an executor
+    → resolve execution locality when the current mechanism is unavailable or insufficient
+    → execute directly or project to an eligible executor
 ```
 
 That availability record is derived execution state, not a new authority source. Autonomous progression and executor projection consume the same resolved record and its provenance; they must not independently search Project instructions, repository instructions, work items, or prior conversation for another value. If a decision-critical carrier changes, invalidate the affected derived availability state and re-resolve it before consequential use.
+
+Execution-locality resolution consumes the already-classified action and any applicable availability result. It does not reinterpret availability as authority and must not route around an explicitly disabled logical capability by relabelling the same suppressed effect through another executor or locality.
 
 ## `/review` required context
 
@@ -299,6 +304,7 @@ effective_capabilities
 prohibited_capabilities
 owner_decision_boundaries
 resolved_capability_availability
+resolved_execution_locality
 continuation_mode
 next_governed_action
 required_preconditions
@@ -307,6 +313,8 @@ completion_conditions
 ```
 
 `resolved_capability_availability` is required only when the current proposed action has an explicit availability key. It must be the same resolved record consumed by autonomous progression or executor projection, not a separately rediscovered value.
+
+`resolved_execution_locality` is derived execution state for the exact authorised action. It may resolve directly to `connected/native` when the current governed mechanism is sufficient. When the initial mechanism is unavailable or insufficient, it must retain enough evidence to show which eligible locality was selected or why owner-operated execution is genuinely required. It is not an authority source and must be invalidated when decision-critical action, state, availability, projection, or execution-constraint inputs change.
 
 `governing_objective_identity` should normally identify the lifecycle object that can reconstruct the complete governed objective, such as the governing issue, rather than collapsing `/go` onto one intermediate pull request when post-merge verification or close-out remains part of the objective.
 
@@ -330,6 +338,8 @@ effective_go_capabilities =
 Technical availability may remove executable capability but must never grant authority. Delegation or an external executor may narrow the effective set further but must never widen it.
 
 For a named availability-controlled capability, apply the already-resolved configured availability as an additional narrowing after the action gateway returns `ALLOW`. Do not let availability manufacture an `ALLOW` classification or an owner decision.
+
+Execution-locality selection occurs only after the exact action is `ALLOW` and applicable availability has narrowed the executable set. Choosing another locality or executor may further narrow the mechanism, constraints, or projected capability, but must never add a capability absent from `effective_go_capabilities` or reinterpret the same explicitly suppressed logical effect as available.
 
 `GO_OPERATION_CEILING` is an upper bound on what `/go` may execute; it is not an authority grant. A capability category is effective only when current authoritative sources separately permit the exact action within the governing objective.
 
@@ -385,7 +395,51 @@ Before every consequential lifecycle transition, classify the exact proposed act
 
 `FORBID` means the action cannot execute under the current `/go` contract. `REQUIRE OWNER / SEPARATE AUTHORITY` means the action may be legitimate but current resolved authority is insufficient for it. `ALLOW` means the exact action is authorised within the current objective, subject to execution feasibility and refreshed preconditions.
 
-Keep authority classification separate from execution feasibility. If an action is `ALLOW` but the required execution capability is unavailable, follow the router's capability / `EXTERNAL_REQUIRED` boundary rather than manufacturing a new owner-authority decision. Technical availability never changes an unauthorised action into `ALLOW`.
+Keep authority classification separate from execution feasibility. If an action is `ALLOW` but the initially selected execution capability is unavailable or genuinely insufficient, preserve the capability / `EXTERNAL_REQUIRED` boundary without jumping directly to owner-operated execution: resolve another eligible execution locality before selecting a human-operated `EXTERNAL_REQUIRED` hand-off. Technical availability never changes an unauthorised action into `ALLOW`, and changing locality never widens the action's resolved authority.
+
+## `/go` execution-locality resolution
+
+Execution locality answers where the exact already-authorised action can be performed truthfully and safely; it does not answer whether the action is authorised.
+
+Resolve proportionately after action-gateway `ALLOW` and applicable capability-availability narrowing:
+
+```text
+exact action = ALLOW
+    → current/equivalent governed connected/native capability sufficient?
+        → yes: execute and observe
+        → no
+    → governed hosted/hermetic execution can establish the required truth/effect?
+        → yes: project only the existing authorised subset, execute and observe
+        → no
+    → does correctness genuinely depend on owner-local/private state?
+        → no: preserve the capability/execution-design gap; do not default to owner shell transport
+        → yes
+    → separately governed bounded owner-local executor exists and is eligible?
+        → yes: project only the existing authorised subset, execute and observe
+        → no: human-operated EXTERNAL_REQUIRED may be selected when a complete safe hand-off exists
+```
+
+The portable locality classes are:
+
+- `connected/native` — a current or equivalent governed connected capability that can perform and verify the exact action;
+- `hosted/hermetic` — governed execution whose correctness can be established from explicit or remotely available inputs without owner-private state; and
+- `owner-local/bounded-executor` — a separately governed bounded executor used only when a material dependency genuinely requires owner-local/private state.
+
+Human-operated external execution is a terminal hand-off mechanism after locality resolution, not a fourth executor class and not a preferred fallback merely because one connector is unavailable.
+
+Before generating a substantial human-operated hand-off, inspect proportionately only the authoritative repository/task execution or operator surfaces relevant to the action. Prefer an established maintained capability that expresses the same bounded effect, with invocation-specific identities and expectations supplied as typed arguments or data. Do not search arbitrary files for executables, invent a global capability registry, or manufacture a broad shell/argv escape hatch.
+
+Owner-local/private dependence must identify the decision-critical fact or effect that cannot truthfully be established elsewhere. Valid examples can include local filesystem or working-copy state, private authenticated provider context, local-only tooling or state, browser/session-local state not safely exposed elsewhere, or another explicitly established private dependency. Historical convenience, habit, or the previous use of an owner shell is not evidence that owner-local execution is required.
+
+Locality re-resolution is fail closed:
+
+- `PROFILE_DENIED` or equivalent authority/projection denial is not worked around by choosing another executor;
+- `CAPABILITY_DISABLED` or equivalent configured suppression is not bypassed by relabelling the same logical effect through another locality;
+- `EXECUTOR_UNSUPPORTED`, `UNAVAILABLE`, or equivalent execution unavailability may cause re-resolution only among localities already compatible with current authority, availability, projection and execution constraints;
+- `STALE_PROFILE` or `GUARD_MISMATCH` requires decision-critical state refresh before another consequential attempt; and
+- an alternate locality that needs broader credentials, network reach, mutation authority, provider access, or another wider effect is ineligible unless that broader effect is independently authorised and within the current operation ceiling.
+
+Do not retry the same unchanged failed locality indefinitely. Retain enough bounded evidence about attempted or excluded localities to avoid an execution loop and to distinguish a genuine owner-local requirement from an unresolved capability gap.
 
 ## `/go` bounded approval consumption
 
@@ -431,7 +485,8 @@ Immediately before a consequential action, refresh the decision-critical inputs 
 - branch or repository policy relevant to the action;
 - governing issue/task authority;
 - the exact accepted proposal/decision;
-- applicable capability-availability carrier identity/freshness when the action has a named key; and
+- applicable capability-availability carrier identity/freshness when the action has a named key;
+- resolved execution-locality assumptions or owner-local dependency evidence when they affect the action; and
 - materially changed repository instructions.
 
 If those inputs change so the proposed action is no longer valid, invalidate the stale run context or approval and re-resolve before execution. After a consequential transition creates a new material state or immutable identity, bind the result/evidence to that new state and re-resolve before another consequential transition.
@@ -445,6 +500,9 @@ governing_objective_identity
 starting_lifecycle_state
 proposed_action
 action_authority_classification
+resolved_capability_availability
+resolved_execution_locality
+locality_evidence
 action_taken
 resulting_lifecycle_state
 resulting_identity
@@ -453,7 +511,7 @@ remaining_boundaries
 next_governed_action
 ```
 
-The record should distinguish proposed actions that were `ALLOW`, `REQUIRE OWNER / SEPARATE AUTHORITY`, or `FORBID`, and authorised actions that could not execute because of a capability boundary.
+The record should distinguish proposed actions that were `ALLOW`, `REQUIRE OWNER / SEPARATE AUTHORITY`, or `FORBID`, authorised actions that could not execute because of a capability boundary, and locality decisions that selected or rejected an alternate execution path.
 
 A successful intermediate action is not automatically objective completion:
 
@@ -476,7 +534,7 @@ Resolve the evidence necessary to support the requested operation before adjudic
 - a static source observation;
 - an applicable repository-rule or authority citation;
 - for `/fix`, the bounded implementation delta and resulting candidate identity;
-- for `/go`, the starting state, proposed action, authority classification, resulting state/identity, validation/evidence, and remaining boundaries.
+- for `/go`, the starting state, proposed action, authority classification, applicable availability, resolved execution locality when material, resulting state/identity, validation/evidence, and remaining boundaries.
 
 Do not fabricate executed evidence where only static analysis occurred. Identify static observations as static. If a material claim requires execution that was not performed, represent that absence rather than implying the execution succeeded.
 
@@ -513,9 +571,9 @@ For `/review`, it keeps the existing Promptbook review-recording model intact: o
 
 For `/fix`, it permits only bounded remediation mutation derived from current authority, classifies material actions before execution, distinguishes candidate A from candidate B, and prevents A-specific review or validation from silently carrying forward after bytes change.
 
-For `/go`, it derives effective lifecycle capabilities by monotonic narrowing, classifies every consequential transition through an explicit authority gateway, consumes bounded decisions only for their exact effect, invalidates stale state across candidate/result transitions, and prevents a successful intermediate action from being mistaken for completion.
+For `/go`, it derives effective lifecycle capabilities by monotonic narrowing, classifies every consequential transition through an explicit authority gateway, resolves eligible execution locality before human-operated external fallback, consumes bounded decisions only for their exact effect, invalidates stale state across candidate/result transitions, and prevents a successful intermediate action from being mistaken for completion.
 
-When a named capability-availability key is relevant to `/fix` or `/go`, the run context carries one resolved availability record from Promptbook's deterministic carrier contract so local progression and delegated execution apply the same configuration decision.
+When a named capability-availability key is relevant to `/fix` or `/go`, the run context carries one resolved availability record from Promptbook's deterministic carrier contract so local progression and delegated execution apply the same configuration decision. For `/go`, locality selection consumes that same availability decision and the existing action-specific capability projection rather than rediscovering or widening them.
 
 ## `/review` lifecycle
 
@@ -590,6 +648,7 @@ production routing
 → refresh decision-critical state
 → pre-action gateway classification
 → resolved capability availability when applicable
+→ resolved execution locality / eligible mechanism
 → execute one available ALLOW transition only
 → resulting lifecycle state and immutable identity
 → result-bound validation/evidence
@@ -606,9 +665,10 @@ Before substantive progression:
 5. resolve the next proposed action, required preconditions/evidence, and completion conditions;
 6. refresh decision-critical state immediately before any consequential transition;
 7. classify that exact action through the `/go` action gateway;
-8. when the action has an explicit availability key, resolve and bind the one applicable availability record before execution/projection.
+8. when the action has an explicit availability key, resolve and bind the one applicable availability record before execution/projection;
+9. when the current mechanism is unavailable or insufficient, resolve an eligible execution locality without widening authority, availability or projection.
 
-Execute only an `ALLOW` action that is actually available. If the action is authorised but unavailable, preserve the capability / `EXTERNAL_REQUIRED` boundary rather than inventing authority. If authority is missing or stale, surface the appropriate owner/separate-authority boundary. If higher-precedence policy forbids the action, do not execute it.
+Execute only an `ALLOW` action through an eligible locality that is actually available. If the current mechanism is unavailable, try another already-governed no-widening locality only when it can truthfully establish the required result. Use human-operated `EXTERNAL_REQUIRED` only after no eligible governed locality can perform the action and a complete safe hand-off exists. If owner-local/private state is claimed as necessary, retain the material dependency that makes it decision-critical. If authority is missing or stale, surface the appropriate owner/separate-authority boundary. If higher-precedence policy forbids the action, do not execute it.
 
 After a consequential action, bind resulting evidence to the new state/identity, invalidate evidence that does not transfer, and re-resolve before another consequential action. Preserve fresh-review boundaries and independently gate any later merge, release, deployment, production mutation, or close-out rather than inheriting authority from the prior step.
 
@@ -624,11 +684,11 @@ An external execution substrate should receive only the resolved authorised subs
 
 ## Boundaries / limitations
 
-This contract defines `/review`, `/fix`, and `/go` run contexts, but it does not introduce a new Switchboard schema, operating-system or network sandboxing, Guardian-style approval automation, native subagents, agentctl policy ownership, Watchtower workflow ownership, or a universal persisted run-context schema.
+This contract defines `/review`, `/fix`, and `/go` run contexts, but it does not introduce a new Switchboard schema, operating-system or network sandboxing, Guardian-style approval automation, native subagents, agentctl policy ownership, Watchtower workflow ownership, a global executor/capability registry, arbitrary remote shell or argv dispatch, or a universal persisted run-context schema.
 
 It does not intrinsically grant merge, release, tag, deployment, infrastructure/provider, settings, credential, secret, production, destructive-action, material-cost, or unrelated mutation authority. Those actions require separate current authority where they are permitted at all, and `/go` must resolve that authority explicitly before execution.
 
-External mechanisms may enforce capability restrictions or collect evidence, but they do not become owners of Promptbook workflow policy or independent discoverers of Promptbook availability configuration.
+External mechanisms may enforce capability restrictions or collect evidence, but they do not become owners of Promptbook workflow policy or independent discoverers of Promptbook availability configuration. Execution-locality selection chooses only among already-eligible mechanisms and cannot turn technical reachability into authority.
 
 ## Status
 

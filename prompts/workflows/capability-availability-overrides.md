@@ -10,7 +10,7 @@ Capability availability is execution state, not authority. An availability overr
 
 Use this contract when a governed workflow has already resolved the authority for a material action but execution depends on an external capability whose availability may differ by executor, connector, managed Project, repository, or task.
 
-Use an explicit override only for capabilities whose temporary availability materially affects safe progression. Do not turn ordinary executor discovery, feature experimentation, or general configuration into a broad feature-management system.
+Use an explicit override only for capabilities whose temporary availability materially affects safe progression. Do not turn ordinary executor discovery, feature experimentation, execution-locality selection, or general configuration into a broad feature-management system.
 
 The first supported capability key is:
 
@@ -29,9 +29,9 @@ Resolve authority first. Capability configuration may narrow an action already c
 
 Use the deterministic carrier order defined by this contract. A missing optional declaration falls through to the next carrier. A malformed, contradictory, stale, target-mismatched, or required-but-unavailable applicable declaration fails conservatively for the affected capability and must not silently fall through to an enabled result.
 
-If the effective availability is disabled, do not invoke or probe the affected capability. Use the workflow's bounded alternative or capability-boundary hand-off instead. If the effective availability is enabled, attempt the capability only when independently authorised and otherwise executable, then verify the observed resulting state rather than treating configuration as evidence of success.
+If the effective availability is disabled, do not invoke or probe the affected logical capability. Do not bypass the suppression by relabelling the same effect through another automated executor or execution locality. Use only a separately defined bounded alternative or human-operated capability-boundary hand-off that the governing workflow explicitly permits. If the effective availability is enabled, attempt the capability only when independently authorised and otherwise executable, then verify the observed resulting state rather than treating configuration as evidence of success.
 
-When availability is relevant to a resolved /fix or /go action, attach the one resolved availability record to the derived run state and pass that same record to autonomous progression and any executor projection. Downstream consumers must not rediscover Project, repository, or work-item declarations independently.
+When availability is relevant to a resolved /fix or /go action, attach the one resolved availability record to the derived run state and pass that same record to autonomous progression, execution-locality resolution and any executor projection. Downstream consumers must not rediscover Project, repository, or work-item declarations independently.
 ```
 
 ## Inputs
@@ -46,7 +46,7 @@ Resolve only the inputs needed for the current capability decision:
 - managed Project availability configuration, if any;
 - the documented Promptbook default;
 - provenance and freshness sufficient to identify which declaration controlled the result; and
-- the current lifecycle state needed to choose a safe fallback.
+- the current lifecycle state needed to choose a safe fallback or determine which execution localities remain eligible.
 
 A minimal logical declaration is:
 
@@ -59,7 +59,7 @@ The representation is intentionally portable. Executors and integrations may map
 
 ## Authoritative carriers and discovery
 
-Use existing authoritative surfaces. This contract does not require a new configuration file, schema, service, or executor-owned discovery mechanism.
+Use existing authoritative surfaces. This contract does not require a new configuration file, schema, service, executor-owned discovery mechanism, or locality registry.
 
 Resolve carriers in this order, highest first:
 
@@ -134,12 +134,15 @@ resolve repository/work/action authority
     -> classify the exact action through the operation gateway
     -> resolve capability availability once
     -> derive effective executable capability
-    -> execute locally or project to an executor
+    -> resolve eligible execution locality when the current mechanism is unavailable or insufficient
+    -> execute directly or project to an eligible executor
 ```
 
 The resolved availability record may be represented as `resolved_capability_availability` or an equivalent field attached to the current derived run state. It does not need to be durably committed for every run, but it must retain enough identity/provenance for a fresh context to reconstruct the same decision.
 
-Autonomous progression and executor projection consume this same resolved record. They must not independently rediscover Project, repository, or work-item configuration and thereby risk different source assumptions.
+Autonomous progression, execution-locality resolution and executor projection consume this same resolved record. They must not independently rediscover Project, repository, or work-item configuration and thereby risk different source assumptions.
+
+A locality decision may choose among mechanisms only after availability has been resolved. It cannot turn `disabled`, invalid, contradictory, stale, target-mismatched, or source-unavailable configuration into an executable capability. Where a bounded human-operated fallback is explicitly defined for a suppressed capability, that fallback remains a hand-off boundary rather than an automated bypass of the suppression.
 
 ## Authority and availability
 
@@ -159,23 +162,25 @@ effective_executable_capability =
     ∩ configured_available_capability
 ```
 
-No term on the right may add authority absent from `authority_permitted_capability` or widen an operation ceiling.
+No term on the right may add authority absent from `authority_permitted_capability` or widen an operation ceiling. Execution-locality selection may only choose a mechanism within the resulting eligible set; it is not another widening term.
 
 In particular, `enabled` must never grant repository mutation, review publication, merge, release, deployment, repository-settings mutation, credential use, provider mutation, production mutation, or any other separately governed effect.
 
-`disabled` means Promptbook must not invoke or probe the affected capability in the current governed execution path. A known-disabled capability is not repeatedly retried merely because the underlying operation remains desirable.
+`disabled` means Promptbook must not invoke or probe the affected logical capability in the current governed execution path. A known-disabled capability is not repeatedly retried merely because the underlying operation remains desirable, and the same suppressed logical effect is not restored by selecting a different automated executor or locality.
+
+A disabled or unavailable mechanism also does not, by itself, prove that owner-operated execution is required. `/go` should resolve whether another already-governed capability or different eligible action mechanism can satisfy the objective without performing the suppressed effect before selecting a human hand-off.
 
 ## First capability: `pull_request.mark_ready`
 
 ### Disabled
 
-When `pull_request.mark_ready = disabled`, do not invoke the draft-to-ready transition.
+When `pull_request.mark_ready = disabled`, do not invoke the draft-to-ready transition through an automated mechanism, including by routing the same logical capability through another executor locality.
 
 If implementation is already complete, required validation has passed, no genuine lifecycle hold remains, and independent review is the next governed gate, prefer creating the pull request as non-draft in the first place. This avoids manufacturing a later transition solely because draft creation was habitual.
 
 Do not use that shortcut when draft state expresses a real hold. A pull request remains legitimately draft while implementation, validation, an unresolved decision, another required gate, or repository-local policy says it is not yet reviewable.
 
-When a legitimately draft pull request later becomes reviewable and the transition is independently authorised but the capability remains disabled or otherwise unavailable, treat this as an execution capability boundary. Produce the smallest complete `EXTERNAL_REQUIRED` hand-off needed to mark that exact pull request ready. Do not reclassify the action as requiring new owner authority merely because the mechanism is unavailable, and do not repeatedly invoke the configured-disabled capability.
+When a legitimately draft pull request later becomes reviewable and the transition is independently authorised but the capability remains disabled or otherwise unavailable, treat this as an execution capability boundary. First resolve whether the lifecycle can proceed through another already-governed mechanism that does not bypass the suppressed `pull_request.mark_ready` effect. If no such path can satisfy the required state, produce the smallest complete `EXTERNAL_REQUIRED` hand-off needed to mark that exact pull request ready. The human-operated fallback explicitly defined here is not automated capability re-enablement. Do not reclassify the action as requiring new owner authority merely because the mechanism is unavailable, and do not repeatedly invoke the configured-disabled capability.
 
 The hand-off must identify the exact pull request and preserve the normal Promptbook external-action requirements. Where a browser/UI transition is appropriate:
 
@@ -190,13 +195,13 @@ The hand-off must identify the exact pull request and preserve the normal Prompt
 
 When `pull_request.mark_ready = enabled`, the normal transition may be attempted only after the exact action is independently authorised and current lifecycle state still requires it.
 
-After invocation, verify the observed pull-request state. Configuration is not execution evidence. If the mechanism fails, returns an integration/schema error, or leaves the pull request draft, record that truthfully as execution unavailability/failure and route through the bounded capability fallback. Do not reinterpret a failed mechanism as an authority failure, and do not report success merely because the flag was enabled.
+After invocation, verify the observed pull-request state. Configuration is not execution evidence. If the mechanism fails, returns an integration/schema error, or leaves the pull request draft, record that truthfully as execution unavailability/failure. Before selecting the human fallback, `/go` may re-resolve another eligible governed locality for the same exact action when that locality preserves the current projection and all execution constraints. Do not reinterpret a failed mechanism as an authority failure, and do not report success merely because the flag was enabled.
 
 ## Executor projection
 
 Availability resolution composes with [Executor capability projection](executor-capability-projection.md) rather than replacing it.
 
-Promptbook resolves authority, the operation-specific capability ceiling, and the configured availability record before executor projection. The executor receives that resolved availability state; it must not discover Promptbook Project/repository/work-item declarations independently.
+Promptbook resolves authority, the operation-specific capability ceiling, and the configured availability record before execution-locality selection or executor projection. The executor receives that resolved availability state; it must not discover Promptbook Project/repository/work-item declarations independently.
 
 For portable projection, the pull-request ready transition belongs to the material capability class:
 
@@ -211,8 +216,11 @@ When availability affects projection or execution, retain provenance sufficient 
 - authority denied the action;
 - configuration disabled the capability;
 - the executor did not support the capability;
-- a configured-enabled mechanism failed at runtime; and
+- a configured-enabled mechanism failed at runtime;
+- another eligible locality was selected without widening the projection; and
 - the capability executed and the resulting state was verified.
+
+`CAPABILITY_DISABLED` remains a configured suppression result across automated localities. `EXECUTOR_UNSUPPORTED` or ordinary unavailability may allow Promptbook to select another already-eligible locality. `PROFILE_DENIED` is not a locality problem, while stale profiles or guard mismatches require refresh before another consequential attempt.
 
 ## Configuration provenance and freshness
 
@@ -228,17 +236,19 @@ Do not embed secrets, connector diagnostics, or private environment state merely
 
 Adds a small reversible configuration layer between independently resolved authority and capability execution. It lets Promptbook avoid known-broken or intentionally unavailable transitions without changing desired workflow semantics, and lets operators re-enable those transitions through configuration alone when the underlying integration recovers.
 
+The configuration result also composes with `/go` execution-locality resolution: availability narrows the eligible mechanism set before locality is chosen, a disabled logical capability cannot be restored by changing automated executors, and ordinary executor unavailability can be distinguished from configured suppression so another already-governed locality may be tried safely.
+
 The first concrete behaviour avoids unnecessary draft-to-ready transitions for reviewable implementation candidates, preserves legitimate draft/WIP semantics, provides a complete bounded fallback when a real draft later becomes reviewable, and verifies enabled transitions from observed state.
 
 The design can accommodate additional explicitly governed capability keys later, but this contract does not define or pre-authorise any additional keys.
 
 ## Boundaries / limitations
 
-This contract does not modify or repair an external connector, implement an executor, probe capabilities automatically, create a remote feature-management service, add shorthand commands, make draft pull requests universally invalid, or grant action authority.
+This contract does not modify or repair an external connector, implement an executor, probe capabilities automatically, create a remote feature-management service or locality registry, add shorthand commands, make draft pull requests universally invalid, or grant action authority.
 
-It does not make configuration a new repository-policy or workflow-authority source. Higher-precedence repository/task authority, operation ceilings, current evidence, freshness requirements, and explicit owner decisions remain controlling.
+It does not make configuration or locality a new repository-policy or workflow-authority source. Higher-precedence repository/task authority, operation ceilings, current evidence, freshness requirements, projected capabilities and explicit owner decisions remain controlling.
 
-Managed Project configuration is not repository authority. A successful probe, installed tool, credential, network path, executor implementation, or `enabled` declaration could establish feasibility evidence but could never create action authority.
+Managed Project configuration is not repository authority. A successful probe, installed tool, credential, network path, executor implementation, reachable locality, or `enabled` declaration could establish feasibility evidence but could never create action authority.
 
 Unsupported capability keys do not acquire executable semantics merely because a declaration names them. Promptbook must define a key before this contract gives that key meaning.
 

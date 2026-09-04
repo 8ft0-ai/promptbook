@@ -4,7 +4,7 @@
 
 Define the Promptbook contract for projecting a resolved agent run context into a bounded executor-facing capability profile. The profile lets an execution substrate enforce no more than the capabilities already authorised for the resolved `/review`, `/fix`, or `/go` operation.
 
-This contract is a companion to [Resolved agent run context](resolved-agent-run-context.md). Promptbook owns the workflow-side projection semantics. A consuming executor owns only its supported mechanisms, local safety policy, enforcement and evidence; it does not become a repository-policy, workflow-policy or owner-decision authority source.
+This contract is a companion to [Resolved agent run context](resolved-agent-run-context.md). Promptbook owns the workflow-side projection semantics, including any `/go` execution-locality selection. A consuming executor owns only its supported mechanisms, local safety policy, enforcement and evidence; it does not become a repository-policy, workflow-policy, locality-selection or owner-decision authority source.
 
 When a projected capability has an explicit Promptbook availability key, also apply [Capability availability overrides](capability-availability-overrides.md). Promptbook resolves the applicable availability record before projection; availability may narrow an otherwise eligible projection but cannot widen resolved authority.
 
@@ -14,7 +14,7 @@ Use this contract only when a resolved operation is delegating or exposing one o
 
 Do not create a profile merely because an executor exists. Advisory reasoning or work that remains entirely inside the current governed context does not acquire an executor profile unless a capability is actually being exposed or delegated.
 
-For `/go`, projection at a consequential gate is action-specific. Do not project one broad lifecycle profile containing every capability that might eventually be useful.
+For `/go`, projection at a consequential gate is action-specific. Do not project one broad lifecycle profile containing every capability that might eventually be useful. If `/go` selects another execution locality, project the same exact governed action again only from current resolved state; changing locality never widens the action-specific capability set.
 
 ## Prompt
 
@@ -25,9 +25,11 @@ Bind the projection to the exact decision-critical state and authority provenanc
 
 For a capability with an explicit availability key, consume the Promptbook-resolved capability availability record produced after authority classification. Do not rediscover Project, repository, work-item, or conversational configuration inside the executor projection. A disabled or conservatively unresolved capability must not remain executable or be probed; an enabled value removes only the Promptbook suppression and does not create authority or prove executor support.
 
+When `/go` has selected an execution locality, consume that selection as derived execution state. The selected connected/native, hosted/hermetic, or owner-local/bounded executor may receive only the action-specific capability already eligible for projection. Do not reinterpret locality, executor support, credential presence, network reachability, or owner-local state as permission to add a capability or bypass configured suppression.
+
 Represent denied capability explicitly enough for a consuming executor to fail closed. Allow the executor to narrow the projected set further through supported-capability and local-safety intersections, but never to widen it.
 
-Before execution, reject stale or mismatched profile or availability state. After execution, return bounded evidence that distinguishes profile denial, configured unavailability, executor unavailability, stale state, guard mismatch, and actual execution. Do not expose secrets or treat executor evidence as authority for a later workflow action.
+Before execution, reject stale or mismatched profile, availability, locality binding or guard state. After execution, return bounded evidence that distinguishes profile denial, configured unavailability, executor unavailability, stale state, guard mismatch, and actual execution. Do not expose secrets or treat executor evidence as authority for a later workflow action.
 ```
 
 ## Inputs
@@ -37,8 +39,9 @@ Before execution, reject stale or mismatched profile or availability state. Afte
 - the immutable candidate, lifecycle result, accepted proposal, or other decision-critical bound state;
 - the resolved action-gateway classification and current effective/prohibited capabilities;
 - any applicable Promptbook-resolved capability-availability record, including key, value, result class and provenance;
+- for `/go`, any material `resolved_execution_locality` selection and evidence binding that determined which executor class is eligible;
 - any operation-specific filesystem, network, credential, provider, repository, branch, or external-service constraints that are already authoritative;
-- freshness, expiry, consumed-approval, availability, or guard conditions that can invalidate execution; and
+- freshness, expiry, consumed-approval, availability, locality, or guard conditions that can invalidate execution; and
 - the bounded execution evidence required for safe governed continuation.
 
 ## Core invariant
@@ -71,7 +74,17 @@ actual_executor_capabilities =
     executor_local_safety_policy
 ```
 
-The availability or executor-side intersection cannot add a capability absent from the Promptbook projection. A configured `enabled` value means only that Promptbook is not suppressing that named capability; it cannot widen authority.
+The availability, locality choice, or executor-side intersection cannot add a capability absent from the Promptbook projection. A configured `enabled` value means only that Promptbook is not suppressing that named capability; it cannot widen authority.
+
+Changing execution locality preserves the same invariant:
+
+```text
+capabilities_at_alternate_locality
+    ⊆
+projected_executor_capabilities_for_exact_action
+```
+
+An alternate locality that would require wider credential, network, mutation, provider, filesystem, or other effect capability is not eligible merely because that locality could technically perform the action.
 
 Technical availability is never authority:
 
@@ -96,6 +109,7 @@ allowed_capabilities
 denied_capabilities
 execution_constraints
 capability_availability_provenance
+execution_locality_binding
 stale_or_expiry_conditions
 required_execution_evidence
 projection_provenance
@@ -107,7 +121,9 @@ projection_provenance
 
 `capability_availability_provenance` is derived from the same Promptbook-resolved availability record used by the governing workflow. It is required only when an applicable availability declaration affected or could affect the executable capability. It identifies the effective capability key/value, result and source sufficiently to distinguish configured suppression from executor support or authority denial without turning configuration into an authority source.
 
-The executor is not a configuration-discovery authority. It may verify the resolved availability record's binding/freshness and may narrow capability further, but it must not independently search Project instructions, repository instructions, work items, or prior conversation for a different availability value.
+`execution_locality_binding` is required only when locality selection materially determined the executor for a `/go` action. It identifies the selected portable locality class and enough bound-state/provenance information to detect stale or mismatched delegation. It is derived execution state, never a new capability grant.
+
+The executor is not a configuration-discovery authority and is not a locality-selection authority. It may verify the resolved availability/locality record's binding and freshness and may narrow capability further, but it must not independently search Project instructions, repository instructions, work items, prior conversation, local credentials, or ambient environment state for a different availability value or a broader execution path.
 
 The profile is derived execution state, not a durable authority source. If it conflicts with current authoritative inputs, current authoritative inputs win and the profile is stale.
 
@@ -160,6 +176,8 @@ FORBID
 
 `ALLOW` is necessary but not sufficient. Project only capability needed for the current operation/action. For a named availability-controlled capability, consume its effective Promptbook-resolved availability after this authority classification. A disabled or conservatively unresolved availability state removes the capability from executable projection; it cannot change the action-gateway classification or manufacture an owner decision.
 
+When `/go` re-resolves locality after `EXECUTOR_UNSUPPORTED`, `UNAVAILABLE`, or equivalent execution unavailability, create a fresh action-specific projection for the alternate eligible locality from current resolved state. Do not carry broader capability from the new executor's implementation. `PROFILE_DENIED` is not an execution-locality failure and must not be worked around by choosing another executor. `CAPABILITY_DISABLED` is likewise not bypassed by relabelling the same suppressed logical effect through another locality.
+
 An executor may then remove projected capability because of unsupported mechanisms, stronger local policy, guard failure or stale state. Keep authority and feasibility distinct. A capability denied by Promptbook authority is not the same result as a capability that is authorised but configured unavailable or unsupported by the executor.
 
 ## No ambient authority from environment state
@@ -172,6 +190,8 @@ None of the following may widen a projection:
 - network reachability;
 - executor support for a capability;
 - an availability override being `enabled`;
+- an execution locality being technically reachable;
+- owner-local/private state being present;
 - a previous operation having been authorised;
 - a prior approval whose bounded action has already been consumed; or
 - a previous successful execution.
@@ -223,7 +243,9 @@ It must not include `merge`, `release_publish` or `deploy` under the `/fix` oper
 
 A `/go` profile is derived for the exact next governed action. For example, independently authorised merge of candidate A may project `merge` bound to A, while `release_publish` and `deploy` remain absent.
 
-An independently authorised transition of an exact draft pull request to ready-for-review state may project only `work_item_state_transition` for that bounded action. If `pull_request.mark_ready` resolves as disabled under the availability contract, the transition must be removed from executable capability even though the action itself remains authorised.
+An independently authorised transition of an exact draft pull request to ready-for-review state may project only `work_item_state_transition` for that bounded action. If `pull_request.mark_ready` resolves as disabled under the availability contract, the transition must be removed from executable capability even though the action itself remains authorised. Selecting a different locality cannot restore that same suppressed logical capability.
+
+If the initially selected executor is unsupported or unavailable, `/go` may select another already-eligible locality. That locality receives a newly projected profile for the same exact action and current bound state; it does not inherit any wider capability merely because the alternate executor supports more effects.
 
 After merge creates result M, the A-bound profile is stale. A later release or deployment requires a newly resolved action gateway and a newly projected profile bound to the applicable resulting state and authority.
 
@@ -238,6 +260,7 @@ Invalidate and re-project when a decision-critical input changes, including wher
 - accepted proposal identity or bounded approval state;
 - operation or operation ceiling;
 - applicable capability-availability value, provenance or freshness;
+- selected execution locality or owner-local dependency evidence when material;
 - required checks or other freshness-sensitive preconditions;
 - repository instructions or policy that affect the action; or
 - declared expiry/freshness bounds.
@@ -265,6 +288,8 @@ A consumed approval is not a reusable profile input. If a proposal materially ch
 
 A capability availability decision resolved for one work identity or configuration state must not silently carry over after that decision becomes stale. Promptbook must re-resolve the affected availability key before projection rather than an executor assuming a previous `enabled` state remains valid.
 
+A locality selection resolved for one action, bound state or execution-constraint set must not silently carry into another. If locality evidence becomes stale, return control to Promptbook for re-resolution rather than choosing a broader path locally.
+
 ## Executor enforcement result
 
 The executor should return bounded evidence logically equivalent to:
@@ -291,6 +316,8 @@ Use distinct result classes when they affect governed continuation:
 
 The shareable result must not include raw secret values, broad environment dumps or private diagnostic content merely because the executor can observe them.
 
+`EXECUTOR_UNSUPPORTED` may be evidence for Promptbook to re-resolve among already-eligible execution localities. `STALE_PROFILE` and `GUARD_MISMATCH` require decision-critical refresh before a consequential retry. `PROFILE_DENIED` and `CAPABILITY_DISABLED` remain denial/suppression evidence, not invitations to route around the boundary through a different executor.
+
 ## Consumer contract
 
 A compliant executor consumer must:
@@ -298,11 +325,12 @@ A compliant executor consumer must:
 1. verify the profile version and bound identities it understands;
 2. reject unknown or materially ambiguous capability semantics rather than widening them;
 3. consume the resolved Promptbook capability-availability suppression relevant to the requested action without rediscovering its carriers;
-4. intersect the remaining projected capabilities with supported capability and local safety policy;
-5. execute only the requested capability that survives those intersections and all required guards;
-6. never interpret arbitrary command text as authority when the projected contract names a bounded capability;
-7. return bounded enforcement evidence that distinguishes configured suppression from unsupported execution; and
-8. leave any next workflow, owner decision, merge/release/deploy progression or acceptance decision to the governing Promptbook/repository context.
+4. consume any Promptbook-selected execution-locality binding without treating it as new authority;
+5. intersect the remaining projected capabilities with supported capability and local safety policy;
+6. execute only the requested capability that survives those intersections and all required guards;
+7. never interpret arbitrary command text as authority when the projected contract names a bounded capability;
+8. return bounded enforcement evidence that distinguishes configured suppression from unsupported execution; and
+9. leave locality re-resolution, any next workflow, owner decision, merge/release/deploy progression or acceptance decision to the governing Promptbook/repository context.
 
 Executor-local policy may be stricter than Promptbook projection. It must not be weaker in a way that widens executable authority.
 
@@ -326,17 +354,17 @@ Do not claim machine enforcement until a real executor has consumed the profile 
 
 ## What it does
 
-Makes the already-resolved Promptbook authority boundary consumable by an executor without allowing the executor, environment or availability configuration to become a new authority source. It defines the portable profile, material capability vocabulary, state-binding and stale-profile rules, configuration/executor-side no-widening intersections, and bounded evidence needed to distinguish policy denial from configured, unavailable or failed execution.
+Makes the already-resolved Promptbook authority boundary consumable by an executor without allowing the executor, environment, availability configuration or execution-locality choice to become a new authority source. It defines the portable profile, material capability vocabulary, state/locality binding and stale-profile rules, configuration/executor-side no-widening intersections, and bounded evidence needed to distinguish policy denial from configured, unavailable or failed execution.
 
-It preserves the existing `/review`, `/fix`, and `/go` operation ceilings rather than creating new capability. A later executor can implement this contract independently and prove machine enforcement without requiring Promptbook to own the executor mechanism.
+It preserves the existing `/review`, `/fix`, and `/go` operation ceilings rather than creating new capability. A later executor can implement this contract independently and prove machine enforcement without requiring Promptbook to own the executor mechanism or a global locality registry.
 
 ## Boundaries / limitations
 
-This contract does not implement an executor, sandbox, network policy engine, credential broker, secret distributor, remote worker, OCI runner, deployment framework, provider policy, production mutation policy, or capability-health probing mechanism.
+This contract does not implement an executor, sandbox, network policy engine, credential broker, secret distributor, remote worker, OCI runner, deployment framework, provider policy, production mutation policy, capability-health probing mechanism, global executor registry or arbitrary remote shell/argv dispatch.
 
-It does not change the authority semantics of `/review`, `/fix`, or `/go`; it only projects their already-resolved effective capabilities into a form that capability configuration and an executor can further restrict and enforce.
+It does not change the authority semantics of `/review`, `/fix`, or `/go`; it only projects their already-resolved effective capabilities into a form that capability configuration, execution-locality selection and an executor can further restrict and enforce.
 
-External executors remain mechanisms, not Promptbook workflow-policy authorities. Availability configuration is likewise an execution mechanism, not a policy authority source.
+External executors remain mechanisms, not Promptbook workflow-policy or locality-selection authorities. Availability configuration and locality selection are likewise execution state, not policy authority sources.
 
 ## Status
 
