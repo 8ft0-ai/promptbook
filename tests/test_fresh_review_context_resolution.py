@@ -83,14 +83,14 @@ class FreshReviewContextResolutionTests(unittest.TestCase):
         ):
             self.assertIn(marker, self.fresh_lower)
         self.assertIn("do not pass author-side substantive conclusions", self.router_lower)
-        self.assertIn("must not include author-side private reasoning", self.handover_lower)
+        self.assertIn("do not include author-side substantive conclusions", self.handover_lower)
 
     def test_delegated_reviewer_uses_bounded_review_profile(self):
         self.assertIn("child_review_authority", self.context)
         self.assertIn("effective_review_authority", self.context)
         self.assertIn("child_review_authority", self.projection)
         self.assertIn("effective_review_authority", self.projection)
-        self.assertIn("newly resolved `/review` operation", self.projection_lower)
+        self.assertIn("newly resolved child `/review` operation", self.projection_lower)
         for capability in (
             "repository_read",
             "work_item_read",
@@ -140,20 +140,22 @@ class FreshReviewContextResolutionTests(unittest.TestCase):
 
     def test_approved_does_not_create_merge_release_or_deploy_authority(self):
         self.assertIn("a recorded `approve` is review evidence/state, not merge authority", self.fresh_lower)
-        for marker in ("merge authority", "release", "deployment"):
-            self.assertIn(marker, self.router_lower)
+        self.assertIn(
+            "review-recording authority does not grant remediation, merge, release, deployment",
+            self.router_lower,
+        )
         self.assertIn("independently gate any later remediation, merge, release, deployment", self.autonomous_lower)
 
     def test_unavailable_or_unprovable_isolation_preserves_manual_fallback(self):
         self.assertIn("only when no eligible/provable isolated review context is available", self.router_lower)
-        self.assertIn("manual fresh-context `external_required` fallback", self.context_lower)
+        self.assertIn("existing manual fresh-context `external_required` hand-off", self.context_lower)
         self.assertIn("existing manual fresh-context `external_required` fallback", self.autonomous_lower)
         self.assertIn("next chat:", self.handover_lower)
         self.assertIn("/review", self.handover_lower)
 
     def test_unchanged_failed_delegation_does_not_loop(self):
         self.assertIn("do not repeatedly create equivalent failed review contexts", self.context_lower)
-        self.assertIn("do not repeatedly create an equivalent failed review context", self.autonomous_lower)
+        self.assertIn("avoid repeatedly creating an equivalent failed review context", self.autonomous_lower)
         self.assertIn("do not retry an equivalent failed delegation indefinitely", self.router_lower)
         self.assertIn("do not repeatedly create an equivalent failed fresh-review child", self.guide_lower)
 
