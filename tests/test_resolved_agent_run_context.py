@@ -307,7 +307,11 @@ class ResolvedAgentRunContextTests(unittest.TestCase):
     def test_go_authorised_but_unavailable_uses_external_boundary(self):
         self.assertIn("if an action is `allow` but the required execution capability is unavailable", self.contract_lower)
         self.assertIn("capability / `external_required` boundary", self.contract_lower)
-        self.assertIn("rather than manufacturing a new owner-authority decision", self.contract_lower)
+        self.assertIn(
+            "resolve another eligible execution locality before selecting a human-operated `external_required` hand-off",
+            self.contract_lower,
+        )
+        self.assertIn("changing locality never widens the action's resolved authority", self.contract_lower)
 
     def test_go_closeout_requires_completion_conditions_and_authority(self):
         self.assertIn(
