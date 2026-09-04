@@ -126,7 +126,10 @@ class ExecutionLocalityResolutionTests(unittest.TestCase):
         self.assertIn("operational-artifact-handoff.md", self.autonomous)
 
     def test_no_safe_locality_or_handoff_is_blocked_not_invented_execution(self):
-        self.assertIn("no safe action, eligible execution locality, complete external handoff", self.autonomous_lower)
+        self.assertIn(
+            "no safe action, eligible execution locality, eligible isolated review context",
+            self.autonomous_lower,
+        )
         self.assertIn("blocked when no safe action, eligible locality", self.guide_lower)
         self.assertIn("do not search arbitrary files for executables", self.context_lower)
         self.assertIn("manufacture a broad shell/argv escape hatch", self.context_lower)
@@ -137,9 +140,9 @@ class ExecutionLocalityResolutionTests(unittest.TestCase):
         self.assertIn("do not manufacture a new owner-authority decision merely because a mechanism is unavailable", self.autonomous_lower)
 
     def test_fresh_context_external_required_is_preserved_as_distinct_case(self):
-        self.assertIn("genuinely fresh-context hand-off remains a distinct case", self.router_lower)
+        self.assertIn("fresh-review context resolution remains distinct from execution locality", self.router_lower)
         self.assertIn("a genuine fresh-context boundary is a distinct kind of external_required stop", self.autonomous_lower)
-        self.assertIn("does not require execution-locality probing", self.guide_lower)
+        self.assertIn("fresh-review context resolution is deliberately separate again", self.guide_lower)
 
     def test_failure_results_drive_fail_closed_locality_reresolution(self):
         self.assertIn("`PROFILE_DENIED`", self.context)

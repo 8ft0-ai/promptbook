@@ -375,7 +375,7 @@ class ResolvedAgentRunContextTests(unittest.TestCase):
             "proposed next governed action",
             "refresh decision-critical state",
             "pre-action gateway classification",
-            "execute one available allow transition only",
+            "execute one available allow transition or bounded delegated review only",
             "resulting lifecycle state and immutable identity",
             "result-bound validation/evidence",
             "re-resolve remaining authority and boundaries",

@@ -53,7 +53,7 @@ Classify evidence honestly as `STATIC`, `EXECUTED`, or `DURABLE` according to th
 
 That remediation record is the workflow record, not a routed terminal state. When this workflow is invoked through the workflow router, return control to the router after recording it so the router can apply the effective continuation mode.
 
-Preserve any required independent re-review boundary; do not present author-side remediation as fresh approval evidence. If this context changed the candidate and independent re-review is required, do not enter that review here. Treat the re-review as a hard fresh-context boundary and, when the durable target is sufficient for reconstruction, hand it off as `Next chat: /review <REVIEWED_CANDIDATE>`. That navigation is not review or merge authority.
+Preserve any required independent re-review boundary; do not present author-side remediation as fresh approval evidence. If this context changed the candidate and independent re-review is required, do not enter that review here. Treat the re-review as a hard fresh-context boundary and return control to the router so it can resolve an eligible genuinely isolated fresh-review context. If such a context is eligible, the review is performed there under the ordinary `/review` ceiling and fresh-review contract. Only when no eligible/provable isolated context can be established should the existing manual fallback be used; when the durable target is sufficient for reconstruction, hand it off as `Next chat: /review <REVIEWED_CANDIDATE>`. That navigation is not review or merge authority.
 ```
 
 ## Inputs
@@ -64,13 +64,13 @@ Preserve any required independent re-review boundary; do not present author-side
 
 Keeps remediation narrow, makes mutation authority explicit, classifies material actions before execution, makes review findings traceable to regression evidence, and prevents a repair cycle from becoming an unbounded redesign. It also preserves review-level diagnosis of materially related findings so an already-authorised invariant/boundary correction may be recognised as the minimum safe change instead of forcing repeated example-by-example patches. It binds remediation to starting candidate A and the resulting validation/evidence to candidate B, preventing candidate-specific review or validation from silently carrying across changed bytes.
 
-When routed, it returns the remediation record to the governing workflow while preserving the mandatory fresh-context boundary for re-review of a candidate changed in this context.
+When routed, it returns the remediation record to the governing workflow while preserving the mandatory fresh-context boundary for re-review of a candidate changed in this context. The router may satisfy that boundary through an eligible isolated fresh-review context before requiring the owner to transport the review manually.
 
 ## Boundaries / limitations
 
 Use only where the expected correction is objectively bounded by existing requirements and authority. An invariant/boundary-level correction is permitted only when it is objectively determined by the governing contract/findings and already within the resolved remediation scope; materially new architecture, authority, security, product, or scope decisions should be resolved separately. Repeated findings never create redesign authority by themselves. Merge, release/tag, deployment, unrelated repository mutation, infrastructure/provider mutation, and settings/credential/secret mutation are not granted by this workflow merely because a capability exists.
 
-Author-side remediation cannot substitute for fresh independent review when that gate is required. The action gateway is a workflow contract, not a new approval service, sandbox, or persisted policy object.
+Author-side remediation cannot substitute for fresh independent review when that gate is required. Automatic fresh-context resolution changes only how an eligible independent context is reached; it never makes this remediation context fresh or bypasses repository rules that require another human or formal reviewer. The action gateway is a workflow contract, not a new approval service, sandbox, or persisted policy object.
 
 ## Status
 

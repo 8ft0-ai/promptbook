@@ -29,7 +29,7 @@ Before declaring completion:
 
 Return a concise implementation record: outcome delivered, principal changes, acceptance-criterion coverage, validation and results, justified plan deviations, and remaining limitations.
 
-That implementation record is the workflow record, not a routed terminal state. When this workflow is invoked through the workflow router, return control to the router after recording it so the router can apply the effective continuation mode to the next governed gate. If required independent review is the next gate and this context authored or materially shaped the candidate, preserve the fresh-context boundary rather than reviewing the candidate here; a durable target may be handed off as `Next chat: /review <APPROVED_TASK>` when that target is sufficient for reconstruction.
+That implementation record is the workflow record, not a routed terminal state. When this workflow is invoked through the workflow router, return control to the router after recording it so the router can apply the effective continuation mode to the next governed gate. If required independent review is the next gate and this context authored or materially shaped the candidate, preserve the fresh-context boundary rather than reviewing the candidate here. Return control to the router so it can resolve an eligible genuinely isolated fresh-review context under the fresh-review context-resolution contract. Only when no eligible/provable isolated context can be established should the existing manual fallback be used; a durable target may then be handed off as `Next chat: /review <APPROVED_TASK>` when that target is sufficient for reconstruction.
 
 Do not merge, deploy, release, or broaden scope unless that action is already authorised separately. Continuation metadata never creates that authority.
 ```
@@ -41,11 +41,11 @@ Do not merge, deploy, release, or broaden scope unless that action is already au
 
 ## What it does
 
-Keeps implementation tied to the approved outcome, makes validation part of completion, and forces plan drift to be reconciled before speculative code changes. When routed, the implementation record returns control to the governing workflow instead of accidentally ending the broader objective.
+Keeps implementation tied to the approved outcome, makes validation part of completion, and forces plan drift to be reconciled before speculative code changes. When routed, the implementation record returns control to the governing workflow instead of accidentally ending the broader objective. A context that authored the candidate remains ineligible to review it independently; the router may satisfy that hard boundary through an eligible isolated fresh-review context before requiring manual context transport.
 
 ## Boundaries / limitations
 
-This prompt does not grant repository mutation, merge, deployment, credential, or production authority. The receiving environment must already have those capabilities and permissions where needed. A required fresh independent review remains a hard boundary after this context authors or materially shapes the candidate.
+This prompt does not grant repository mutation, merge, deployment, credential, or production authority. The receiving environment must already have those capabilities and permissions where needed. A required fresh independent review remains a hard boundary after this context authors or materially shapes the candidate. Automatic context resolution may change how that boundary is satisfied, but it never makes the authoring context fresh and never weakens a repository requirement for another human or formal reviewer.
 
 ## Status
 
