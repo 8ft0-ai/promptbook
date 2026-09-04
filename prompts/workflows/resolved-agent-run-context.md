@@ -27,6 +27,8 @@ Treat the resolved context as derived execution state rather than a new authorit
 
 For an authorised `/go` action whose initially selected mechanism is unavailable or genuinely insufficient, resolve execution locality before selecting a human-operated `EXTERNAL_REQUIRED` hand-off. Prefer an eligible connected/native mechanism, then governed hosted/hermetic execution when the required truth does not depend on owner-private state, then a separately governed bounded owner-local executor when owner-local/private state is genuinely decision-critical. Locality selection may narrow mechanism and projected capability only; it must never create authority, bypass configured suppression, or widen credentials, network, mutation, or other effect boundaries.
 
+When independent review is required and the current context is not genuinely fresh, resolve fresh-review context eligibility separately from execution locality. A candidate child reviewer is eligible only when the execution surface can establish a reasoning/information boundary that excludes author-side substantive adjudication, expected conclusion and hidden conversational state as review evidence. Bind only the minimal durable review target or equivalent reconstruction reference needed for the child to independently bootstrap applicable authority and reconstruct the exact candidate, checks and review state. Resolve the child as a new `/review` operation under the `/review` ceiling rather than inheriting the originating `/go`, `/implement` or `/fix` capability profile. If isolation is unavailable, ambiguous or unprovable, preserve the manual fresh-context fallback rather than manufacturing independence.
+
 Use the operation-specific capability profile and lifecycle below. Collect bounded reconstructable evidence, distinguish static observation from executed and durable evidence, and bind candidate- or result-specific evidence to the immutable state for which it was actually observed.
 ```
 
@@ -98,6 +100,8 @@ That availability record is derived execution state, not a new authority source.
 
 Execution-locality resolution consumes the already-classified action and any applicable availability result. It does not reinterpret availability as authority and must not route around an explicitly disabled logical capability by relabelling the same suppressed effect through another executor or locality.
 
+Fresh-review context resolution is not part of this availability/locality ordering. It answers whether independent adjudication can occur in a genuinely isolated reasoning context after the current context is determined non-fresh; it does not answer where an already-authorised execution effect can run.
+
 ## `/review` required context
 
 For `/review`, resolve at least:
@@ -112,8 +116,11 @@ applicable_repository_instructions
 effective_capabilities
 prohibited_capabilities
 owner_decision_boundaries
+resolved_fresh_review_context
 required_evidence
 ```
+
+`resolved_fresh_review_context` is required only when the `/review` operation is entered through delegated fresh-context resolution. Ordinary review performed directly in a current context that is already genuinely fresh need not create a child-context record.
 
 ## Immutable review candidate
 
@@ -159,6 +166,55 @@ review_capabilities =
 ```
 
 Ordinary router `/review` may additionally carry only the narrow review-publication capability already defined by the router. `/review --read-only` carries no review-record mutation capability.
+
+## Fresh-review child-context resolution
+
+Fresh-review context resolution applies only when a fresh independent review is required and the current context is not itself eligible to perform that review. It preserves the review boundary by creating or selecting a distinct eligible reasoning context; it never reclassifies the current authoring/remediation context as fresh.
+
+Resolve a bounded record logically equivalent to:
+
+```text
+review_target_identity
+originating_context_freshness
+isolated_context_eligibility
+isolation_evidence
+child_operation
+child_review_capabilities
+child_projection_provenance
+attempt_identity_or_equivalent
+failure_class
+result_candidate_identity
+result_disposition_or_evidence
+```
+
+The representation may remain ephemeral. Its purpose is to make the fresh-context decision reconstructable enough to prove that the child was eligible, bounded, and tied to the exact reviewed candidate, or that manual fallback was required.
+
+Eligibility requires all of the following:
+
+1. the child receives only a minimal durable review target or equivalent reconstruction reference, not author-side substantive reasoning or a proposed disposition;
+2. the child independently bootstraps applicable project/repository authority and reconstructs the exact candidate, governing contract, checks and review state from authoritative sources;
+3. the information boundary does not expose author-side hidden conversational state, private reasoning, expected conclusion or other substantive adjudication as review evidence;
+4. the child resolves as operation `/review` and is constrained by the existing `/review` capability profile and recording mode;
+5. repository-local policy does not require a distinct human or formal reviewer that this child context cannot satisfy; and
+6. the returned review disposition/evidence is bound to the exact candidate actually inspected.
+
+Project/repository instructions and durable governing records are not prohibited merely because the originating context also saw them. Freshness concerns inherited adjudication, not shared authoritative rules.
+
+Authority is narrowed at the child boundary:
+
+```text
+child_review_authority
+    ⊆
+effective_review_authority
+```
+
+The child must not inherit `candidate_write`, bounded remediation mutation, `merge`, `release_publish`, `deploy`, repository-settings mutation, provider mutation, production-data mutation or another author-side capability merely because the originating context possessed it. Creating/selecting the child is not authority and cannot refresh stale parent authority.
+
+If isolation cannot be established, the durable target is ambiguous or insufficient, repository policy requires a genuinely distinct human/formal reviewer, the candidate moves so the returned result is stale, or the child would require broader capability than `/review` permits, the child is ineligible. Preserve the existing manual fresh-context `EXTERNAL_REQUIRED` hand-off or the stronger repository-policy boundary.
+
+Do not repeatedly create equivalent failed review contexts while the target, isolation evidence and bounded review-capability state remain unchanged. A materially changed target, isolation mechanism, policy or capability state may justify a new resolution attempt.
+
+Fresh-review context resolution is distinct from `/go` execution-locality resolution. `connected/native`, `hosted/hermetic`, and `owner-local/bounded-executor` answer where an authorised effect can execute; they do not by themselves establish independent adjudication.
 
 ## `/fix` required context
 
@@ -305,6 +361,7 @@ prohibited_capabilities
 owner_decision_boundaries
 resolved_capability_availability
 resolved_execution_locality
+resolved_fresh_review_context
 continuation_mode
 next_governed_action
 required_preconditions
@@ -315,6 +372,8 @@ completion_conditions
 `resolved_capability_availability` is required only when the current proposed action has an explicit availability key. It must be the same resolved record consumed by autonomous progression or executor projection, not a separately rediscovered value.
 
 `resolved_execution_locality` is derived execution state for the exact authorised action. It may resolve directly to `connected/native` when the current governed mechanism is sufficient. When the initial mechanism is unavailable or insufficient, it must retain enough evidence to show which eligible locality was selected or why owner-operated execution is genuinely required. It is not an authority source and must be invalidated when decision-critical action, state, availability, projection, or execution-constraint inputs change.
+
+`resolved_fresh_review_context` is material only when independent review is the next governed gate and the current context is not genuinely fresh. It records the separate isolation/child-review resolution described above. It is not an execution locality and does not create review, mutation or lifecycle authority.
 
 `governing_objective_identity` should normally identify the lifecycle object that can reconstruct the complete governed objective, such as the governing issue, rather than collapsing `/go` onto one intermediate pull request when post-merge verification or close-out remains part of the objective.
 
@@ -486,10 +545,11 @@ Immediately before a consequential action, refresh the decision-critical inputs 
 - governing issue/task authority;
 - the exact accepted proposal/decision;
 - applicable capability-availability carrier identity/freshness when the action has a named key;
-- resolved execution-locality assumptions or owner-local dependency evidence when they affect the action; and
+- resolved execution-locality assumptions or owner-local dependency evidence when they affect the action;
+- resolved fresh-review isolation/result binding when a delegated review is being relied upon; and
 - materially changed repository instructions.
 
-If those inputs change so the proposed action is no longer valid, invalidate the stale run context or approval and re-resolve before execution. After a consequential transition creates a new material state or immutable identity, bind the result/evidence to that new state and re-resolve before another consequential transition.
+If those inputs change so the proposed action is no longer valid, invalidate the stale run context or approval and re-resolve before execution. After a consequential transition creates a new material state or immutable identity, bind the result/evidence to that new state and re-resolve before another consequential transition. A delegated review disposition bound to candidate A does not transfer to moved candidate A'.
 
 ## `/go` progression result
 
@@ -502,6 +562,7 @@ proposed_action
 action_authority_classification
 resolved_capability_availability
 resolved_execution_locality
+resolved_fresh_review_context
 locality_evidence
 action_taken
 resulting_lifecycle_state
@@ -511,7 +572,7 @@ remaining_boundaries
 next_governed_action
 ```
 
-The record should distinguish proposed actions that were `ALLOW`, `REQUIRE OWNER / SEPARATE AUTHORITY`, or `FORBID`, authorised actions that could not execute because of a capability boundary, and locality decisions that selected or rejected an alternate execution path.
+The record should distinguish proposed actions that were `ALLOW`, `REQUIRE OWNER / SEPARATE AUTHORITY`, or `FORBID`, authorised actions that could not execute because of a capability boundary, locality decisions that selected or rejected an alternate execution path, and fresh-review context decisions that delegated an eligible independent review or preserved the manual fallback.
 
 A successful intermediate action is not automatically objective completion:
 
@@ -534,7 +595,7 @@ Resolve the evidence necessary to support the requested operation before adjudic
 - a static source observation;
 - an applicable repository-rule or authority citation;
 - for `/fix`, the bounded implementation delta and resulting candidate identity;
-- for `/go`, the starting state, proposed action, authority classification, applicable availability, resolved execution locality when material, resulting state/identity, validation/evidence, and remaining boundaries.
+- for `/go`, the starting state, proposed action, authority classification, applicable availability, resolved execution locality when material, resolved fresh-review context when material, resulting state/identity, validation/evidence, and remaining boundaries.
 
 Do not fabricate executed evidence where only static analysis occurred. Identify static observations as static. If a material claim requires execution that was not performed, represent that absence rather than implying the execution succeeded.
 
@@ -567,13 +628,13 @@ The human-facing review may remain concise. It does not need to print a verbose 
 
 Makes the effective execution state of supported governed operations explicit and reconstructable without introducing a new durable per-run artefact. It separates authority from capability, preserves repository-instruction provenance, and requires honest evidence classes bound to the candidate or resulting state for which they were observed.
 
-For `/review`, it keeps the existing Promptbook review-recording model intact: ordinary router `/review` may publish only the requested review record, while `/review --read-only` remains zero-write.
+For `/review`, it keeps the existing Promptbook review-recording model intact: ordinary router `/review` may publish only the requested review record, while `/review --read-only` remains zero-write. When review is delegated from a non-fresh originating context, it additionally binds affirmative isolation evidence, a minimal reconstruction target, a newly resolved child `/review` capability profile and the exact candidate/result identity without transmitting author-side substantive adjudication.
 
 For `/fix`, it permits only bounded remediation mutation derived from current authority, classifies material actions before execution, distinguishes candidate A from candidate B, and prevents A-specific review or validation from silently carrying forward after bytes change.
 
-For `/go`, it derives effective lifecycle capabilities by monotonic narrowing, classifies every consequential transition through an explicit authority gateway, resolves eligible execution locality before human-operated external fallback, consumes bounded decisions only for their exact effect, invalidates stale state across candidate/result transitions, and prevents a successful intermediate action from being mistaken for completion.
+For `/go`, it derives effective lifecycle capabilities by monotonic narrowing, classifies every consequential transition through an explicit authority gateway, resolves eligible execution locality before human-operated external fallback, separately resolves eligible fresh-review context before manual fresh-context fallback, consumes bounded decisions only for their exact effect, invalidates stale state across candidate/result transitions, and prevents a successful intermediate action from being mistaken for completion.
 
-When a named capability-availability key is relevant to `/fix` or `/go`, the run context carries one resolved availability record from Promptbook's deterministic carrier contract so local progression and delegated execution apply the same configuration decision. For `/go`, locality selection consumes that same availability decision and the existing action-specific capability projection rather than rediscovering or widening them.
+When a named capability-availability key is relevant to `/fix` or `/go`, the run context carries one resolved availability record from Promptbook's deterministic carrier contract so local progression and delegated execution apply the same configuration decision. For `/go`, locality selection consumes that same availability decision and the existing action-specific capability projection rather than rediscovering or widening them. Fresh-review context resolution does not reuse the locality classes; it re-resolves a bounded `/review` child profile from the current review authority ceiling.
 
 ## `/review` lifecycle
 
@@ -598,7 +659,8 @@ Before substantive adjudication:
 3. bind to the immutable candidate where applicable;
 4. establish instruction and authority provenance;
 5. intersect available capabilities with the review capability boundary;
-6. identify the evidence required for a safe disposition.
+6. identify the evidence required for a safe disposition;
+7. when review was delegated, verify the resolved fresh-review isolation binding and independently reconstruct decision-critical state from the durable target before adjudication.
 
 During review, collect only evidence permitted by the effective capability set and relevant to the governing contract. Before publication, refresh candidate identity and any decision-critical evidence that can stale.
 
@@ -632,7 +694,7 @@ Before substantive mutation:
 6. resolve `required_validation` and `required_evidence`;
 7. refresh candidate A immediately before the first material write.
 
-During remediation, classify each material action through the action gateway and execute only `ALLOW` actions that are actually available. For a named availability-controlled action, consume the one resolved availability record after the gateway classification. After changed bytes produce B, invalidate A-specific review/validation for B, run the required validation against B, and record the resulting candidate/evidence without crossing a required fresh-review boundary.
+During remediation, classify each material action through the action gateway and execute only `ALLOW` actions that are actually available. For a named availability-controlled action, consume the one resolved availability record after the gateway classification. After changed bytes produce B, invalidate A-specific review/validation for B, run the required validation against B, and record the resulting candidate/evidence without crossing a required fresh-review boundary. Return control to the router so that boundary can be satisfied through an eligible isolated reviewer or, failing that, the existing manual hand-off.
 
 ## `/go` lifecycle
 
@@ -648,8 +710,9 @@ production routing
 → refresh decision-critical state
 → pre-action gateway classification
 → resolved capability availability when applicable
-→ resolved execution locality / eligible mechanism
-→ execute one available ALLOW transition only
+→ resolved execution locality / eligible mechanism when an execution effect is required
+→ resolved fresh-review context when independent adjudication is required and current context is non-fresh
+→ execute one available ALLOW transition or bounded delegated review only
 → resulting lifecycle state and immutable identity
 → result-bound validation/evidence
 → re-resolve remaining authority and boundaries
@@ -666,11 +729,14 @@ Before substantive progression:
 6. refresh decision-critical state immediately before any consequential transition;
 7. classify that exact action through the `/go` action gateway;
 8. when the action has an explicit availability key, resolve and bind the one applicable availability record before execution/projection;
-9. when the current mechanism is unavailable or insufficient, resolve an eligible execution locality without widening authority, availability or projection.
+9. when the current mechanism is unavailable or insufficient, resolve an eligible execution locality without widening authority, availability or projection;
+10. when independent review is the next gate and the current context is non-fresh, resolve an eligible isolated fresh-review context separately from execution locality and bind the child `/review` projection/result state.
 
 Execute only an `ALLOW` action through an eligible locality that is actually available. If the current mechanism is unavailable, try another already-governed no-widening locality only when it can truthfully establish the required result. Use human-operated `EXTERNAL_REQUIRED` only after no eligible governed locality can perform the action and a complete safe hand-off exists. If owner-local/private state is claimed as necessary, retain the material dependency that makes it decision-critical. If authority is missing or stale, surface the appropriate owner/separate-authority boundary. If higher-precedence policy forbids the action, do not execute it.
 
-After a consequential action, bind resulting evidence to the new state/identity, invalidate evidence that does not transfer, and re-resolve before another consequential action. Preserve fresh-review boundaries and independently gate any later merge, release, deployment, production mutation, or close-out rather than inheriting authority from the prior step.
+When the next gate is independent review, never execute that adjudication in a context that authored or materially shaped the candidate. If an eligible isolated context exists, invoke the bounded `/review` operation there and reconcile the exact-candidate-bound result. If no eligible/provable isolated context exists, use the existing manual fresh-context `EXTERNAL_REQUIRED` hand-off. Do not reinterpret either branch as execution-locality selection.
+
+After a consequential action or delegated review result, bind resulting evidence to the state/identity for which it was observed, invalidate evidence that does not transfer, and re-resolve before another consequential action. Preserve fresh-review boundaries and independently gate any later remediation, merge, release, deployment, production mutation, or close-out rather than inheriting authority from the prior step.
 
 ## Delegation invariant
 
@@ -680,15 +746,21 @@ Future delegated or child execution contexts must never gain authority merely th
 child_authority ⊆ parent_authority
 ```
 
-An external execution substrate should receive only the resolved authorised subset needed for the delegated action. This contract does not introduce subagent infrastructure or make the substrate a workflow-policy owner.
+For delegated fresh review, use the stricter operation-specific form:
+
+```text
+child_review_authority ⊆ effective_review_authority
+```
+
+A fresh-review child is resolved as `/review`; it does not inherit broader parent `/go`, `/implement`, or `/fix` mutation capability. An external execution substrate should likewise receive only the resolved authorised subset needed for the delegated action. Delegation cannot refresh stale parent authority, create a new approval, or make an authoring context fresh. This contract does not introduce subagent infrastructure or make the substrate a workflow-policy owner.
 
 ## Boundaries / limitations
 
-This contract defines `/review`, `/fix`, and `/go` run contexts, but it does not introduce a new Switchboard schema, operating-system or network sandboxing, Guardian-style approval automation, native subagents, agentctl policy ownership, Watchtower workflow ownership, a global executor/capability registry, arbitrary remote shell or argv dispatch, or a universal persisted run-context schema.
+This contract defines `/review`, `/fix`, and `/go` run contexts, including bounded fresh-review child-context resolution, but it does not introduce a new Switchboard schema, operating-system or network sandboxing, Guardian-style approval automation, native subagents, agentctl policy ownership, Watchtower workflow ownership, a global executor/capability registry, arbitrary remote shell or argv dispatch, a global agent registry, or a universal persisted run-context schema.
 
 It does not intrinsically grant merge, release, tag, deployment, infrastructure/provider, settings, credential, secret, production, destructive-action, material-cost, or unrelated mutation authority. Those actions require separate current authority where they are permitted at all, and `/go` must resolve that authority explicitly before execution.
 
-External mechanisms may enforce capability restrictions or collect evidence, but they do not become owners of Promptbook workflow policy or independent discoverers of Promptbook availability configuration. Execution-locality selection chooses only among already-eligible mechanisms and cannot turn technical reachability into authority.
+External mechanisms may enforce capability restrictions or collect evidence, but they do not become owners of Promptbook workflow policy or independent discoverers of Promptbook availability configuration. Execution-locality selection chooses only among already-eligible mechanisms and cannot turn technical reachability into authority. Fresh-review context selection likewise cannot turn technical context creation into review authority or into proof of independence; isolation must be established, and repository requirements for distinct human/formal review remain higher precedence.
 
 ## Status
 
