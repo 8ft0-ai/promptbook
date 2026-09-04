@@ -113,7 +113,8 @@ class NextInvocationGuidanceTests(unittest.TestCase):
         self.assertIn("continuation mode is only a preference", self.autonomous_lower)
         self.assertIn("a specialised workflow's local disposition or record is a workflow record", self.autonomous_lower)
         self.assertIn("return control to the router", self.autonomous_lower)
-        self.assertIn("under `auto`, continue the next authorised same-context action", self.autonomous_lower)
+        self.assertIn("under `auto`, continue the next authorised workflow", self.autonomous_lower)
+        self.assertIn("eligible isolated fresh-review context", self.autonomous_lower)
         self.assertIn("under `suggest`, emit the smallest safe navigation", self.autonomous_lower)
         self.assertIn("under `stop`, end the requested deliverable", self.autonomous_lower)
 
@@ -191,15 +192,18 @@ class NextInvocationGuidanceTests(unittest.TestCase):
         self.assertIn("does not itself grant implementation", self.plan_lower)
         self.assertIn("| `/go` | `auto` |", self.router)
         self.assertIn("not permission to end a routed objective", self.router_lower)
-        self.assertIn("enter the next safely authorised and executable same-context workflow", self.router_lower)
+        self.assertIn("enter the next safely authorised and executable workflow automatically", self.router_lower)
+        self.assertIn("eligible genuinely isolated fresh-review context", self.router_lower)
 
     def test_implementation_and_fix_preserve_fresh_review_boundary(self):
         self.assertIn("required independent review is the next gate", self.implement_lower)
         self.assertIn("preserve the fresh-context boundary", self.implement_lower)
+        self.assertIn("eligible genuinely isolated fresh-review context", self.implement_lower)
         self.assertIn("next chat: /review <approved_task>", self.implement_lower)
         self.assertIn("| `/fix` | `auto` |", self.router)
         self.assertIn("independent re-review is required", self.remediate_lower)
         self.assertIn("hard fresh-context boundary", self.remediate_lower)
+        self.assertIn("eligible genuinely isolated fresh-review context", self.remediate_lower)
         self.assertIn("next chat: /review <reviewed_candidate>", self.remediate_lower)
 
     def test_review_default_and_explicit_override_are_composable(self):
@@ -220,6 +224,7 @@ class NextInvocationGuidanceTests(unittest.TestCase):
         ):
             self.assertIn(boundary, self.autonomous_lower)
         self.assertIn("`auto` must not cross them", self.autonomous_lower)
+        self.assertIn("eligible isolated review context satisfies the freshness boundary", self.autonomous_lower)
         for terminal_state in (
             "EXTERNAL_REQUIRED",
             "DECISION_REQUIRED",
@@ -234,11 +239,12 @@ class NextInvocationGuidanceTests(unittest.TestCase):
     def test_fresh_context_can_use_minimal_review_invocation(self):
         self.assertIn("Next chat:", self.router)
         self.assertIn("/review <exact review target>", self.router)
-        self.assertIn("genuinely fresh context", self.router_lower)
-        self.assertIn("durable authoritative sources", self.router_lower)
+        self.assertIn("genuinely fresh-review boundary", self.router_lower)
+        self.assertIn("durably identifiable", self.router_lower)
+        self.assertIn("manual fallback", self.router_lower)
         self.assertIn("prefer an existing public shorthand invocation", self.handover_lower)
         self.assertIn("durable target is sufficient", self.handover_lower)
-        self.assertIn("minimal shorthand invocation", self.handover_lower)
+        self.assertIn("minimal result may be a `next chat:` invocation", self.handover_lower)
         self.assertIn("receiving context must refresh authoritative state", self.handover_lower)
 
     def test_external_execution_contract_is_not_replaced(self):
