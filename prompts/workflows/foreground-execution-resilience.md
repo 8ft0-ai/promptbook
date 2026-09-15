@@ -12,9 +12,11 @@ Use during authorised implementation or remediation when foreground-execution ex
 
 Use an approximately **18-minute** foreground budget only as an empirical, provisional operating hypothesis for ordinary Chat execution. It is configurable and revisable from observed behaviour and is **not** an asserted OpenAI or platform hard timeout. When no trustworthy remaining-time signal exists, use conservative task-shape and risk judgement rather than inventing timing precision.
 
-## Contract
+## Prompt
 
 ```text
+Progress <TASK_OR_OBJECTIVE> while preserving a durable continuation boundary if foreground-execution exhaustion becomes a material risk.
+
 When foreground-execution exhaustion is a material risk, preserve one coherent immutable governed state before spending the remaining practical foreground budget on work that can safely continue later.
 
 For repository implementation work, the normal minimum continuation point is an exact candidate commit. Where pull-request creation is already authorised, appropriate, and executable without widening authority, an exact candidate plus a PR bound to that candidate is preferred. PR creation is never mandatory merely to beat a foreground budget.
@@ -40,13 +42,9 @@ Foreground-budget pressure may influence selection only among execution surfaces
 If interruption occurs after a conforming checkpoint, report the exact immutable continuation identity and unresolved lifecycle state rather than implying completion. If interruption occurs before a conforming checkpoint, report the actual incomplete durable state. Never fabricate a candidate, PR, validation result, review state, or recoverability claim.
 
 Do not add a new conversational terminal state for foreground exhaustion. Represent the interruption and recovery evidence beneath the existing Promptbook terminal-state model.
-```
 
-## Deterministic recovery shape
+The deterministic recoverable sequence is:
 
-The intended recoverable sequence is:
-
-```text
 substantial governed implementation
   -> foreground budget risk becomes material
   -> coherent candidate C is persisted durably
@@ -56,11 +54,23 @@ substantial governed implementation
   -> exact candidate C recovered
   -> exact-head CI/reconciliation completed
   -> genuinely fresh review boundary reached
+
+The sequence remains fail closed. Candidate C is a persistence identity, not evidence that validation passed, review occurred, or the broader objective completed.
 ```
 
-The sequence remains fail closed. Candidate `C` is a persistence identity, not evidence that validation passed, review occurred, or the broader objective completed.
+## Inputs
 
-## Negative requirements
+- `<TASK_OR_OBJECTIVE>` — the bounded governed implementation, remediation, or continuation objective.
+- The current authoritative repository/task state, including existing mutation and lifecycle authority, candidate identity where one exists, validation/CI state, and execution-surface constraints.
+- An approximately 18-minute foreground budget may be used only as an empirical, provisional and configurable/revisable operating hypothesis, never as a hard platform guarantee.
+
+## What it does
+
+Creates an early immutable persistence boundary before optional or deferrable assurance consumes the remaining practical foreground budget, while preserving the distinction between pre-publication safety and authoritative candidate-bound validation. It makes later recovery depend on durable repository evidence rather than prior conversation memory, so exact-head CI observation, PR/evidence reconciliation, remaining candidate-bound assurance, and preparation for genuinely fresh review can continue from the same exact candidate when still authorised.
+
+[Implement an approved issue](../engineering/implement-an-approved-issue.md) applies this contract when implementation or remediation work faces material foreground-execution risk. [Autonomous progression](autonomous-progression.md) applies the reconstruction side when governed continuation resumes from a durable checkpoint.
+
+## Boundaries / limitations
 
 The contract must never be interpreted to mean that:
 
@@ -73,9 +83,7 @@ The contract must never be interpreted to mean that:
 - an otherwise prohibited execution surface becomes eligible to avoid a foreground limit; or
 - conversation memory is a required persistence store for governed continuation.
 
-## Integration
-
-[Implement an approved issue](../engineering/implement-an-approved-issue.md) applies this contract when implementation or remediation work faces material foreground-execution risk. [Autonomous progression](autonomous-progression.md) applies the reconstruction side when governed continuation resumes from a durable checkpoint.
+This contract does not create a scheduler, timer service, background/asynchronous execution claim, persistence store, new shorthand command, new conversational terminal state, or connector-specific atomic publication mechanism. Repository-local policy, explicit task authority, validation, review freshness, merge/release/deployment controls, capability availability, and execution-locality constraints remain authoritative.
 
 ## Status
 
