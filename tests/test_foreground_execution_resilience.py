@@ -15,11 +15,15 @@ class ForegroundExecutionResilienceTests(unittest.TestCase):
         cls.implement = (ENGINEERING / "implement-an-approved-issue.md").read_text(
             encoding="utf-8"
         )
+        cls.remediate = (ENGINEERING / "remediate-review-findings.md").read_text(
+            encoding="utf-8"
+        )
         cls.autonomous = (WORKFLOWS / "autonomous-progression.md").read_text(
             encoding="utf-8"
         )
         cls.contract_lower = cls.contract.lower()
         cls.implement_lower = cls.implement.lower()
+        cls.remediate_lower = cls.remediate.lower()
         cls.autonomous_lower = cls.autonomous.lower()
 
     def test_soft_budget_is_empirical_provisional_and_not_a_platform_guarantee(self):
@@ -145,9 +149,26 @@ class ForegroundExecutionResilienceTests(unittest.TestCase):
         positions = [self.contract_lower.index(marker) for marker in markers]
         self.assertEqual(positions, sorted(positions))
 
+    def test_remediation_path_applies_checkpoint_contract_without_widening_authority(self):
+        self.assertIn(
+            "foreground-execution exhaustion becomes a material risk during an authorised bounded remediation",
+            self.remediate_lower,
+        )
+        self.assertIn(
+            "[foreground execution resilience](../workflows/foreground-execution-resilience.md)",
+            self.remediate_lower,
+        )
+        self.assertIn("establish an exact immutable candidate", self.remediate_lower)
+        self.assertIn(
+            "candidate or pull-request mutation remains subject to the resolved `/fix` authority and action gateway",
+            self.remediate_lower,
+        )
+        self.assertIn("required validation and fresh re-review remain bound", self.remediate_lower)
+
     def test_integration_points_link_to_the_contract(self):
         link = "foreground-execution-resilience.md"
         self.assertIn(link, self.implement_lower)
+        self.assertIn(link, self.remediate_lower)
         self.assertIn(link, self.autonomous_lower)
         self.assertIn("implement an approved issue", self.contract_lower)
         self.assertIn("autonomous progression", self.contract_lower)
