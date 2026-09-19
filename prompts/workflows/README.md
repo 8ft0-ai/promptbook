@@ -34,6 +34,12 @@ When a user message begins with one of these commands, treat it as a concise int
 - `/handoff [target]` — use [Next-session handover](next-session-handover.md). The handoff is the final deliverable; do not execute the handed-off task in the current context.
 - `/status [target]` — reconstruct decision-critical current state and report concise authoritative status read-only. Do not mutate, merge, dispatch, or otherwise continue the governed task unless the user separately requests continuation.
 
+For ordinary `/go` continuation, **operation + durable target is the normal operator contract**. When the target unambiguously identifies the governed objective, reconstruct machine-recoverable lifecycle state from current authoritative sources rather than requiring the user to copy it into the invocation. Candidate heads, pull-request identities, validation/check runs, review dispositions, durable comment identities and lifecycle stage are evidence to derive when they are unambiguous; conversation history may help locate them but is not authority.
+
+Treat an explicit current-user identity or constraint differently from derived state. A deliberate qualifier such as `/go <target> against exact head <sha>` is an **essential assertion** that constrains the requested operation. Refresh it against authoritative state and do not silently replace it with a newer or different reconstructed value. If an explicit assertion is stale or conflicts with current state, surface the changed-state decision or fail closed under the existing terminal semantics.
+
+Target-only invocation is valid only while reconstruction is unambiguous. If multiple active candidates, conflicting authorities, materially different pending actions, or missing decision-critical evidence prevent a unique safe interpretation, do not guess. Reducing operator input never collapses separate authority boundaries such as candidate approval, merge, release, deployment, or production mutation.
+
 For a conceptual map of `/go` state, authority, capability, evidence rebinding and terminal boundaries, see [`/go` lifecycle](../../guides/go-lifecycle.md). The router remains the canonical behavioural contract.
 
 Keep the command set small. `--read-only` is the one explicit `/review` modifier justified by the write-back boundary; otherwise prefer natural-language qualifiers over inventing flags or a larger command grammar.
