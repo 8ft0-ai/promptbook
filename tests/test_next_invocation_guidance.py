@@ -284,6 +284,47 @@ class NextInvocationGuidanceTests(unittest.TestCase):
             self.fresh_lower,
         )
 
+    def test_target_only_go_is_normal_common_case(self):
+        self.assertIn(
+            "operation + durable target is the normal operator contract",
+            self.router_lower,
+        )
+        self.assertIn("reconstruct machine-recoverable lifecycle state", self.router_lower)
+        for derived in (
+            "candidate heads",
+            "pull-request identities",
+            "validation/check runs",
+            "review dispositions",
+            "durable comment identities",
+            "lifecycle stage",
+        ):
+            self.assertIn(derived, self.router_lower)
+        self.assertIn("conversation history may help locate them but is not authority", self.router_lower)
+
+    def test_explicit_user_pin_remains_essential_assertion(self):
+        self.assertIn("essential assertion", self.router_lower)
+        self.assertIn("/go <target> against exact head <sha>", self.router_lower)
+        self.assertIn("do not silently replace it", self.router_lower)
+        self.assertIn("if an explicit assertion is stale or conflicts with current state", self.router_lower)
+
+    def test_target_only_reconstruction_fails_closed_on_ambiguity(self):
+        for ambiguity in (
+            "multiple active candidates",
+            "conflicting authorities",
+            "materially different pending actions",
+            "missing decision-critical evidence",
+        ):
+            self.assertIn(ambiguity, self.router_lower)
+        self.assertIn("do not guess", self.router_lower)
+        for boundary in (
+            "candidate approval",
+            "merge",
+            "release",
+            "deployment",
+            "production mutation",
+        ):
+            self.assertIn(boundary, self.router_lower)
+
     def test_target_selection_prefers_governing_lifecycle(self):
         self.assertIn("prefer the governing lifecycle object", self.router_lower)
         self.assertIn("rather than the reviewed intermediate artefact", self.router_lower)
