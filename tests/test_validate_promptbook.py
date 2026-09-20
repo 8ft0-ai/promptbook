@@ -321,7 +321,7 @@ class PromptbookValidationTests(unittest.TestCase):
         self.assertIn("do not require the human to ask how to perform the external action", handover_lower)
         self.assertIn("do not turn an already-authorised capability transfer into a new decision request", handover_lower)
         self.assertIn("reuse it after refreshing any guards", handover_lower)
-        self.assertIn("directly copyable as the next prompt", handover_lower)
+        self.assertIn("directly copyable as the receiving prompt", handover_lower)
         self.assertIn("directly executable as the required action", handover_lower)
 
     def test_fresh_review_composition_contract(self):
