@@ -141,7 +141,7 @@ The canonical command semantics live in [`prompts/workflows/README.md`](../promp
 - `/status [target]` — report broader authoritative state, identity, blocker/boundary, next transition, `/go` behaviour, and minimum decision-critical evidence, read-only.
 - `/help [topic-or-question]` — advise what the operator should do and why from the same resolved state, without executing the recommendation.
 - `/plan [target]` — plan bounded work using the Promptbook planning prompt.
-- `/review [target]` — request substantive fresh review. For a GitHub pull request, record the requested review by default; use `/review --read-only [target]` or an unambiguous natural-language zero-write qualifier to report only in chat.
+- `/review [target]` — request substantive fresh review. For a GitHub pull request, record the requested review on GitHub by default; use `/review --read-only [target]` or an unambiguous natural-language zero-write qualifier to report only in chat.
 - `/fix [target]` — remediate objectively bounded review findings under existing authority, validate the changed candidate, then return control rather than silently continuing to later lifecycle effects.
 - `/save [target]` — persist the material result using only the narrow repository-native persistence authority defined by the router/run-context contract.
 - `/prompt [target-or-request]` — generate a continuation, delegation, or intended-independent context-transfer prompt artefact; do not execute it or treat generation as freshness/authority.
@@ -159,6 +159,8 @@ Commands are intentionally not a mini CLI. `/review --read-only` is the one expl
 ```
 
 If the target is omitted, resolve it from the current conversation and authoritative repository state. If that is not safely possible, fail closed rather than guessing.
+
+## Compatibility intents
 
 Compatibility intents `/implement`, `/handoff`, `/record`, and `/analyse` may remain understood during migration, but repositories should not copy or advertise them as the normal public command vocabulary. `/implement` still maps to the existing approved-implementation workflow when explicitly invoked; `/handoff` maps to context-transfer prompting where appropriate without replacing complete `EXTERNAL_REQUIRED` human execution procedures; `/record` maps to `/save`; `/analyse` remains read-only analysis/synthesis.
 ## Direct prompt escape hatch
