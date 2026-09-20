@@ -145,8 +145,8 @@ class NextInvocationGuidanceTests(unittest.TestCase):
             ),
             "handover": (
                 self.handover_lower,
-                "first distinguish the handover type",
-                "directly copyable as the next prompt",
+                "first distinguish the transfer type",
+                "directly copyable as the receiving prompt",
             ),
             "documentation assessment": (
                 self.documentation_assessment_lower,
