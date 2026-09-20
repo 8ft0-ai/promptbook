@@ -73,12 +73,15 @@ class NextInvocationGuidanceTests(unittest.TestCase):
     def test_command_continuation_defaults_are_explicit(self):
         expected = {
             "/go": "auto",
-            "/implement": "auto",
-            "/fix": "auto",
-            "/review": "suggest",
-            "/plan": "suggest",
+            "/step": "stop",
+            "/next": "stop",
             "/status": "stop",
-            "/handoff": "stop",
+            "/help": "stop",
+            "/plan": "suggest",
+            "/review": "suggest",
+            "/fix": "suggest",
+            "/save": "stop",
+            "/prompt": "stop",
         }
         for command, mode in expected.items():
             self.assertIn(f"| `{command}` | `{mode}` |", self.router)
@@ -200,7 +203,7 @@ class NextInvocationGuidanceTests(unittest.TestCase):
         self.assertIn("preserve the fresh-context boundary", self.implement_lower)
         self.assertIn("eligible genuinely isolated fresh-review context", self.implement_lower)
         self.assertIn("next chat: /review <approved_task>", self.implement_lower)
-        self.assertIn("| `/fix` | `auto` |", self.router)
+        self.assertIn("| `/fix` | `suggest` after bounded remediation plus required validation |", self.router)
         self.assertIn("independent re-review is required", self.remediate_lower)
         self.assertIn("hard fresh-context boundary", self.remediate_lower)
         self.assertIn("eligible genuinely isolated fresh-review context", self.remediate_lower)
@@ -338,19 +341,44 @@ class NextInvocationGuidanceTests(unittest.TestCase):
         self.assertIn("if blocked applies", self.autonomous_lower)
         self.assertIn("if complete applies, state that no further action is required", self.autonomous_lower)
 
-    def test_public_shorthand_vocabulary_is_unchanged(self):
+    def test_projection_family_shares_one_next_transition(self):
+        for marker in (
+            "/next   -> reports transition t or boundary b",
+            "/status -> reports next: t/b",
+            "/help   -> advice is based on t/b",
+            "/step   -> executes t only when t is allow and executable",
+            "/go     -> repeats the same transition loop until b",
+        ):
+            self.assertIn(marker, self.router_lower)
+
+    def test_step_and_fix_are_scope_controls(self):
+        self.assertIn("`/step` | `stop` after exactly one governed transition", self.router_lower)
+        self.assertIn("explicit `/fix` is a scope-control request", self.router_lower)
+        self.assertIn(
+            "automatic remediation followed by further review/merge/verification progression remains available through `/go`",
+            self.router_lower,
+        )
+
+    def test_compatibility_intents_are_not_public_commands(self):
+        self.assertIn("## compatibility intents", self.router_lower)
+        for command in ("/implement", "/handoff", "/record", "/analyse"):
+            self.assertIn(f"`{command}", self.router_lower)
+    def test_public_shorthand_vocabulary_matches_low_friction_surface(self):
         commands = set(
             re.findall(r"^- `(/[-a-z]+)(?:\s[^`]*)?`", self.router, flags=re.MULTILINE)
         )
         self.assertEqual(
             {
                 "/go",
-                "/review",
-                "/plan",
-                "/implement",
-                "/fix",
-                "/handoff",
+                "/step",
+                "/next",
                 "/status",
+                "/help",
+                "/plan",
+                "/review",
+                "/fix",
+                "/save",
+                "/prompt",
             },
             commands,
         )
