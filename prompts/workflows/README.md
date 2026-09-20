@@ -100,13 +100,13 @@ The command defaults are:
 | Command | Default continuation mode |
 | --- | --- |
 | `/go` | `auto` |
-| `/step` | `stop` after exactly one governed transition and one re-resolution |
+| `/step` | `stop` |
 | `/next` | `stop` |
 | `/status` | `stop` |
 | `/help` | `stop` |
 | `/plan` | `suggest` |
 | `/review` | `suggest` |
-| `/fix` | `suggest` after bounded remediation plus required validation |
+| `/fix` | `suggest` |
 | `/save` | `stop` |
 | `/prompt` | `stop` |
 
