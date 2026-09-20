@@ -31,7 +31,7 @@ Use the deterministic carrier order defined by this contract. A missing optional
 
 If the effective availability is disabled, do not invoke or probe the affected logical capability. Do not bypass the suppression by relabelling the same effect through another automated executor or execution locality. Use only a separately defined bounded alternative or human-operated capability-boundary hand-off that the governing workflow explicitly permits. If the effective availability is enabled, attempt the capability only when independently authorised and otherwise executable, then verify the observed resulting state rather than treating configuration as evidence of success.
 
-When availability is relevant to a resolved /fix or /go action, attach the one resolved availability record to the derived run state and pass that same record to autonomous progression, execution-locality resolution and any executor projection. Downstream consumers must not rediscover Project, repository, or work-item declarations independently.
+When availability is relevant to a resolved `/fix` action or `/go` progression action, attach the one resolved availability record to the derived run state and pass that same record to autonomous progression, execution-locality resolution and any executor projection. `/step` has no independent availability model: when it selects one governed transition, it consumes exactly the same resolved availability record, suppression behaviour, locality constraints and stale-state rules that `/go` would consume for that transition. Downstream consumers must not rediscover Project, repository, or work-item declarations independently.
 ```
 
 ## Inputs
@@ -97,7 +97,7 @@ An absent optional declaration is different from an applicable declaration that 
 
 ## Resolved availability record
 
-When availability affects or could affect a consequential `/fix` or `/go` action, derive one reconstructable record logically equivalent to:
+When availability affects or could affect a consequential `/fix` action or `/go` progression action, including a transition selected by `/step`, derive one reconstructable record logically equivalent to:
 
 ```text
 capability_key
@@ -127,7 +127,7 @@ Equivalent current authoritative inputs for the same repository, work identity a
 
 ## Resolved-run-context integration
 
-Availability resolution is derived execution state, not a parallel authority system. For a relevant `/fix` or `/go` action, apply this order:
+Availability resolution is derived execution state, not a parallel authority system. For a relevant `/fix` action or `/go` progression action, including a transition selected by `/step`, apply this order:
 
 ```text
 resolve repository/work/action authority

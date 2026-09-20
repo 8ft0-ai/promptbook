@@ -89,7 +89,7 @@ The representation may be textual or structured. It need not be committed for ev
 
 ## Capability-availability integration
 
-When a material `/fix` or `/go` action has an explicit Promptbook capability-availability key, resolve availability only after the exact action has passed the operation's authority gateway. Use [Capability availability overrides](capability-availability-overrides.md) to derive one record equivalent to `resolved_capability_availability` for the current repository/work/action identity.
+When a material `/fix` action or `/go` progression action has an explicit Promptbook capability-availability key, resolve availability only after the exact action has passed the operation's authority gateway. `/step` has no independent availability model: when it selects one governed transition, that action is the same `/go` progression action for availability, suppression, locality and projection purposes. Use [Capability availability overrides](capability-availability-overrides.md) to derive one record equivalent to `resolved_capability_availability` for the current repository/work/action identity.
 
 The ordering is:
 
@@ -234,6 +234,7 @@ starting_candidate_identity
 resolved_authority_sources
 applicable_repository_instructions
 remediation_scope
+remediation_plan
 effective_capabilities
 prohibited_capabilities
 owner_decision_boundaries
@@ -245,6 +246,8 @@ required_evidence
 `resolved_capability_availability` is required only when the current material action has an explicit availability key; otherwise its absence is explicit and carries no meaning.
 
 `starting_candidate_identity` is the immutable reviewed candidate or equivalent revision to which the blocking findings and remediation authority apply. `remediation_scope` is derived from the governing findings, task/design, accepted plan where applicable, repository instructions, and explicit current authority. It is not inferred merely from what a tool could change.
+
+`remediation_plan` is required when review-response synthesis has classified the response as `BOUNDED_REMEDIATION`. It binds the source candidate identity, blocker set, material finding relationships or shared invariant, bounded correction, required validation, and explicit scope boundaries that synthesis determined. The plan is authoritative synthesis input to `/fix`, not mutation authority: `/fix` must refresh current state and authority before acting, and must fail closed or return to response routing if the plan is stale, conflicts with current authoritative evidence, or would require a broader correction. When direct `/fix` follows `CHANGES REQUIRED` and no valid remediation plan exists yet, the router must perform the required non-mutating response synthesis before substantive mutation.
 
 `available_capabilities` and `authority_derived_capabilities` may be retained as intermediate derived sets when useful for reconstruction, but they are not new authority sources.
 
@@ -714,7 +717,7 @@ For `/go`, it derives effective lifecycle capabilities by monotonic narrowing, c
 
 For `/save`, it permits only the minimum repository-native persistence mutation allowed by its narrow operation ceiling and prevents a persistence request from becoming branch/PR/code/cross-repository/production authority. `/prompt` remains artefact generation rather than execution state.
 
-When a named capability-availability key is relevant to `/fix`, `/go`, or `/step`, the run context carries one resolved availability record from Promptbook's deterministic carrier contract so local progression and delegated execution apply the same configuration decision. For `/go`, locality selection consumes that same availability decision and the existing action-specific capability projection rather than rediscovering or widening them. Fresh-review context resolution does not reuse the locality classes; it re-resolves a bounded `/review` child profile from the current review authority ceiling.
+When a named capability-availability key is relevant to `/fix`, `/go`, or `/step`, the run context carries one resolved availability record from Promptbook's deterministic carrier contract so local progression and delegated execution apply the same configuration decision. For `/go` progression, including `/step` when it selects one transition, locality selection consumes that same availability decision and the existing action-specific `/go` capability projection rather than rediscovering, duplicating or widening them. Fresh-review context resolution does not reuse the locality classes; it re-resolves a bounded `/review` child profile from the current review authority ceiling.
 
 ## `/review` lifecycle
 
@@ -837,11 +840,11 @@ For delegated fresh review, use the stricter operation-specific form:
 child_review_authority ⊆ effective_review_authority
 ```
 
-A fresh-review child is resolved as `/review`; it does not inherit broader parent `/go`, `/implement`, or `/fix` mutation capability. An external execution substrate should likewise receive only the resolved authorised subset needed for the delegated action. Delegation cannot refresh stale parent authority, create a new approval, or make an authoring context fresh. This contract does not introduce subagent infrastructure or make the substrate a workflow-policy owner.
+A fresh-review child is resolved as `/review`; it does not inherit broader parent `/go`, `/step`, `/implement`, or `/fix` mutation capability. An external execution substrate should likewise receive only the resolved authorised subset needed for the delegated action. Delegation cannot refresh stale parent authority, create a new approval, or make an authoring context fresh. This contract does not introduce subagent infrastructure or make the substrate a workflow-policy owner.
 
 ## Boundaries / limitations
 
-This contract defines `/review`, `/fix`, and `/go` run contexts, including bounded fresh-review child-context resolution, but it does not introduce a new Switchboard schema, operating-system or network sandboxing, Guardian-style approval automation, native subagents, agentctl policy ownership, Watchtower workflow ownership, a global executor/capability registry, arbitrary remote shell or argv dispatch, a global agent registry, or a universal persisted run-context schema.
+This contract defines `/review`, `/fix`, `/go` progression, and `/save` run contexts, including bounded fresh-review child-context resolution. `/step` is the one-transition progression-depth mode of the `/go` run context and does not introduce a separate operation ceiling, authority model, availability model or executor profile. The contract does not introduce a new Switchboard schema, operating-system or network sandboxing, Guardian-style approval automation, native subagents, agentctl policy ownership, Watchtower workflow ownership, a global executor/capability registry, arbitrary remote shell or argv dispatch, a global agent registry, or a universal persisted run-context schema.
 
 It does not intrinsically grant merge, release, tag, deployment, infrastructure/provider, settings, credential, secret, production, destructive-action, material-cost, or unrelated mutation authority. Those actions require separate current authority where they are permitted at all, and `/go` must resolve that authority explicitly before execution.
 

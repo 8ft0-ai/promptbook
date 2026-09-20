@@ -360,6 +360,28 @@ class NextInvocationGuidanceTests(unittest.TestCase):
             self.router_lower,
         )
 
+    def test_step_after_changes_required_performs_synthesis_then_stops(self):
+        self.assertIn(
+            "if `/step` is invoked immediately after `changes required`",
+            self.router_lower,
+        )
+        self.assertIn(
+            "review-response synthesis is the one governed transition",
+            self.router_lower,
+        )
+        self.assertIn(
+            "produces the candidate-bound remediation plan",
+            self.router_lower,
+        )
+        self.assertIn(
+            "reports `/fix` as the next transition",
+            self.router_lower,
+        )
+        self.assertIn(
+            "stops without performing remediation mutation",
+            self.router_lower,
+        )
+
     def test_compatibility_intents_are_not_public_commands(self):
         self.assertIn("## compatibility intents", self.router_lower)
         for command in ("/implement", "/handoff", "/record", "/analyse"):

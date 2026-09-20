@@ -497,6 +497,20 @@ class ResolvedAgentRunContextTests(unittest.TestCase):
         ):
             self.assertIn(forbidden, self.contract_lower)
 
+    def test_fix_consumes_candidate_bound_remediation_plan_and_contract_scope_is_consistent(self):
+        self.assertIn("remediation_plan", self.contract)
+        self.assertIn("candidate-bound remediation plan", self.contract_lower)
+        self.assertIn("authoritative synthesis input to `/fix`", self.contract_lower)
+        self.assertIn("not mutation authority", self.contract_lower)
+        self.assertIn(
+            "defines `/review`, `/fix`, `/go` progression, and `/save` run contexts",
+            self.contract_lower,
+        )
+        self.assertIn(
+            "`/step` is the one-transition progression-depth mode",
+            self.contract_lower,
+        )
+
     def test_prompt_generation_is_not_execution_state(self):
         self.assertIn("`/prompt` is pure artefact generation", self.contract_lower)
         self.assertIn("prompt generation leaves the current governed state unchanged", self.contract_lower)

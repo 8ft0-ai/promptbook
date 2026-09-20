@@ -120,6 +120,12 @@ class ExecutorCapabilityProjectionTests(unittest.TestCase):
         self.assertIn("deploy", section)
         self.assertIn("newly projected profile", section.lower())
 
+    def test_step_reuses_go_action_specific_projection_without_new_profile(self):
+        self.assertIn("`/step` deliberately has no separate operation profile", self.projection_lower)
+        self.assertIn("same `/go` profile", self.projection_lower)
+        self.assertIn("only progression depth differs", self.projection_lower)
+        self.assertIn("does not create a fourth progression ceiling", self.projection_lower)
+
     def test_environment_state_cannot_widen_projection(self):
         for ambient in (
             "connector",

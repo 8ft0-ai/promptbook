@@ -128,6 +128,20 @@ class ReviewRelationshipContractTests(unittest.TestCase):
         ):
             self.assertIn(outcome, self.router_lower)
 
+    def test_bounded_remediation_synthesis_emits_plan_consumed_by_fix(self):
+        self.assertIn("candidate-bound remediation plan", self.router_lower)
+        for field in (
+            "source candidate identity",
+            "complete blocker set",
+            "shared invariant",
+            "required validation",
+            "explicit scope boundaries",
+        ):
+            self.assertIn(field, self.router_lower)
+        self.assertIn("authoritative synthesis input to `/fix`", self.router_lower)
+        self.assertIn("consume its candidate-bound remediation plan", self.remediate_lower)
+        self.assertIn("do not silently rediscover a different repair", self.remediate_lower)
+
     def test_author_disagreement_cannot_silently_overrule_independent_blocker(self):
         self.assertIn(
             "mere author-side disagreement with an independent blocker is insufficient",
