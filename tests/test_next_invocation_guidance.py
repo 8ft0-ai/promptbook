@@ -203,7 +203,7 @@ class NextInvocationGuidanceTests(unittest.TestCase):
         self.assertIn("preserve the fresh-context boundary", self.implement_lower)
         self.assertIn("eligible genuinely isolated fresh-review context", self.implement_lower)
         self.assertIn("next chat: /review <approved_task>", self.implement_lower)
-        self.assertIn("| `/fix` | `suggest` after bounded remediation plus required validation |", self.router)
+        self.assertIn("| `/fix` | `suggest` |", self.router)
         self.assertIn("independent re-review is required", self.remediate_lower)
         self.assertIn("hard fresh-context boundary", self.remediate_lower)
         self.assertIn("eligible genuinely isolated fresh-review context", self.remediate_lower)
@@ -365,8 +365,11 @@ class NextInvocationGuidanceTests(unittest.TestCase):
         for command in ("/implement", "/handoff", "/record", "/analyse"):
             self.assertIn(f"`{command}", self.router_lower)
     def test_public_shorthand_vocabulary_matches_low_friction_surface(self):
+        shorthand = self.router.split("## Shorthand commands", 1)[1].split(
+            "## Compatibility intents", 1
+        )[0]
         commands = set(
-            re.findall(r"^- `(/[-a-z]+)(?:\s[^`]*)?`", self.router, flags=re.MULTILINE)
+            re.findall(r"^- `(/[-a-z]+)(?:\s[^`]*)?`", shorthand, flags=re.MULTILINE)
         )
         self.assertEqual(
             {
@@ -383,7 +386,6 @@ class NextInvocationGuidanceTests(unittest.TestCase):
             },
             commands,
         )
-
 
 if __name__ == "__main__":
     unittest.main()
