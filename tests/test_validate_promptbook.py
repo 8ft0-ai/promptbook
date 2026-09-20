@@ -312,7 +312,7 @@ class PromptbookValidationTests(unittest.TestCase):
         self.assertIn("do not delegate an already-established machine-verifiable check", autonomous_lower)
         self.assertIn("on fail, preserve fail-closed behaviour", autonomous_lower)
 
-        self.assertIn("fresh review, new chat/session, or another agent context", handover_lower)
+        self.assertIn("fresh review, a new chat/session, or another agent context", handover_lower)
         self.assertIn("human-operated external execution", handover_lower)
         self.assertIn("complete copy/paste script or exact commands", handover_lower)
         self.assertIn("exact browser/ui steps", handover_lower)
