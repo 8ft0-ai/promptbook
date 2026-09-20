@@ -116,5 +116,26 @@ class ReviewRelationshipContractTests(unittest.TestCase):
         self.assertIn("human-facing review concise", self.fresh_lower)
 
 
+    def test_response_synthesis_routes_review_evidence_without_re_adjudication(self):
+        self.assertIn("perform response routing/synthesis before remediation", self.router_lower)
+        self.assertIn("do not perform a second author-side substantive review", self.router_lower)
+        for outcome in (
+            "bounded_remediation",
+            "design_change_required",
+            "architecture_issue",
+            "review_finding_invalid_or_superseded",
+            "decision_required",
+        ):
+            self.assertIn(outcome, self.router_lower)
+
+    def test_author_disagreement_cannot_silently_overrule_independent_blocker(self):
+        self.assertIn(
+            "mere author-side disagreement with an independent blocker is insufficient",
+            self.router_lower,
+        )
+        self.assertIn("requires new authoritative evidence", self.router_lower)
+        self.assertIn("appropriate independent adjudication or decision boundary", self.router_lower)
+
+
 if __name__ == "__main__":
     unittest.main()
