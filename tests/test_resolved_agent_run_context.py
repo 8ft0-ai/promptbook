@@ -32,14 +32,14 @@ class ResolvedAgentRunContextTests(unittest.TestCase):
 
     def test_supported_operations_are_explicit_without_generalising_authority(self):
         self.assertIn(
-            "explicitly supported operations are `/review`, `/fix`, and `/go`",
+            "explicitly effectful operation profiles are `/review`, `/fix`, `/go`, and `/save`",
             self.contract_lower,
         )
         self.assertIn(
             "supporting one profile does not generalise another operation's permissions",
             self.contract_lower,
         )
-        for operation in ("`/review`", "`/fix`", "`/go`"):
+        for operation in ("`/review`", "`/fix`", "`/go`", "`/save`"):
             self.assertIn(operation, self.contract)
 
     def test_review_context_has_required_fields(self):
@@ -432,11 +432,11 @@ class ResolvedAgentRunContextTests(unittest.TestCase):
         self.assertIn("author-side remediation as fresh approval evidence", self.remediate_lower)
 
     def test_autonomous_progression_resolves_go_context_before_progression(self):
-        self.assertIn("before substantive `/go` lifecycle progression", self.autonomous_lower)
+        self.assertIn("before substantive `/go` or `/step` lifecycle progression", self.autonomous_lower)
         self.assertIn("resolved agent run context", self.autonomous_lower)
         self.assertIn("resolved-agent-run-context.md", self.autonomous)
         self.assertIn("treat `next_governed_action` as a proposal", self.autonomous_lower)
-        self.assertIn("before every consequential `/go` transition", self.autonomous_lower)
+        self.assertIn("before every consequential progression transition", self.autonomous_lower)
         for classification in (
             "`ALLOW`",
             "`REQUIRE OWNER / SEPARATE AUTHORITY`",
@@ -460,6 +460,47 @@ class ResolvedAgentRunContextTests(unittest.TestCase):
         self.assertIn("child_authority ⊆ parent_authority", self.contract)
         self.assertIn("never gain authority merely through delegation", self.contract_lower)
         self.assertIn("resolved authorised subset", self.contract_lower)
+
+
+    def test_go_step_and_read_only_projections_share_one_resolved_state(self):
+        self.assertIn("single canonical derived execution-state contract", self.contract_lower)
+        self.assertIn("`/step` shares `/go`'s progression state and action gateway", self.contract_lower)
+        self.assertIn("`/next`, `/status`, and `/help` are read-only projections", self.contract_lower)
+        for marker in (
+            "/next   -> reports transition t or boundary b",
+            "/status -> reports next: t/b",
+            "/help   -> advice is based on t/b",
+            "/step   -> executes t only if t is allow and executable",
+            "/go     -> repeats the same transition loop until b",
+        ):
+            self.assertIn(marker, self.contract_lower)
+
+    def test_router_boundaries_are_derived_not_parallel_terminal_state(self):
+        self.assertIn("derived router boundaries", self.contract_lower)
+        for boundary in ("none", "complete", "decision_required", "external_required", "blocked"):
+            self.assertIn(boundary, self.contract_lower)
+        self.assertIn("must not construct a second independently resolved lifecycle model", self.contract_lower)
+
+    def test_save_has_narrow_intrinsic_persistence_ceiling(self):
+        self.assertIn("## `/save` required context", self.contract_lower)
+        for allowed in (
+            "update the existing canonical issue body",
+            "create one new issue when no existing canonical work item is appropriate",
+        ):
+            self.assertIn(allowed, self.contract_lower)
+        for forbidden in (
+            "branch creation or branch mutation",
+            "pull-request creation or merge",
+            "cross-repository mutation",
+            "issue closure unless separately authorised",
+            "release/deploy/apply/provider/settings/credential/secret effects",
+        ):
+            self.assertIn(forbidden, self.contract_lower)
+
+    def test_prompt_generation_is_not_execution_state(self):
+        self.assertIn("`/prompt` is pure artefact generation", self.contract_lower)
+        self.assertIn("prompt generation leaves the current governed state unchanged", self.contract_lower)
+        self.assertIn("establishes neither delegated authority nor freshness", self.contract_lower)
 
 
 if __name__ == "__main__":
