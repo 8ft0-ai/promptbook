@@ -170,7 +170,7 @@ class ReviewCompletionContractTests(unittest.TestCase):
         self.assertIn("single-maintainer", self.fresh_lower)
 
         shorthand = self.router.split("## Shorthand commands", 1)[1].split(
-            "## Continuation policy", 1
+            "## Compatibility intents", 1
         )[0]
         commands = set(re.findall(r"^- `(/[-a-z]+)(?: [^`]*)?`", shorthand, re.M))
         self.assertEqual(PUBLIC_COMMANDS, commands)
