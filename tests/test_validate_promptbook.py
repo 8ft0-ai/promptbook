@@ -14,12 +14,15 @@ SPEC.loader.exec_module(MODULE)
 
 PUBLIC_COMMANDS = {
     "/go",
-    "/review",
-    "/plan",
-    "/implement",
-    "/fix",
-    "/handoff",
+    "/step",
+    "/next",
     "/status",
+    "/help",
+    "/plan",
+    "/review",
+    "/fix",
+    "/save",
+    "/prompt",
 }
 COMMAND_RE = re.compile(r"`(/[-a-z]+)(?:\s[^`]*)?`")
 
