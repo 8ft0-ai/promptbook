@@ -6,7 +6,7 @@ Produce either a compact context-transfer prompt artefact for another reasoning 
 
 ## When to use
 
-Use when `/prompt` or a compatibility handoff intent requests a context-transfer artefact, when fresh review requires a manual new-context fallback because no eligible isolated review context can be established automatically, or when an authorised action genuinely requires human-operated external execution.
+Use when `/prompt` or a compatibility handoff intent requests a context-transfer artefact for fresh review, a new chat/session, or another agent context; when fresh review requires a manual new-context fallback because no eligible isolated review context can be established automatically; or when an authorised action genuinely requires human-operated external execution.
 
 ## Prompt
 
@@ -37,7 +37,7 @@ A prompt artefact is navigation/instruction text only. The parent governed state
 
 For a fresh-context boundary, automatic resolution and manual handover are distinct from execution locality. Do not probe `connected/native`, `hosted/hermetic`, or owner-local execution classes merely to satisfy reasoning independence. Instead, the governing workflow first determines whether a genuinely isolated review context can be established under the fresh-review and resolved-run-context contracts. If it can, no human context handover is required. If it cannot, or isolation cannot be proved, the existing manual handover remains the fail-closed fallback.
 
-For that manual fresh-context fallback, a minimal result may be a `Next chat:` invocation such as `/review` with the exact durable review target. Keep the genuine freshness boundary explicit. A shorthand invocation is navigation only: it does not grant approval, mutation, merge, implementation, execution, credential, production, or other authority, and the receiving context must refresh authoritative state before acting.
+For that manual fresh-context fallback, when the durable target is sufficient for reconstruction, prefer an existing public shorthand invocation. A minimal result may be a `Next chat:` invocation such as `/review` with the exact durable review target. Keep the genuine freshness boundary explicit. A shorthand invocation is navigation only: it does not grant approval, mutation, merge, implementation, execution, credential, production, or other authority, and the receiving context must refresh authoritative state before acting.
 
 Preserve only information that materially affects the next decision or action. Include information in a full handover only when it cannot be safely reconstructed from the durable target, such as:
 - repository/system and governing issue/task identity;
