@@ -26,13 +26,41 @@ Do not manually choose a workflow when this router can determine the route from 
 
 When a user message begins with one of these commands, treat it as a concise intent selector. Resolve an omitted target from the current conversation and authoritative repository/task state only when that is unambiguous. Commands do not grant authority beyond the narrow operation authority explicitly defined here, bypass repository policy, weaken freshness or independence requirements, or turn unavailable capabilities into available ones. Any intrinsic operation authority is bounded to the requested command and does not become remediation, merge, release, deployment, settings, credential, production, or other unrelated authority.
 
-- `/go [target]` — continue the governed objective through this router. If the target is already established, `/go` alone means perform the next authorised, safely decidable action rather than merely describing the next gate or asking for a routine `proceed` confirmation. Natural-language qualifiers such as `/go until the next genuinely fresh review boundary` are allowed.
-- `/review [target]` — request a substantive independent review using [Fresh independent review](fresh-independent-review.md). For a GitHub pull request, ordinary `/review` includes the narrow authority to durably record the requested review on GitHub after refreshing the exact candidate/head and applying repository/platform constraints. `/review --read-only [target]`, or an unambiguous natural-language equivalent such as `review without mutation` or `review only in chat`, performs the same assessment with zero GitHub write-back. Treat the review disposition as the requested final deliverable unless the user explicitly asks to continue afterwards. Review-recording authority does not grant remediation, merge, release, deployment, issue-closure, workflow-dispatch, settings, credential, cloud, runtime, production, or unrelated mutation authority. If the current context is not genuinely fresh for the required decision, first resolve whether an eligible genuinely isolated fresh-review context can be established under the fresh-review and resolved-run-context contracts. Invoke the bounded `/review` operation there when isolation is provable; use [Next-session handover](next-session-handover.md) and stop as `EXTERNAL_REQUIRED` only when no eligible/provable isolated review context is available. Never substitute author-side reasoning for independent evidence.
+The normal public surface is:
+
+- `/go [target]` — continue the governed objective through repeated safely authorised governed transitions until a real boundary. If the target is already established, `/go` reconstructs current state instead of asking the operator to transport routine lifecycle evidence.
+- `/step [target]` — execute exactly one safely authorised governed transition, including verification intrinsic to establishing that transition's result, re-resolve once, report what follows, and stop. If the next result is a real boundary rather than an executable transition, report the boundary without consequential mutation.
+- `/next [target]` — read-only. Reconstruct the same governed state used by `/go` and `/step`, then report the single next governed transition or real boundary without executing it. Natural-language "what's next?" has the same semantics.
+- `/status [target]` — read-only. Reconstruct and report broader authoritative current state, decision-critical identity, blocker/boundary, the same next transition reported by `/next`, what `/go` would do, and minimum decision-critical evidence.
+- `/help [topic-or-question]` — read-only advisory interpretation of the same resolved state. Recommend what the operator should do and why, explain material alternatives or blockers, and answer prospective questions without executing the described action or creating authority.
 - `/plan [target]` — use [Plan an issue](../engineering/plan-an-issue.md). Planning remains non-implementation work unless separate authority says otherwise.
-- `/implement [target]` — use [Implement an approved issue](../engineering/implement-an-approved-issue.md). The target must already be sufficiently approved/determined and repository mutation must already be authorised.
-- `/fix [target]` — use [Remediate review findings](../engineering/remediate-review-findings.md) for objectively bounded findings under existing authority. Preserve any required fresh re-review boundary after changing the candidate.
-- `/handoff [target]` — use [Next-session handover](next-session-handover.md). The handoff is the final deliverable; do not execute the handed-off task in the current context.
-- `/status [target]` — reconstruct decision-critical current state and report concise authoritative status read-only. Do not mutate, merge, dispatch, or otherwise continue the governed task unless the user separately requests continuation.
+- `/review [target]` — request a substantive independent review using [Fresh independent review](fresh-independent-review.md). For a GitHub pull request, ordinary `/review` includes the narrow authority to durably record the requested review after refreshing the exact candidate/head and applying repository/platform constraints. `/review --read-only [target]`, or an unambiguous natural-language equivalent, performs the same assessment with zero GitHub write-back. Review-recording authority does not grant remediation, merge, release, deployment, issue-closure, settings, credential, production, or unrelated mutation authority.
+- `/fix [target]` — use [Remediate review findings](../engineering/remediate-review-findings.md) for objectively bounded findings under existing authority. If review-response synthesis has not yet been satisfied, perform that non-mutating synthesis first. Explicit `/fix` performs bounded remediation plus required validation, then returns control rather than silently continuing into fresh review, merge, or later lifecycle effects.
+- `/save [target]` — persist the current material result in the smallest correct durable repository-native home. The command carries only the narrow intrinsic persistence authority defined by the resolved-run-context contract; it does not grant branch/PR/code/cross-repository/production mutation authority.
+- `/prompt [target-or-request]` — generate the shortest safe context-transfer artefact only. It may generate a continuation, delegation, or independent-review prompt contract, but it does not execute the prompt, create another context, transfer authority, establish freshness, or change the current governed lifecycle state.
+
+For one authoritative resolved snapshot, preserve this projection invariant:
+
+```text
+/next   -> reports transition T or boundary B
+/status -> reports Next: T/B
+/help   -> advice is based on T/B
+/step   -> executes T only when T is ALLOW and executable; otherwise reports B
+/go     -> repeats the same transition loop until B
+```
+
+Keep the command set small. `--read-only` remains the one explicit `/review` modifier justified by a write-back boundary; otherwise prefer natural-language qualifiers over inventing flags or a larger command grammar.
+
+## Compatibility intents
+
+These legacy or advanced intents remain understandable for compatibility but are not part of the advertised normal public surface:
+
+- `/implement [target]` — route to [Implement an approved issue](../engineering/implement-an-approved-issue.md) when the target is sufficiently approved/determined and repository mutation is already authorised.
+- `/handoff [target]` — compatibility intent for generating a context-transfer prompt when that is the requested deliverable. It must not replace a complete human-operated `EXTERNAL_REQUIRED` execution handoff.
+- `/record [target]` — compatibility alias for `/save`.
+- `/analyse [target]` — read-only analysis/synthesis intent. It may produce a plan when explicitly requested, but does not create a new lifecycle stage.
+
+Do not advertise compatibility intents as equal public commands.
 
 For ordinary `/go` continuation, **operation + durable target is the normal operator contract**. When the target unambiguously identifies the governed objective, reconstruct machine-recoverable lifecycle state from current authoritative sources rather than requiring the user to copy it into the invocation. Candidate heads, pull-request identities, validation/check runs, review dispositions, durable comment identities and lifecycle stage are evidence to derive when they are unambiguous; conversation history may help locate them but is not authority.
 
@@ -46,7 +74,7 @@ Keep the command set small. `--read-only` is the one explicit `/review` modifier
 
 For every substantive `/review`, discovering a material blocker ends approval eligibility but does not end the substantive inspection. Complete the bounded decision-critical review surface for the exact candidate before recording the disposition; for `CHANGES REQUIRED`, report all material blockers discovered across that completed surface. The detailed coverage model and re-review rules live in [Fresh independent review](fresh-independent-review.md); the router does not replace them with a universal checklist.
 
-When a completed review exposes materially related blockers, synthesise their relationship before recommending `/fix`: challenge whether they indicate a shared invariant, mechanism, trust boundary, or failing abstraction rather than treating recurrence mechanically. This relationship assessment does not widen `/fix`; an invariant/boundary correction is eligible only when it is objectively the minimum safe correction and already within existing remediation authority. Otherwise expose the real planning, decision, or authority boundary rather than silently converting a broader redesign into bounded remediation.
+When a completed review exposes `CHANGES REQUIRED`, perform response routing/synthesis before remediation. Consume the completed review's disposition, complete blocker set, relationship diagnosis, governing design and freshly reconstructed authoritative state; do not perform a second author-side substantive review. Classify the response as `BOUNDED_REMEDIATION`, `DESIGN_CHANGE_REQUIRED`, `ARCHITECTURE_ISSUE`, `REVIEW_FINDING_INVALID_OR_SUPERSEDED`, or `DECISION_REQUIRED`. A bounded invariant/boundary correction remains eligible only when it is objectively the minimum safe correction and already within remediation authority. `REVIEW_FINDING_INVALID_OR_SUPERSEDED` requires new authoritative evidence, material candidate/state movement, or an objectively demonstrable governing-contract mismatch; mere author-side disagreement with an independent blocker is insufficient. A genuine unresolved substantive disagreement must return to an appropriate independent adjudication or decision boundary rather than being silently overruled.
 
 ## Continuation policy
 
@@ -72,12 +100,19 @@ The command defaults are:
 | Command | Default continuation mode |
 | --- | --- |
 | `/go` | `auto` |
-| `/implement` | `auto` |
-| `/fix` | `auto` |
-| `/review` | `suggest` |
-| `/plan` | `suggest` |
+| `/step` | `stop` after exactly one governed transition and one re-resolution |
+| `/next` | `stop` |
 | `/status` | `stop` |
-| `/handoff` | `stop` |
+| `/help` | `stop` |
+| `/plan` | `suggest` |
+| `/review` | `suggest` |
+| `/fix` | `suggest` after bounded remediation plus required validation |
+| `/save` | `stop` |
+| `/prompt` | `stop` |
+
+Explicit `/fix` is a scope-control request. Automatic remediation followed by further review/merge/verification progression remains available through `/go`; the bounded `/fix` invocation itself does not silently become `/go`.
+
+Compatibility `/implement` retains its existing implementation workflow behaviour when explicitly invoked, but it is not an advertised normal command. Compatibility `/handoff`, `/record`, and `/analyse` inherit the stop/read-only semantics of the public intent they map to.
 
 A lower-precedence preference may choose only among actions already permitted by higher-precedence constraints. Navigation emitted under `suggest` or `stop` is navigation metadata only and never supplies authority to the receiving invocation.
 
@@ -87,8 +122,10 @@ Before routing, inspect the current conversation and the authoritative repositor
 
 Use the first matching case:
 
-1. **A handover or next-session prompt is explicitly the requested deliverable** → [Next-session handover](next-session-handover.md).
-   - Produce the handover only. Do not reinterpret a request for a prompt as authority to execute the handed-off task in the current context.
+1. **A context-transfer prompt is explicitly the requested deliverable** → [Next-session handover](next-session-handover.md).
+   - Generate only the requested context-transfer artefact. Select a continuation, delegation, or independent-review receiving contract from user intent and current state when unambiguous.
+   - Generating the artefact does not create the receiving context, transfer authority, establish independence/freshness, or change the current lifecycle state.
+   - Do not use this route to replace a complete human-operated `EXTERNAL_REQUIRED` execution handoff.
 
 2. **An independent substantive review is required now**.
    - If the current context is genuinely fresh for that decision → [Fresh independent review](fresh-independent-review.md). Reconstruct the decision from the actual candidate and evidence rather than inheriting the authoring conclusion. Freshness is about the context/evidence boundary; it does not require a different GitHub account unless repository-local policy explicitly requires a distinct reviewer identity.
