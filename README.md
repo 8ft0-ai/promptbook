@@ -48,9 +48,13 @@ Examples:
 /prompt for a fresh review
 ```
 
-Commands are shorthand intent selectors with only the narrow authority intrinsic to the operation defined by the workflow router. `/go` and `/step` share the same governed transition model but differ in progression depth; `/next`, `/status`, and `/help` are read-only projections over the same resolved state. For a GitHub pull request, ordinary `/review` includes the bounded write needed to record the requested review; `/review --read-only` or an unambiguous natural-language zero-write qualifier reports only in chat. `/save` carries only its narrow persistence ceiling, while `/prompt` generates text only and does not create another context, transfer authority, or establish freshness. Commands do not bypass repository-local instructions, validation, security controls, freshness, or independent-review requirements.
+Commands are shorthand intent selectors with only the narrow authority intrinsic to the operation defined by the workflow router. Commands do not grant unrelated authority. `/go` and `/step` share the same governed transition model but differ in progression depth; `/next`, `/status`, and `/help` are read-only projections over the same resolved state. For a GitHub pull request, ordinary `/review` includes the bounded write needed to record the requested review; `/review --read-only` or an unambiguous natural-language zero-write qualifier reports only in chat. `/save` carries only its narrow persistence ceiling, while `/prompt` generates text only and does not create another context, transfer authority, or establish freshness. Commands do not bypass repository-local instructions, validation, security controls, freshness, or independent-review requirements.
 
-Compatibility intents such as `/implement`, `/handoff`, `/record`, and `/analyse` may still be understood by the router but are not part of the advertised normal command surface. See [Project bootstrap and shorthand commands](guides/project-bootstrap.md) for setup and the [Workflow router](prompts/workflows/README.md) for canonical command semantics.
+See [Project bootstrap and shorthand commands](guides/project-bootstrap.md) for setup and the [Workflow router](prompts/workflows/README.md) for canonical command semantics.
+
+## Compatibility intents
+
+Compatibility intents such as `/implement`, `/handoff`, `/record`, and `/analyse` may still be understood by the router but are not part of the advertised normal command surface.
 ## Decision capsules
 
 When Promptbook genuinely needs a human judgement or authority decision, it presents the recommendation and choices first instead of making you copy an approval phrase or repository identifier:
