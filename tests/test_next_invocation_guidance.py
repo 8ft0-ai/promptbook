@@ -352,7 +352,8 @@ class NextInvocationGuidanceTests(unittest.TestCase):
             self.assertIn(marker, self.router_lower)
 
     def test_step_and_fix_are_scope_controls(self):
-        self.assertIn("`/step` | `stop` after exactly one governed transition", self.router_lower)
+        self.assertIn("| `/step` | `stop` |", self.router)
+        self.assertIn("execute exactly one safely authorised governed transition", self.router_lower)
         self.assertIn("explicit `/fix` is a scope-control request", self.router_lower)
         self.assertIn(
             "automatic remediation followed by further review/merge/verification progression remains available through `/go`",
