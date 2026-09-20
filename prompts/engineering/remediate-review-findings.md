@@ -15,6 +15,8 @@ Remediate the blocking findings on <REVIEWED_CANDIDATE>.
 
 First re-read the exact findings, the governing task/design, the current candidate, applicable repository instructions, and current authority. Before substantive mutation, resolve the `/fix` Resolved Agent Run Context defined by `prompts/workflows/resolved-agent-run-context.md` from current authoritative inputs rather than conversation memory.
 
+When review-response synthesis has already selected `BOUNDED_REMEDIATION`, consume its candidate-bound remediation plan as the authoritative synthesis input to `/fix`. Reconcile that plan against the current candidate, findings, governing design and authority, but do not silently rediscover a different repair or re-adjudicate the completed review. If the plan is stale, conflicts with current authoritative evidence, no longer covers the complete blocker set, or now requires materially broader product, architecture, security, scope or authority, stop mutation and return to response routing. If direct `/fix` follows `CHANGES REQUIRED` and no valid plan exists, the router must perform the non-mutating synthesis transition first.
+
 Bind the run context to the repository/work item, exact starting candidate identity, authority sources, instruction provenance, bounded remediation scope, effective and prohibited capabilities, owner-decision boundaries, required validation, and required evidence. Treat the context as ephemeral derived execution state, not as a new authority source.
 
 Immediately before the first material write, refresh the starting candidate identity. If it moved, invalidate the stale candidate-specific context and re-resolve before applying findings to unexpected bytes.

@@ -15,7 +15,7 @@ Repository-local instructions, explicit task authority, current authoritative ev
 
 ## Mental model
 
-`/go` is not a linear "implement, review, merge" pipeline. It is a governed continuation loop:
+`/go` is not a linear "implement, review, merge" pipeline. It is the repeated form of one governed transition loop. `/step` uses the same loop but permits exactly one governed transition before one re-resolution and stop. `/next`, `/status`, and `/help` project that same resolved state read-only rather than constructing separate lifecycle models:
 
 ```text
 intent
@@ -83,7 +83,7 @@ flowchart TD
     S -->|No| T[BLOCKED when no safe action, eligible locality/reviewer, external hand-off or concrete decision can resolve the condition]
 ```
 
-The diagram is conceptual. The router and operation-specific workflows determine the exact route for a real task. One unavailable capability or preferred connector does not by itself reach `EXTERNAL_REQUIRED`. For human-operated execution, `/go` first resolves whether another already-governed no-widening locality can truthfully perform the same authorised action. `EXTERNAL_REQUIRED` applies only when no eligible governed locality can perform the required action and a complete bounded owner-operated hand-off can actually resolve it.
+The diagram is conceptual. The router and operation-specific workflows determine the exact route for a real task. The Resolved Agent Run Context is the single derived execution-state contract beneath `/go`, `/step`, `/next`, `/status`, and `/help`; command choice changes progression depth or projection only, not the underlying authority/evidence truth. One unavailable capability or preferred connector does not by itself reach `EXTERNAL_REQUIRED`. For human-operated execution, `/go` first resolves whether another already-governed no-widening locality can truthfully perform the same authorised action. `EXTERNAL_REQUIRED` applies only when no eligible governed locality can perform the required action and a complete bounded owner-operated hand-off can actually resolve it.
 
 A genuine fresh-review boundary is a separate information-boundary case. If the current context is non-fresh, `/go` first resolves whether an eligible isolated review context can be established without inheriting author-side substantive adjudication. If yes, the review proceeds there under the ordinary `/review` ceiling. If isolation is unavailable or unprovable, the existing `Next chat: /review <durable target>` hand-off remains the safe `EXTERNAL_REQUIRED` fallback. This does not add a fourth execution-locality class and does not make the authoring context fresh.
 
@@ -244,19 +244,20 @@ After the transition, `/go` should bind the observed result to B, invalidate der
 
 ## Continuation
 
-The workflow router owns continuation preference. `/go` defaults to `auto`, which means it should enter the next safely authorised and executable workflow without waiting for a routine human `proceed` message.
+The workflow router owns continuation preference. `/go` defaults to `auto`, which means it should enter the next safely authorised and executable workflow without waiting for a routine human `proceed` message. `/step` applies a stronger one-transition progression-depth bound: after one governed transition and the verification intrinsic to establishing its result, re-resolve once, report what follows, and stop even when more routine work remains.
 
 `auto` does not cross hard boundaries by pretending they do not exist. In particular, it cannot create authority, weaken validation, bypass repository policy, ignore failed checks, make a non-fresh authoring context review its own work, bypass configured capability suppression, or convert an unavailable mechanism into a broader authorised capability. It may satisfy a required fresh-review boundary through an eligible genuinely isolated child review context because the independent adjudication then occurs outside the authoring context; if no such context is eligible/provable, the manual fresh-context stop remains.
 
 The intended ordinary shape is:
 
 ```text
-resolve
-  -> authorised action or required independent review
-  -> execute through eligible locality or isolated review context
-  -> observe result
-  -> re-resolve internally
-  -> next authorised action
+resolve one shared governed state
+  -> propose transition T or derive boundary B
+  -> /next reports T/B
+  -> /status reports broader state + T/B
+  -> /help advises from the same T/B
+  -> /step executes at most T, verifies, re-resolves once, stops
+  -> /go executes T and repeats until B
 ```
 
 An ordinary lifecycle milestone should not become:
@@ -277,7 +278,13 @@ In the common case, the operator should need to supply only the operation and wo
 
 ```text
 /go <target>
+/step <target>
+/next <target>
+/status <target>
+/help <question-or-topic>
 ```
+
+The progression/navigation family should reconstruct equivalent authoritative state for equivalent inputs. The operator should not need to transport candidate heads, review IDs, CI runs, or lifecycle labels merely because one projection command needs them internally.
 
 Everything else that is decision-critical but safely reconstructable from authoritative sources should normally be derived rather than copied into the command. This can include exact candidate heads, validation run identities, durable review or comment identities, prior dispositions and current lifecycle state.
 
@@ -287,11 +294,11 @@ That does not mean all explicit input is redundant. Classify additional input in
 2. **Genuine human decisions / authority** — judgement, choice or permission that current authoritative state does not supply. These remain real `DECISION_REQUIRED` boundaries when needed.
 3. **Machine-reconstructable state** — durable evidence or lifecycle facts that can be recovered unambiguously from authoritative sources. These should not normally become mandatory operator input merely because the workflow implementation needs them internally.
 
-Reconstruction must remain fail closed. If a candidate identity, evidence record, governing objective, availability decision, material locality dependency or fresh-review isolation/target binding cannot be reconstructed unambiguously, `/go` must surface the real uncertainty instead of guessing or treating stale conversation state as authority.
+Reconstruction must remain fail closed. If a candidate identity, evidence record, governing objective, availability decision, material locality dependency or fresh-review isolation/target binding cannot be reconstructed unambiguously, the selected command must surface the real uncertainty instead of guessing or treating stale conversation state as authority. Read-only projections do not gain permission to invent missing state merely because they do not mutate.
 
 ## Conversational terminal states
 
-A routed objective ends only in one of four terminal states:
+`COMPLETE`, `DECISION_REQUIRED`, `EXTERNAL_REQUIRED`, and `BLOCKED` are derived router boundaries from the resolved state plus proposed transition; they are not an independently mutable terminal-state variable. A routed objective ends only when one of these derived boundaries applies:
 
 | State | Meaning |
 | --- | --- |
@@ -449,6 +456,6 @@ Any semantic change resulting from these follow-on investigations should be sepa
 
 ## Target operating principle
 
-> In the common case, `/go <target>` should be enough: reconstruct everything safely reconstructable, continue automatically across routine authorised transitions, prefer already-governed execution localities over owner execution transport, prefer eligible genuinely isolated review contexts over owner review-context transport, and surface only a genuine human-decision, unavoidable execution-environment, unavoidable manual fresh-review, blocked or completion boundary.
+> In the common case, the operator should choose only progression depth or projection: `/go <target>` keeps going until a real boundary; `/step <target>` performs one governed transition; `/next` tells what comes next; `/status` tells where the objective stands; `/help` advises what to do. All should reconstruct the same authoritative state rather than making the operator transport lifecycle machinery.
 
 The principle reduces unnecessary human orchestration without weakening authority, evidence, validation, security, freshness, capability suppression, no-widening projection, repository requirements for human/formal review or fail-closed behaviour.

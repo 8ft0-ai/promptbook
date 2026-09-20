@@ -133,27 +133,36 @@ Repositories with stronger separation-of-duties requirements should state them e
 
 ## Shorthand commands
 
-The canonical command semantics live in [`prompts/workflows/README.md`](../prompts/workflows/README.md). The small public vocabulary is:
+The canonical command semantics live in [`prompts/workflows/README.md`](../prompts/workflows/README.md). The normal public vocabulary is:
 
-- `/go [target]` — continue the governed objective through the router; when the target is already clear, `/go` alone means perform the next authorised, safely decidable action rather than merely describe the next gate.
-- `/review [target]` — request a substantive fresh review as the current deliverable. For a GitHub pull request, record the requested review on GitHub by default; use `/review --read-only [target]` or an unambiguous natural-language zero-write qualifier to report only in chat. Review recording does not grant merge, remediation, release, deployment, settings, credential, production, or other unrelated authority.
+- `/go [target]` — repeat safely authorised governed transitions until a real boundary.
+- `/step [target]` — perform exactly one governed transition, including intrinsic verification, re-resolve once, then stop.
+- `/next [target]` — report the single next governed transition or real boundary, read-only. Natural-language "what's next?" has the same intent.
+- `/status [target]` — report broader authoritative state, identity, blocker/boundary, next transition, `/go` behaviour, and minimum decision-critical evidence, read-only.
+- `/help [topic-or-question]` — advise what the operator should do and why from the same resolved state, without executing the recommendation.
 - `/plan [target]` — plan bounded work using the Promptbook planning prompt.
-- `/implement [target]` — implement already-approved bounded work using the Promptbook implementation prompt.
-- `/fix [target]` — remediate current bounded review findings using existing authority.
-- `/handoff [target]` — produce the shortest safe continuation handoff without executing the handed-off task.
-- `/status [target]` — reconstruct and report authoritative current state read-only; do not mutate unless the user separately requests continuation.
+- `/review [target]` — request substantive fresh review. For a GitHub pull request, record the requested review on GitHub by default; use `/review --read-only [target]` or an unambiguous natural-language zero-write qualifier to report only in chat.
+- `/fix [target]` — remediate objectively bounded review findings under existing authority, validate the changed candidate, then return control rather than silently continuing to later lifecycle effects.
+- `/save [target]` — persist the material result using only the narrow repository-native persistence authority defined by the router/run-context contract.
+- `/prompt [target-or-request]` — generate a continuation, delegation, or intended-independent context-transfer prompt artefact; do not execute it or treat generation as freshness/authority.
 
-Commands are intentionally not a mini CLI. The explicit `/review --read-only` modifier exists because it changes the write-back boundary; otherwise add natural-language qualifiers when needed, for example:
+Commands are intentionally not a mini CLI. `/review --read-only` is the one explicit modifier justified by the write-back boundary; otherwise add natural-language qualifiers when needed, for example:
 
 ```text
 /go until the next genuinely fresh review boundary
-/status issue #42
+/step issue #42
+/next
+/help why did go stop?
 /review PR #17
 /review --read-only PR #17
+/prompt for a subagent to investigate this and return its findings
 ```
 
 If the target is omitted, resolve it from the current conversation and authoritative repository state. If that is not safely possible, fail closed rather than guessing.
 
+## Compatibility intents
+
+Compatibility intents `/implement`, `/handoff`, `/record`, and `/analyse` may remain understood during migration, but repositories should not copy or advertise them as the normal public command vocabulary. `/implement` still maps to the existing approved-implementation workflow when explicitly invoked; `/handoff` maps to context-transfer prompting where appropriate without replacing complete `EXTERNAL_REQUIRED` human execution procedures; `/record` maps to `/save`; `/analyse` remains read-only analysis/synthesis.
 ## Direct prompt escape hatch
 
 The router is the default for ordinary continuation. A caller may still explicitly name an individual Promptbook prompt when that exact standalone deliverable is wanted. Explicit prompt selection does not weaken repository-local precedence or create authority that the task does not already have. In particular, selecting the standalone analytical pull-request review prompt does not implicitly select router `/review` write-back behaviour.

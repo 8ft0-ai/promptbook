@@ -5,12 +5,15 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 PUBLIC_COMMANDS = {
     "/go",
-    "/review",
-    "/plan",
-    "/implement",
-    "/fix",
-    "/handoff",
+    "/step",
+    "/next",
     "/status",
+    "/help",
+    "/plan",
+    "/review",
+    "/fix",
+    "/save",
+    "/prompt",
 }
 
 
@@ -155,7 +158,7 @@ class ReviewCompletionContractTests(unittest.TestCase):
             self.fresh_lower,
         )
 
-    def test_existing_review_boundaries_and_commands_are_unchanged(self):
+    def test_review_boundaries_and_public_commands_remain_aligned(self):
         self.assertIn("zero github write-back", self.router_lower)
         self.assertIn("suppress every review-record mutation", self.fresh_lower)
         self.assertIn(
@@ -167,7 +170,7 @@ class ReviewCompletionContractTests(unittest.TestCase):
         self.assertIn("single-maintainer", self.fresh_lower)
 
         shorthand = self.router.split("## Shorthand commands", 1)[1].split(
-            "## Continuation policy", 1
+            "## Compatibility intents", 1
         )[0]
         commands = set(re.findall(r"^- `(/[-a-z]+)(?: [^`]*)?`", shorthand, re.M))
         self.assertEqual(PUBLIC_COMMANDS, commands)

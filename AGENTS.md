@@ -26,7 +26,7 @@ When behaviour changes, add or update regression coverage that would fail if the
 
 The current public shorthand vocabulary is:
 
-`/go`, `/review`, `/plan`, `/implement`, `/fix`, `/handoff`, `/status`.
+`/go`, `/step`, `/next`, `/status`, `/help`, `/plan`, `/review`, `/fix`, `/save`, `/prompt`.
 
 `prompts/workflows/README.md` is canonical for command semantics. The root `README.md` is the quick-start/discovery surface, `guides/project-bootstrap.md` is the setup surface, and `BOOTSTRAP` is the copyable project-bootstrap text.
 

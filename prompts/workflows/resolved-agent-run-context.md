@@ -2,13 +2,13 @@
 
 ## Purpose
 
-Define the reusable Promptbook contract for deriving the effective execution state of a governed agent operation from current authoritative inputs. The explicitly supported operations are `/review`, `/fix`, and `/go`, each with its own capability and lifecycle profile under one common authority/evidence model.
+Define the reusable Promptbook contract for deriving the effective execution state of a governed agent operation from current authoritative inputs. The explicitly effectful operation profiles are `/review`, `/fix`, `/go`, and `/save`, under one common authority/evidence model. `/step` shares `/go`'s progression state and action gateway but limits progression depth to one governed transition. `/next`, `/status`, and `/help` are read-only projections over the same resolved state; `/prompt` is pure artefact generation and does not create an execution profile merely by being generated.
 
 Promptbook is the canonical owner of this workflow contract. The context is ephemeral derived state, not a new durable authority source and not a replacement for repository-native instructions, issue or pull-request authority, immutable Git identity, CI evidence, accepted decisions, or other durable records.
 
 ## When to use
 
-Use this contract before substantive `/review` adjudication, before substantive `/fix` mutation, and before substantive `/go` lifecycle progression so the operation executes from explicit repository/work authority, relevant immutable identity, capability boundaries, instruction provenance, current lifecycle state, and required evidence rather than remembered conversation state.
+Use this contract before substantive `/review` adjudication, before substantive `/fix` mutation, before substantive `/go` or `/step` lifecycle progression, and before `/save` persistence so the operation executes from explicit repository/work authority, relevant immutable identity, capability boundaries, instruction provenance, current lifecycle state, and required evidence rather than remembered conversation state. `/next`, `/status`, and `/help` should resolve the same applicable governed state read-only when they need authoritative lifecycle information.
 
 An operation may reuse the common model only when its own authority and capability semantics are deliberately defined here. Supporting one profile does not generalise another operation's permissions.
 
@@ -21,11 +21,17 @@ Bind the operation to the repository, governing work identity, immutable candida
 
 For `/fix`, also bind the starting candidate, remediation scope, required validation, and candidate transition before substantive mutation.
 
-For `/go`, also bind the governing objective, current lifecycle state, current candidate and review disposition where applicable, continuation mode, proposed next governed action, required preconditions, required evidence, and completion conditions. Before every consequential `/go` transition, classify the exact proposed action through the `/go` action gateway and execute only an `ALLOW` action that remains executable after refreshing decision-critical state.
+For `/go` or `/step`, also bind the governing objective, current lifecycle state, current candidate and review disposition where applicable, progression depth, continuation mode, proposed next governed action, required preconditions, required evidence, and completion conditions. Before every consequential progression transition, classify the exact proposed action through the existing `/go` action gateway and execute only an `ALLOW` action that remains executable after refreshing decision-critical state. `/step` differs from `/go` only by progression depth: execute at most one governed transition, perform verification intrinsic to establishing that result, re-resolve once, and stop.
 
-Treat the resolved context as derived execution state rather than a new authority source. Do not fill missing authority or evidence from conversation memory. Technical capability availability may only narrow executable capability; it must never create authority. When an applicable Promptbook capability-availability key is relevant to a `/fix` or `/go` action, resolve it once after action-authority classification using the capability-availability contract and attach that resolved record to the derived run state rather than letting downstream consumers rediscover configuration independently.
+Treat the resolved context as derived execution state rather than a new authority source. Do not fill missing authority or evidence from conversation memory. Technical capability availability may only narrow executable capability; it must never create authority. When an applicable Promptbook capability-availability key is relevant to a `/fix`, `/go`, or `/step` action, resolve it once after action-authority classification using the capability-availability contract and attach that resolved record to the derived run state rather than letting downstream consumers rediscover configuration independently.
 
-For an authorised `/go` action whose initially selected mechanism is unavailable or genuinely insufficient, resolve execution locality before selecting a human-operated `EXTERNAL_REQUIRED` hand-off. Prefer an eligible connected/native mechanism, then governed hosted/hermetic execution when the required truth does not depend on owner-private state, then a separately governed bounded owner-local executor when owner-local/private state is genuinely decision-critical. Locality selection may narrow mechanism and projected capability only; it must never create authority, bypass configured suppression, or widen credentials, network, mutation, or other effect boundaries.
+For `/next`, `/status`, and `/help`, project the same material state and proposed next governed transition without executing the action gateway's effect. Equivalent authoritative inputs must not produce a different next transition merely because the user selected a different read-only projection command.
+
+For `/save`, bind the owning repository/work item, candidate durable home, narrow intrinsic persistence authority, prohibited mutation classes, and evidence of the resulting persistence action. `/save` may persist only the smallest repository-native record allowed by its operation ceiling; technical write capability must not widen that ceiling.
+
+For `/prompt`, do not derive mutation capability merely because another context may later receive the generated text. Prompt generation leaves the current governed state unchanged and establishes neither delegated authority nor freshness.
+
+For an authorised `/go` or `/step` action whose initially selected mechanism is unavailable or genuinely insufficient, resolve execution locality before selecting a human-operated `EXTERNAL_REQUIRED` hand-off. Prefer an eligible connected/native mechanism, then governed hosted/hermetic execution when the required truth does not depend on owner-private state, then a separately governed bounded owner-local executor when owner-local/private state is genuinely decision-critical. Locality selection may narrow mechanism and projected capability only; it must never create authority, bypass configured suppression, or widen credentials, network, mutation, or other effect boundaries.
 
 When independent review is required and the current context is not genuinely fresh, resolve fresh-review context eligibility separately from execution locality. A candidate child reviewer is eligible only when the execution surface can establish a reasoning/information boundary that excludes author-side substantive adjudication, expected conclusion and hidden conversational state as review evidence. Bind only the minimal durable review target or equivalent reconstruction reference needed for the child to independently bootstrap applicable authority and reconstruct the exact candidate, checks and review state. Resolve the child as a new `/review` operation under the `/review` ceiling rather than inheriting the originating `/go`, `/implement` or `/fix` capability profile. If isolation is unavailable, ambiguous or unprovable, preserve the manual fresh-context fallback rather than manufacturing independence.
 
@@ -83,7 +89,7 @@ The representation may be textual or structured. It need not be committed for ev
 
 ## Capability-availability integration
 
-When a material `/fix` or `/go` action has an explicit Promptbook capability-availability key, resolve availability only after the exact action has passed the operation's authority gateway. Use [Capability availability overrides](capability-availability-overrides.md) to derive one record equivalent to `resolved_capability_availability` for the current repository/work/action identity.
+When a material `/fix` action or `/go` progression action has an explicit Promptbook capability-availability key, resolve availability only after the exact action has passed the operation's authority gateway. `/step` has no independent availability model: when it selects one governed transition, that action is the same `/go` progression action for availability, suppression, locality and projection purposes. Use [Capability availability overrides](capability-availability-overrides.md) to derive one record equivalent to `resolved_capability_availability` for the current repository/work/action identity.
 
 The ordering is:
 
@@ -228,6 +234,7 @@ starting_candidate_identity
 resolved_authority_sources
 applicable_repository_instructions
 remediation_scope
+remediation_plan
 effective_capabilities
 prohibited_capabilities
 owner_decision_boundaries
@@ -239,6 +246,8 @@ required_evidence
 `resolved_capability_availability` is required only when the current material action has an explicit availability key; otherwise its absence is explicit and carries no meaning.
 
 `starting_candidate_identity` is the immutable reviewed candidate or equivalent revision to which the blocking findings and remediation authority apply. `remediation_scope` is derived from the governing findings, task/design, accepted plan where applicable, repository instructions, and explicit current authority. It is not inferred merely from what a tool could change.
+
+`remediation_plan` is the candidate-bound remediation plan required when review-response synthesis has classified the response as `BOUNDED_REMEDIATION`. It binds the source candidate identity, blocker set, material finding relationships or shared invariant, bounded correction, required validation, and explicit scope boundaries that synthesis determined. The plan is authoritative synthesis input to `/fix`, not mutation authority: `/fix` must refresh current state and authority before acting, and must fail closed or return to response routing if the plan is stale, conflicts with current authoritative evidence, or would require a broader correction. When direct `/fix` follows `CHANGES REQUIRED` and no valid remediation plan exists yet, the router must perform the required non-mutating response synthesis before substantive mutation.
 
 `available_capabilities` and `authority_derived_capabilities` may be retained as intermediate derived sets when useful for reconstruction, but they are not new authority sources.
 
@@ -343,9 +352,80 @@ next_governed_state
 
 The record should make clear which material actions were `ALLOW`, which proposed actions were `REQUIRE OWNER / SEPARATE AUTHORITY` or `FORBID`, and which authorised actions could not be executed because of a capability boundary.
 
+## Governed-state projection
+
+The Resolved Agent Run Context remains the single canonical derived execution-state contract. Commands must not construct a second independently resolved lifecycle model.
+
+Project only the material dimensions needed for routing and operator-facing interpretation, such as objective identity/scope, work/candidate state, review disposition, response-routing state, authority classification, execution feasibility/locality, and freshness requirements.
+
+`COMPLETE`, `DECISION_REQUIRED`, `EXTERNAL_REQUIRED`, and `BLOCKED` are derived router boundaries, not an independently mutable terminal-state dimension. A projection must therefore derive one of:
+
+```text
+BOUNDARY
+  NONE
+  COMPLETE
+  DECISION_REQUIRED
+  EXTERNAL_REQUIRED
+  BLOCKED
+```
+
+from the resolved state plus proposed transition. Do not allow contradictory combinations such as an execution state that is blocked while a separately asserted terminal state remains active.
+
+For equivalent authoritative inputs, preserve the shared projection invariant:
+
+```text
+/next   -> reports transition T or boundary B
+/status -> reports Next: T/B
+/help   -> advice is based on T/B
+/step   -> executes T only if T is ALLOW and executable; otherwise reports B
+/go     -> repeats the same transition loop until B
+```
+
+The projection may be textual or structured, but it is derived from the same authoritative run context and never becomes a competing source of authority.
+
+## `/save` required context
+
+Before substantive `/save` persistence, resolve at least:
+
+```text
+operation
+repository_identity
+work_item_identity
+resolved_authority_sources
+applicable_repository_instructions
+candidate_durable_home
+intrinsic_persistence_authority
+effective_capabilities
+prohibited_capabilities
+required_evidence
+```
+
+`candidate_durable_home` should prefer an existing canonical issue/work item when one unambiguously owns the result. If none exists and the result is unresolved work, a decision, experiment, or follow-up, one new issue may be created when repository policy permits it.
+
+The intrinsic `/save` operation ceiling is logically equivalent to:
+
+```text
+ALLOW
+- repository/work-item reads needed to choose the canonical home
+- add/update the minimum issue/work-item comment or metadata needed to preserve the result
+- update the existing canonical issue body when that is clearly the owning record
+- create one new issue when no existing canonical work item is appropriate
+
+FORBID UNDER /save ALONE
+- production/code/configuration mutation
+- branch creation or branch mutation
+- pull-request creation or merge
+- repository-document file mutation that requires a branch/PR workflow
+- cross-repository mutation
+- issue closure unless separately authorised
+- release/deploy/apply/provider/settings/credential/secret effects
+- broader engineering implementation
+```
+
+If the correct durable home is a repository document whose modification requires ordinary branch/PR mutation, `/save` alone may identify or record that need, or consume separately established mutation authority if one already exists; it must not manufacture that authority.
 ## `/go` required context
 
-Before substantive `/go` progression, resolve at least:
+Before substantive `/go` or `/step` progression, resolve at least:
 
 ```text
 operation
@@ -379,7 +459,7 @@ completion_conditions
 
 `current_candidate_identity` and `current_review_disposition` may be absent when the current lifecycle state has no candidate/review concept, but their absence must be explicit rather than silently filled from conversation memory.
 
-`next_governed_action` is a proposed transition, not permission to execute it. The exact action must still pass the `/go` action gateway immediately before consequential execution.
+`next_governed_action` is a proposed transition, not permission to execute it. The exact action must still pass the `/go` action gateway immediately before consequential execution. `/step` consumes this same action gateway and stops after one verified transition/re-resolution; `/next`, `/status`, and `/help` may expose or interpret the proposal read-only without executing it.
 
 ## `/go` capability derivation
 
@@ -595,7 +675,8 @@ Resolve the evidence necessary to support the requested operation before adjudic
 - a static source observation;
 - an applicable repository-rule or authority citation;
 - for `/fix`, the bounded implementation delta and resulting candidate identity;
-- for `/go`, the starting state, proposed action, authority classification, applicable availability, resolved execution locality when material, resolved fresh-review context when material, resulting state/identity, validation/evidence, and remaining boundaries.
+- for `/go` or `/step`, the starting state, proposed action, authority classification, applicable availability, resolved execution locality when material, resolved fresh-review context when material, resulting state/identity, validation/evidence, and remaining boundaries;
+- for `/save`, the selected canonical durable home, persistence action, operation-ceiling classification, and resulting durable evidence.
 
 Do not fabricate executed evidence where only static analysis occurred. Identify static observations as static. If a material claim requires execution that was not performed, represent that absence rather than implying the execution succeeded.
 
@@ -632,9 +713,11 @@ For `/review`, it keeps the existing Promptbook review-recording model intact: o
 
 For `/fix`, it permits only bounded remediation mutation derived from current authority, classifies material actions before execution, distinguishes candidate A from candidate B, and prevents A-specific review or validation from silently carrying forward after bytes change.
 
-For `/go`, it derives effective lifecycle capabilities by monotonic narrowing, classifies every consequential transition through an explicit authority gateway, resolves eligible execution locality before human-operated external fallback, separately resolves eligible fresh-review context before manual fresh-context fallback, consumes bounded decisions only for their exact effect, invalidates stale state across candidate/result transitions, and prevents a successful intermediate action from being mistaken for completion.
+For `/go`, it derives effective lifecycle capabilities by monotonic narrowing, classifies every consequential transition through an explicit authority gateway, resolves eligible execution locality before human-operated external fallback, separately resolves eligible fresh-review context before manual fresh-context fallback, consumes bounded decisions only for their exact effect, invalidates stale state across candidate/result transitions, and prevents a successful intermediate action from being mistaken for completion. `/step` reuses that exact progression model but stops after one verified governed transition and one re-resolution. `/next`, `/status`, and `/help` project the same resolved state read-only instead of creating parallel lifecycle truth.
 
-When a named capability-availability key is relevant to `/fix` or `/go`, the run context carries one resolved availability record from Promptbook's deterministic carrier contract so local progression and delegated execution apply the same configuration decision. For `/go`, locality selection consumes that same availability decision and the existing action-specific capability projection rather than rediscovering or widening them. Fresh-review context resolution does not reuse the locality classes; it re-resolves a bounded `/review` child profile from the current review authority ceiling.
+For `/save`, it permits only the minimum repository-native persistence mutation allowed by its narrow operation ceiling and prevents a persistence request from becoming branch/PR/code/cross-repository/production authority. `/prompt` remains artefact generation rather than execution state.
+
+When a named capability-availability key is relevant to `/fix`, `/go`, or `/step`, the run context carries one resolved availability record from Promptbook's deterministic carrier contract so local progression and delegated execution apply the same configuration decision. For `/go` progression, including `/step` when it selects one transition, locality selection consumes that same availability decision and the existing action-specific `/go` capability projection rather than rediscovering, duplicating or widening them. Fresh-review context resolution does not reuse the locality classes; it re-resolves a bounded `/review` child profile from the current review authority ceiling.
 
 ## `/review` lifecycle
 
@@ -738,6 +821,11 @@ When the next gate is independent review, never execute that adjudication in a c
 
 After a consequential action or delegated review result, bind resulting evidence to the state/identity for which it was observed, invalidate evidence that does not transfer, and re-resolve before another consequential action. Preserve fresh-review boundaries and independently gate any later remediation, merge, release, deployment, production mutation, or close-out rather than inheriting authority from the prior step.
 
+## `/save` lifecycle
+
+A `/save` invocation is itself the bounded persistence request. It may select and perform only the smallest canonical repository-native persistence action permitted by the `/save` operation ceiling. After persistence, return the durable location/evidence and stop. Do not automatically enter implementation, issue closure, branch/PR creation, or another lifecycle workflow.
+
+A later operation that acts on the saved record must independently reconstruct its own authority; the fact that `/save` created or updated a durable record does not grant that later operation authority.
 ## Delegation invariant
 
 Future delegated or child execution contexts must never gain authority merely through delegation:
@@ -752,11 +840,11 @@ For delegated fresh review, use the stricter operation-specific form:
 child_review_authority ⊆ effective_review_authority
 ```
 
-A fresh-review child is resolved as `/review`; it does not inherit broader parent `/go`, `/implement`, or `/fix` mutation capability. An external execution substrate should likewise receive only the resolved authorised subset needed for the delegated action. Delegation cannot refresh stale parent authority, create a new approval, or make an authoring context fresh. This contract does not introduce subagent infrastructure or make the substrate a workflow-policy owner.
+A fresh-review child is resolved as `/review`; it does not inherit broader parent `/go`, `/step`, `/implement`, or `/fix` mutation capability. An external execution substrate should likewise receive only the resolved authorised subset needed for the delegated action. Delegation cannot refresh stale parent authority, create a new approval, or make an authoring context fresh. This contract does not introduce subagent infrastructure or make the substrate a workflow-policy owner.
 
 ## Boundaries / limitations
 
-This contract defines `/review`, `/fix`, and `/go` run contexts, including bounded fresh-review child-context resolution, but it does not introduce a new Switchboard schema, operating-system or network sandboxing, Guardian-style approval automation, native subagents, agentctl policy ownership, Watchtower workflow ownership, a global executor/capability registry, arbitrary remote shell or argv dispatch, a global agent registry, or a universal persisted run-context schema.
+This contract defines `/review`, `/fix`, `/go` progression, and `/save` run contexts, including bounded fresh-review child-context resolution. `/step` is the one-transition progression-depth mode of the `/go` run context and does not introduce a separate operation ceiling, authority model, availability model or executor profile. The contract does not introduce a new Switchboard schema, operating-system or network sandboxing, Guardian-style approval automation, native subagents, agentctl policy ownership, Watchtower workflow ownership, a global executor/capability registry, arbitrary remote shell or argv dispatch, a global agent registry, or a universal persisted run-context schema.
 
 It does not intrinsically grant merge, release, tag, deployment, infrastructure/provider, settings, credential, secret, production, destructive-action, material-cost, or unrelated mutation authority. Those actions require separate current authority where they are permitted at all, and `/go` must resolve that authority explicitly before execution.
 

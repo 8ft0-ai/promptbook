@@ -2,24 +2,42 @@
 
 ## Purpose
 
-Produce a compact, executable prompt or external-action handoff that lets another chat, agent, or human-operated environment continue the current work without reconstructing unnecessary history.
+Produce either a compact context-transfer prompt artefact for another reasoning context or a complete human-operated external-action handoff, without making the conversation transcript itself executable state.
 
 ## When to use
 
-Use at a real context or capability boundary: fresh review when no eligible isolated review context can be established automatically, a new chat/session, a different agent, or an external execution environment.
+Use when `/prompt` or a compatibility handoff intent requests a context-transfer artefact for fresh review, a new chat/session, or another agent context; when fresh review requires a manual new-context fallback because no eligible isolated review context can be established automatically; or when an authorised action genuinely requires human-operated external execution.
 
 ## Prompt
 
 ```text
-Create the shortest safe handover for continuing <CURRENT_WORK> in the required receiving context.
+Create the shortest safe transfer artefact for <CURRENT_WORK>.
 
-First distinguish the handover type:
-- for a fresh review, new chat/session, or another agent context, use this handover only after the governing workflow has resolved that no eligible/provable isolated fresh-review context can satisfy the boundary automatically, or when a handover itself is explicitly the requested deliverable; then prefer an existing public shorthand invocation when a durable target is sufficient for the receiving context to reconstruct all decision-critical current state and authority; otherwise produce the shortest directly copyable prompt that carries only the information that cannot safely be reconstructed;
-- for human-operated external execution, provide the concrete action the human must perform now, not merely a description of the capability or context that is needed.
+First distinguish the transfer type:
+
+- `CONTINUATION_PROMPT` — generate a prompt intended for another reasoning context to take over the governed objective. Prefer a minimal durable target or public shorthand invocation when the receiver can reconstruct current authority/state safely. Generating this prompt does not end the current context, transfer authority, or change lifecycle state.
+- `DELEGATION_PROMPT` — generate a prompt for another reasoning context to perform one bounded question/task and return a result here. State the bounded objective, allowed/prohibited effects, what must be reconstructed, stop conditions, and a return contract. Generating the prompt does not create or invoke the delegate and does not grant it authority.
+- `INDEPENDENT_PROMPT` — generate a prompt intended for genuinely independent adjudication, normally fresh substantive review. Transfer only safe reconstruction/navigation information; exclude author-side substantive adjudication, expected conclusion, proposed fix, or private reasoning. Generating the prompt does not establish freshness or independence; the eventual receiving context must separately satisfy the fresh-review eligibility contract.
+- human-operated external execution — provide the concrete action the human must perform now, not merely a description of the capability or context that is needed.
+
+For an unqualified `/prompt`, infer the receiving contract only when current state and user intent make it unambiguous. Otherwise expose the smallest real ambiguity instead of inventing a flag grammar or silently choosing the wrong transfer semantics.
+
+For a delegated prompt, a default return contract should be logically equivalent to:
+
+```text
+Return:
+- conclusion;
+- material evidence;
+- unresolved uncertainty;
+- exact identities examined where decision-critical;
+- no continuation of the parent objective.
+```
+
+A prompt artefact is navigation/instruction text only. The parent governed state remains unchanged until some separately authorised receiving context actually performs work and returns evidence.
 
 For a fresh-context boundary, automatic resolution and manual handover are distinct from execution locality. Do not probe `connected/native`, `hosted/hermetic`, or owner-local execution classes merely to satisfy reasoning independence. Instead, the governing workflow first determines whether a genuinely isolated review context can be established under the fresh-review and resolved-run-context contracts. If it can, no human context handover is required. If it cannot, or isolation cannot be proved, the existing manual handover remains the fail-closed fallback.
 
-For that manual fresh-context fallback, a minimal result may be a `Next chat:` invocation such as `/review` with the exact durable review target. Keep the genuine freshness boundary explicit. A shorthand invocation is navigation only: it does not grant approval, mutation, merge, implementation, execution, credential, production, or other authority, and the receiving context must refresh authoritative state before acting.
+For that manual fresh-context fallback, when the durable target is sufficient for reconstruction, prefer an existing public shorthand invocation. A minimal result may be a `Next chat:` invocation such as `/review` with the exact durable review target. Keep the genuine freshness boundary explicit. A shorthand invocation is navigation only: it does not grant approval, mutation, merge, implementation, execution, credential, production, or other authority, and the receiving context must refresh authoritative state before acting.
 
 Preserve only information that materially affects the next decision or action. Include information in a full handover only when it cannot be safely reconstructed from the durable target, such as:
 - repository/system and governing issue/task identity;
@@ -48,7 +66,7 @@ If an equivalent valid external handoff already exists and decision-critical sta
 
 Remove duplicated historical narrative, superseded identities, old run details that do not affect the next decision, and conclusions a genuinely fresh context must independently determine. Prefer authoritative-state reconstruction over copying a large handover payload when durable sources make that safe.
 
-For a fresh-context handoff, the result must be directly copyable as the next prompt or minimal shorthand invocation. For human-operated external execution, the result must be directly executable as the required action. Neither form may require the recipient to search the previous conversation for missing instructions.
+For a context-transfer request, the result must be directly copyable as the receiving prompt or minimal shorthand invocation. For human-operated external execution, the result must be directly executable as the required action. Neither form may require the recipient to search the previous conversation for missing instructions.
 ```
 
 ## Inputs
@@ -57,11 +75,11 @@ For a fresh-context handoff, the result must be directly copyable as the next pr
 
 ## What it does
 
-Turns a long working session into a minimal continuation contract while preserving the evidence and authority needed to avoid unsafe guessing. For fresh review, it is the manual fallback after the governing workflow cannot establish a provably isolated review context automatically; when the fallback is needed, it prefers a reconstructible public shorthand invocation when durable sources already contain the needed state and retains a fuller handover only when reconstruction would be insufficient. It separately preserves complete human-operated external execution handoffs so capability boundaries expose the exact action to perform rather than only naming the receiving environment. For complex command-line execution, the operational-artifact contract materialises execution state and coupled guards while retaining the atomic-inline exception.
+Generates minimal context-transfer artefacts for continuation, bounded delegation, or intended independent adjudication without changing the parent lifecycle merely by generating text. For fresh review, a manual continuation/independent prompt remains the fallback after the governing workflow cannot establish a provably isolated review context automatically; generating an independent prompt never proves freshness. The workflow separately preserves complete human-operated external execution handoffs so capability boundaries expose the exact action to perform rather than only naming the receiving environment. For complex command-line execution, the operational-artifact contract materialises execution state and coupled guards while retaining the atomic-inline exception.
 
 ## Boundaries / limitations
 
-Do not use handover compression to omit active blockers, required authority, security boundaries, or identities that the next decision genuinely depends on. A shorthand invocation is navigation, never authority. Manual fresh-context handover remains fail closed when automatic isolation is unavailable or unprovable; the handover itself does not make a receiving context fresh unless that context actually satisfies the fresh-review information boundary. Do not expose credentials or secret values, do not manufacture a command sequence when the safe external procedure is not sufficiently determined, and never substitute a slash command for a complete executable external action when human-operated execution is the actual boundary. Artifact delivery never creates authority, and unavailable file delivery must not be answered with a large fragile transcript-dependent executable block.
+Do not use prompt/handover compression to omit active blockers, required authority, security boundaries, or identities that the next decision genuinely depends on. A shorthand invocation or generated prompt is navigation/instruction text, never authority. Prompt generation does not create another context, establish delegated capability, or alter parent lifecycle state. Manual fresh-context handover remains fail closed when automatic isolation is unavailable or unprovable; the generated prompt itself does not make a receiving context fresh unless that context actually satisfies the fresh-review information boundary. Do not expose credentials or secret values, do not manufacture a command sequence when the safe external procedure is not sufficiently determined, and never substitute a slash command for a complete executable external action when human-operated execution is the actual boundary. Artifact delivery never creates authority, and unavailable file delivery must not be answered with a large fragile transcript-dependent executable block.
 
 ## Status
 

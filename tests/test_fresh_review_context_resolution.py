@@ -185,5 +185,17 @@ class FreshReviewContextResolutionTests(unittest.TestCase):
         self.assertIn("only when no eligible/provable isolated context", self.remediate_lower)
 
 
+    def test_independent_prompt_generation_does_not_establish_freshness(self):
+        self.assertIn("`independent_prompt`", self.handover_lower)
+        self.assertIn("generating the prompt does not establish freshness or independence", self.handover_lower)
+        self.assertIn("eventual receiving context must separately satisfy the fresh-review eligibility contract", self.handover_lower)
+
+    def test_prompt_generation_does_not_create_delegate_or_transfer_authority(self):
+        self.assertIn("`delegation_prompt`", self.handover_lower)
+        self.assertIn("generating the prompt does not create or invoke the delegate", self.handover_lower)
+        self.assertIn("a prompt artefact is navigation/instruction text only", self.handover_lower)
+        self.assertIn("parent governed state remains unchanged", self.handover_lower)
+
+
 if __name__ == "__main__":
     unittest.main()

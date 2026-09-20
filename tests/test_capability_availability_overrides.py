@@ -125,6 +125,12 @@ class CapabilityAvailabilityOverrideTests(unittest.TestCase):
         self.assertIn("cannot widen", self.projection_lower)
         self.assertIn("does not imply", self.projection_lower)
 
+    def test_step_consumes_go_availability_model(self):
+        self.assertIn("`/step` has no independent availability model", self.availability_lower)
+        self.assertIn("same resolved availability record", self.availability_lower)
+        self.assertIn("suppression behaviour", self.availability_lower)
+        self.assertIn("transition selected by `/step`", self.availability_lower)
+
     def test_autonomous_progression_applies_availability_before_execution(self):
         self.assertIn("capability-availability-overrides.md", self.progression)
         self.assertIn("pull_request.mark_ready", self.progression)

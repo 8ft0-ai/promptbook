@@ -23,26 +23,38 @@ Once Promptbook is configured for a project, common workflow intents can be invo
 
 | Command | Intent |
 | --- | --- |
-| `/go [target]` | Continue governed work as far as safely possible |
-| `/review [target]` | Review a pull request and record the requested GitHub review by default |
+| `/go [target]` | Continue governed work through repeated safe transitions until a real boundary |
+| `/step [target]` | Perform exactly one governed transition, verify it, re-resolve once, then stop |
+| `/next [target]` | Report the single next governed transition or boundary, read-only |
+| `/status [target]` | Reconstruct and report broader authoritative current state, read-only |
+| `/help [topic-or-question]` | Advise what to do next and why from current governed state, read-only |
 | `/plan [target]` | Plan bounded work |
-| `/implement [target]` | Implement already-approved bounded work |
-| `/fix [target]` | Remediate bounded review findings |
-| `/handoff [target]` | Produce a continuation handoff without executing it |
-| `/status [target]` | Reconstruct and report authoritative current state, read-only |
+| `/review [target]` | Perform substantive fresh review and record the requested GitHub review by default |
+| `/fix [target]` | Remediate bounded review findings, validate, then return control |
+| `/save [target]` | Persist the material result in the smallest correct durable repository-native home |
+| `/prompt [target-or-request]` | Generate a context-transfer prompt artefact without executing it |
 
 Examples:
 
 ```text
 /go issue #42
+/step
+/next
+/help should I use step or go?
 /review PR #43
 /review --read-only PR #43
 /fix
-/status
+/save
+/prompt for a fresh review
 ```
 
-Commands are shorthand intent selectors with only the narrow authority intrinsic to the operation defined by the workflow router. For a GitHub pull request, ordinary `/review` includes the bounded write needed to record the requested review; `/review --read-only` or an unambiguous natural-language zero-write qualifier reports only in chat. Commands do not grant unrelated authority or bypass repository-local instructions, validation, security controls, freshness, or independent-review requirements. See [Project bootstrap and shorthand commands](guides/project-bootstrap.md) for setup and the [Workflow router](prompts/workflows/README.md) for canonical command semantics.
+Commands are shorthand intent selectors with only the narrow authority intrinsic to the operation defined by the workflow router. Commands do not grant unrelated authority. `/go` and `/step` share the same governed transition model but differ in progression depth; `/next`, `/status`, and `/help` are read-only projections over the same resolved state. For a GitHub pull request, ordinary `/review` includes the bounded write needed to record the requested review; `/review --read-only` or an unambiguous natural-language zero-write qualifier reports only in chat. `/save` carries only its narrow persistence ceiling, while `/prompt` generates text only and does not create another context, transfer authority, or establish freshness. Commands do not bypass repository-local instructions, validation, security controls, freshness, or independent-review requirements.
 
+See [Project bootstrap and shorthand commands](guides/project-bootstrap.md) for setup and the [Workflow router](prompts/workflows/README.md) for canonical command semantics.
+
+## Compatibility intents
+
+Compatibility intents such as `/implement`, `/handoff`, `/record`, and `/analyse` may still be understood by the router but are not part of the advertised normal command surface.
 ## Decision capsules
 
 When Promptbook genuinely needs a human judgement or authority decision, it presents the recommendation and choices first instead of making you copy an approval phrase or repository identifier:

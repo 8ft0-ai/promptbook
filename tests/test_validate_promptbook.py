@@ -14,12 +14,15 @@ SPEC.loader.exec_module(MODULE)
 
 PUBLIC_COMMANDS = {
     "/go",
-    "/review",
-    "/plan",
-    "/implement",
-    "/fix",
-    "/handoff",
+    "/step",
+    "/next",
     "/status",
+    "/help",
+    "/plan",
+    "/review",
+    "/fix",
+    "/save",
+    "/prompt",
 }
 COMMAND_RE = re.compile(r"`(/[-a-z]+)(?:\s[^`]*)?`")
 
@@ -309,7 +312,7 @@ class PromptbookValidationTests(unittest.TestCase):
         self.assertIn("do not delegate an already-established machine-verifiable check", autonomous_lower)
         self.assertIn("on fail, preserve fail-closed behaviour", autonomous_lower)
 
-        self.assertIn("fresh review, new chat/session, or another agent context", handover_lower)
+        self.assertIn("fresh review, a new chat/session, or another agent context", handover_lower)
         self.assertIn("human-operated external execution", handover_lower)
         self.assertIn("complete copy/paste script or exact commands", handover_lower)
         self.assertIn("exact browser/ui steps", handover_lower)
@@ -318,7 +321,7 @@ class PromptbookValidationTests(unittest.TestCase):
         self.assertIn("do not require the human to ask how to perform the external action", handover_lower)
         self.assertIn("do not turn an already-authorised capability transfer into a new decision request", handover_lower)
         self.assertIn("reuse it after refreshing any guards", handover_lower)
-        self.assertIn("directly copyable as the next prompt", handover_lower)
+        self.assertIn("directly copyable as the receiving prompt", handover_lower)
         self.assertIn("directly executable as the required action", handover_lower)
 
     def test_fresh_review_composition_contract(self):

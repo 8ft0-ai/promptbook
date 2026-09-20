@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Define the Promptbook contract for projecting a resolved agent run context into a bounded executor-facing capability profile. The profile lets an execution substrate enforce no more than the capabilities already authorised for the resolved `/review`, `/fix`, or `/go` operation.
+Define the Promptbook contract for projecting a resolved agent run context into a bounded executor-facing capability profile. The profile lets an execution substrate enforce no more than the capabilities already authorised for the resolved `/review`, `/fix`, or `/go` progression operation. `/step` does not define a separate executor operation: when it selects one governed transition, it consumes the same action-specific `/go` projection for that exact transition with progression depth limited to one.
 
 This contract is a companion to [Resolved agent run context](resolved-agent-run-context.md). Promptbook owns the workflow-side projection semantics, including any `/go` execution-locality selection and the operation-specific projection used by an eligible isolated fresh-review child. A consuming executor owns only its supported mechanisms, local safety policy, enforcement and evidence; it does not become a repository-policy, workflow-policy, locality-selection, fresh-review-eligibility or owner-decision authority source.
 
@@ -14,9 +14,9 @@ Use this contract only when a resolved operation is delegating or exposing one o
 
 Do not create a profile merely because an executor exists. Advisory reasoning or work that remains entirely inside the current governed context does not acquire an executor profile unless a capability is actually being exposed or delegated.
 
-For `/go`, projection at a consequential gate is action-specific. Do not project one broad lifecycle profile containing every capability that might eventually be useful. If `/go` selects another execution locality, project the same exact governed action again only from current resolved state; changing locality never widens the action-specific capability set.
+For `/go` progression, projection at a consequential gate is action-specific. Do not project one broad lifecycle profile containing every capability that might eventually be useful. `/step` uses this exact same action-specific `/go` profile for its single selected transition and introduces no additional capability or operation ceiling. If `/go` or `/step` selects another execution locality, project the same exact governed action again only from current resolved state; changing locality never widens the action-specific capability set.
 
-When `/go`, `/implement`, or `/fix` reaches a required fresh-review boundary and an eligible isolated review context is established, do not project the originating operation's broader profile into that child. Resolve a new `/review` run context and project only the effective `/review` capability needed by that child. Fresh-review context creation is an information-boundary mechanism, not another execution-locality class or a reason to widen the capability vocabulary.
+When `/go`, `/step`, `/implement`, or `/fix` reaches a required fresh-review boundary and an eligible isolated review context is established, do not project the originating operation's broader profile into that child. Resolve a new `/review` run context and project only the effective `/review` capability needed by that child. Fresh-review context creation is an information-boundary mechanism, not another execution-locality class or a reason to widen the capability vocabulary.
 
 ## Prompt
 
@@ -38,7 +38,7 @@ Before execution, reject stale or mismatched profile, availability, locality bin
 
 ## Inputs
 
-- the current Resolved Agent Run Context for `/review`, `/fix`, or `/go`;
+- the current Resolved Agent Run Context for `/review`, `/fix`, or `/go` progression; `/step` consumes the `/go` progression profile rather than defining another executor profile;
 - the exact material action or bounded delegated step being considered;
 - the immutable candidate, lifecycle result, accepted proposal, or other decision-critical bound state;
 - the resolved action-gateway classification and current effective/prohibited capabilities;
@@ -137,7 +137,7 @@ projection_provenance
 
 `capability_availability_provenance` is derived from the same Promptbook-resolved availability record used by the governing workflow. It is required only when an applicable availability declaration affected or could affect the executable capability. It identifies the effective capability key/value, result and source sufficiently to distinguish configured suppression from executor support or authority denial without turning configuration into an authority source.
 
-`execution_locality_binding` is required only when locality selection materially determined the executor for a `/go` action. It identifies the selected portable locality class and enough bound-state/provenance information to detect stale or mismatched delegation. It is derived execution state, never a new capability grant.
+`execution_locality_binding` is required only when locality selection materially determined the executor for a `/go` progression action, including a transition selected by `/step`. It identifies the selected portable locality class and enough bound-state/provenance information to detect stale or mismatched delegation. It is derived execution state, never a new capability grant.
 
 `fresh_review_isolation_binding` is required only when the profile belongs to an automatically delegated fresh-review child. It identifies enough of the eligible isolation decision, minimal target/reconstruction provenance and child `/review` operation binding to detect stale, mismatched or non-fresh delegation. It must not contain author-side private reasoning or hidden conversational state and is never an authority grant.
 
@@ -196,7 +196,7 @@ FORBID
 
 `ALLOW` is necessary but not sufficient. Project only capability needed for the current operation/action. For a named availability-controlled capability, consume its effective Promptbook-resolved availability after this authority classification. A disabled or conservatively unresolved availability state removes the capability from executable projection; it cannot change the action-gateway classification or manufacture an owner decision.
 
-When `/go` re-resolves locality after `EXECUTOR_UNSUPPORTED`, `UNAVAILABLE`, or equivalent execution unavailability, create a fresh action-specific projection for the alternate eligible locality from current resolved state. Do not carry broader capability from the new executor's implementation. `PROFILE_DENIED` is not an execution-locality failure and must not be worked around by choosing another executor. `CAPABILITY_DISABLED` is likewise not bypassed by relabelling the same suppressed logical effect through another locality.
+When `/go` progression, including `/step`, re-resolves locality after `EXECUTOR_UNSUPPORTED`, `UNAVAILABLE`, or equivalent execution unavailability, create a fresh action-specific projection for the alternate eligible locality from current resolved state. Do not carry broader capability from the new executor's implementation. `PROFILE_DENIED` is not an execution-locality failure and must not be worked around by choosing another executor. `CAPABILITY_DISABLED` is likewise not bypassed by relabelling the same suppressed logical effect through another locality.
 
 An executor may then remove projected capability because of unsupported mechanisms, stronger local policy, guard failure or stale state. Keep authority and feasibility distinct. A capability denied by Promptbook authority is not the same result as a capability that is authorised but configured unavailable or unsupported by the executor.
 
@@ -263,6 +263,8 @@ validation_execute
 It must not include `merge`, `release_publish` or `deploy` under the `/fix` operation ceiling. Provider, settings, credential or production mutation remains absent unless another separately governed contract has already made the exact action effective authority and the current Promptbook operation permits projection of that bounded effect.
 
 ### `/go`
+
+`/step` deliberately has no separate operation profile. For the single governed transition selected by `/step`, project the same `/go` profile that would apply to that exact action from the same resolved state; only progression depth differs.
 
 A `/go` profile is derived for the exact next governed action. For example, independently authorised merge of candidate A may project `merge` bound to A, while `release_publish` and `deploy` remain absent.
 
@@ -379,7 +381,7 @@ For fresh review, the child is deliberately re-resolved under the `/review` oper
 child_review_authority ⊆ effective_review_authority
 ```
 
-This prevents a parent `/go`, `/implement`, or `/fix` context from transferring author-side mutation or later-lifecycle authority into the reviewer. Context isolation and capability narrowing are both required: one does not prove the other.
+This prevents a parent `/go`, `/step`, `/implement`, or `/fix` context from transferring author-side mutation or later-lifecycle authority into the reviewer. Context isolation and capability narrowing are both required: one does not prove the other.
 
 This contract does not define native subagent infrastructure or a complete delegated-agent protocol.
 
@@ -393,13 +395,13 @@ Do not claim machine enforcement until a real executor has consumed the profile 
 
 Makes the already-resolved Promptbook authority boundary consumable by an executor without allowing the executor, environment, availability configuration, execution-locality choice or fresh-context selection to become a new authority source. It defines the portable profile, material capability vocabulary, state/locality/isolation binding and stale-profile rules, configuration/executor-side no-widening intersections, and bounded evidence needed to distinguish policy denial from configured, unavailable or failed execution.
 
-It preserves the existing `/review`, `/fix`, and `/go` operation ceilings rather than creating new capability. A delegated fresh reviewer is projected from the `/review` ceiling rather than inheriting a broader parent profile. A later executor can implement this contract independently and prove machine enforcement without requiring Promptbook to own the executor mechanism or a global locality/agent registry.
+It preserves the existing `/review`, `/fix`, and `/go` operation ceilings rather than creating new capability. `/step` consumes the `/go` ceiling and action-specific projection for one transition; it does not create a fourth progression ceiling. A delegated fresh reviewer is projected from the `/review` ceiling rather than inheriting a broader parent profile. A later executor can implement this contract independently and prove machine enforcement without requiring Promptbook to own the executor mechanism or a global locality/agent registry.
 
 ## Boundaries / limitations
 
 This contract does not implement an executor, sandbox, network policy engine, credential broker, secret distributor, remote worker, OCI runner, deployment framework, provider policy, production mutation policy, capability-health probing mechanism, global executor registry, global agent registry, native subagent infrastructure or arbitrary remote shell/argv dispatch.
 
-It does not change the authority semantics of `/review`, `/fix`, or `/go`; it only projects their already-resolved effective capabilities into a form that capability configuration, execution-locality selection, fresh-review context resolution and an executor can further restrict and enforce.
+It does not change the authority semantics of `/review`, `/fix`, or `/go`; `/step` reuses `/go` authority and projection semantics with one-transition depth. The contract only projects already-resolved effective capabilities into a form that capability configuration, execution-locality selection, fresh-review context resolution and an executor can further restrict and enforce.
 
 External executors remain mechanisms, not Promptbook workflow-policy, locality-selection or fresh-review-eligibility authorities. Availability configuration, locality selection and isolated-context selection are likewise derived execution/review state, not policy authority sources.
 
