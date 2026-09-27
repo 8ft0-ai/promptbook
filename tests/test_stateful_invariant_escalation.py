@@ -129,6 +129,40 @@ class StatefulInvariantEscalationContractTests(unittest.TestCase):
             self.fix_lower,
         )
 
+    def test_explicit_stateful_analyse_precedes_pending_review_route(self):
+        routing = self.router.split("## Routing", 1)[1]
+        analysis_route = (
+            "2. **Mandatory or requested stateful/invariant analysis is required now**"
+        )
+        review_route = "3. **An independent substantive review is required now**"
+        self.assertLess(routing.index(analysis_route), routing.index(review_route))
+        routing_lower = routing.lower()
+        self.assertIn(
+            "explicit read-only `/analyse` request is resolved before an otherwise "
+            "pending independent-review lifecycle gate",
+            routing_lower,
+        )
+        self.assertIn(
+            "does not discharge, bypass, weaken, or satisfy that review gate",
+            routing_lower,
+        )
+
+    def test_fix_consumes_analysis_plan_as_authoritative_synthesis_input(self):
+        self.assertIn(
+            "consume its bounded remediation plan as the authoritative synthesis "
+            "input to `/fix`",
+            self.fix_lower,
+        )
+        self.assertIn(
+            "the analysis-produced plan supersedes that earlier plan",
+            self.fix_lower,
+        )
+        self.assertIn(
+            "stale-plan, scope, action-gateway and authority checks",
+            self.fix_lower,
+        )
+        self.assertIn("bounded remediation plan", self.analysis_lower)
+
     def test_fresh_review_covers_stateful_integration_without_universal_checklist(self):
         for marker in (
             "production integration paths",
