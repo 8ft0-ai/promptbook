@@ -148,15 +148,16 @@ Use the first matching case:
    - Generating the artefact does not create the receiving context, transfer authority, establish independence/freshness, or change the current lifecycle state.
    - Do not use this route to replace a complete human-operated `EXTERNAL_REQUIRED` execution handoff.
 
-2. **An independent substantive review is required now**.
+2. **Mandatory or requested stateful/invariant analysis is required now** → [Stateful invariant analysis](stateful-invariant-analysis.md).
+   - Select this route when the repeated-review escalation trigger is established and no current candidate-bound analysis satisfies it.
+   - Also select it for explicit read-only `/analyse` when the target is materially stateful, lifecycle-sensitive, cross-component, concurrency/retry/cache/inference-sensitive, or equivalent.
+   - An explicit read-only `/analyse` request is resolved before an otherwise pending independent-review lifecycle gate. It does not discharge, bypass, weaken, or satisfy that review gate; after analysis returns, the pending fresh-review requirement remains governed by current authoritative state.
+   - Do not select it merely because two findings exist or because a simple local correction is available. Analysis completion creates no mutation or redesign authority.
+
+3. **An independent substantive review is required now**.
    - If the current context is genuinely fresh for that decision → [Fresh independent review](fresh-independent-review.md). Reconstruct the decision from the actual candidate and evidence rather than inheriting the authoring conclusion. Freshness is about the context/evidence boundary; it does not require a different GitHub account unless repository-local policy explicitly requires a distinct reviewer identity.
    - If the current context is not genuinely fresh, do not review in it. Resolve whether the execution surface can establish an eligible genuinely isolated review context whose information boundary excludes author-side substantive adjudication and expected conclusion. If yes, invoke [Fresh independent review](fresh-independent-review.md) there using the minimal durable review target or equivalent reconstruction reference. The receiving context must independently bootstrap applicable authority, reconstruct the exact candidate/checks/review state, operate only under the bounded `/review` capability profile, and return a disposition/evidence record bound to the exact candidate inspected. If isolation is unavailable, ambiguous, unprovable, incompatible with repository policy, or would require broader capability than `/review` permits → [Next-session handover](next-session-handover.md). Only when no eligible/provable isolated review context is available should the existing fresh-context review handoff be produced and the route stop as `EXTERNAL_REQUIRED`.
    - Fresh-review context resolution is an information-boundary mechanism, not an execution-locality class. Do not probe `connected/native`, `hosted/hermetic`, or owner-local execution merely to create reasoning independence. Creating/selecting a context is not authority, and a delegated context must not simulate a repository requirement for another human or formal reviewer.
-
-3. **Mandatory or requested stateful/invariant analysis is required now** → [Stateful invariant analysis](stateful-invariant-analysis.md).
-   - Select this route when the repeated-review escalation trigger is established and no current candidate-bound analysis satisfies it.
-   - Also select it for explicit read-only `/analyse` when the target is materially stateful, lifecycle-sensitive, cross-component, concurrency/retry/cache/inference-sensitive, or equivalent.
-   - Do not select it merely because two findings exist or because a simple local correction is available. Analysis completion creates no mutation or redesign authority.
 
 4. **A newly supplied bounded approval or execution authority applies to the current proposal or action** → [Autonomous progression](autonomous-progression.md).
    - Identify the exact proposal or action being authorised. An unambiguous response to the current decision capsule, such as `A`, `accept`, `choose B`, or an equivalent natural-language/voice response, may supply that authority or choice.
