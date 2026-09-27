@@ -21,6 +21,7 @@ Promptbook is organised by the task a user wants to perform.
 - [Next-session handover](workflows/next-session-handover.md)
 - [Operational artifact hand-off](workflows/operational-artifact-handoff.md)
 - [Resolved agent run context](workflows/resolved-agent-run-context.md)
+- [Stateful invariant analysis](workflows/stateful-invariant-analysis.md)
 
 ## Documentation
 
