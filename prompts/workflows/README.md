@@ -58,7 +58,7 @@ These legacy or advanced intents remain understandable for compatibility but are
 - `/implement [target]` — route to [Implement an approved issue](../engineering/implement-an-approved-issue.md) when the target is sufficiently approved/determined and repository mutation is already authorised.
 - `/handoff [target]` — compatibility intent for generating a context-transfer prompt when that is the requested deliverable. It must not replace a complete human-operated `EXTERNAL_REQUIRED` execution handoff.
 - `/record [target]` — compatibility alias for `/save`.
-- `/analyse [target]` — read-only analysis/synthesis intent. It may produce a plan when explicitly requested, but does not create a new lifecycle stage.
+- `/analyse [target]` — read-only analysis/synthesis intent. When the target is materially stateful/lifecycle-sensitive or the repeated-review escalation rule is established, route through [Stateful invariant analysis](stateful-invariant-analysis.md). It may produce a plan when explicitly requested, but does not create a new lifecycle stage or mutation authority.
 
 Do not advertise compatibility intents as equal public commands.
 
@@ -78,7 +78,24 @@ When a completed review exposes `CHANGES REQUIRED`, perform response routing/syn
 
 When response synthesis selects `BOUNDED_REMEDIATION`, it must produce a concise candidate-bound remediation plan containing the source candidate identity, complete blocker set being addressed, material finding relationships or shared invariant, bounded correction, required validation, and explicit scope boundaries. That plan becomes the authoritative synthesis input to `/fix`; it is not mutation authority and does not make stale candidate-specific evidence current. `/fix` must refresh current candidate/state and authority before mutation and must return to response routing or fail closed if the plan is stale, conflicts with current authoritative evidence, or requires a broader correction.
 
-If `/step` is invoked immediately after `CHANGES REQUIRED`, review-response synthesis is the one governed transition. When it resolves to `BOUNDED_REMEDIATION`, `/step` produces the candidate-bound remediation plan, re-resolves state once, reports `/fix` as the next transition, and stops without performing remediation mutation. Under `/go`, the same synthesis transition may be followed by authorised `/fix` progression because `/go` continues until a real boundary.
+### Repeated-review stateful escalation
+
+Before routing another `/fix`, reconstruct whether durable review/remediation evidence establishes the mandatory repeated-review escalation trigger. The trigger requires all of:
+
+1. substantive review round **R1** recorded `CHANGES REQUIRED` for behavioural/invariant domain **X**;
+2. authorised remediation changed the candidate;
+3. a genuinely fresh substantive review round **R2** of the resulting candidate again recorded `CHANGES REQUIRED`; and
+4. at least one material R2 blocker is evidence-based and materially belongs to the same behavioural/invariant domain **X**.
+
+A materially same behavioural/invariant domain means a shared invariant, lifecycle/state model, mechanism, trust boundary, inference rule, retry/recovery mechanism, or implementation abstraction established from evidence. Finding count or textual similarity alone is insufficient.
+
+The trigger is not satisfied merely by two blockers in one substantive review, a repeated review against unchanged bytes, materially unrelated R1/R2 domains, a governing requirement that became applicable only after R1, duplicate review records of one substantive adjudication, or a non-substantive check/test failure by itself.
+
+When the trigger is established, do not route directly to another narrow `/fix`. Route first to [Stateful invariant analysis](stateful-invariant-analysis.md) and require a current read-only analysis record bound to the exact candidate, R1/R2 review identities and dispositions, materially related blocker/domain evidence, and governing contract. The escalation is process-driven rather than conclusion-driven: it does not establish that an abstraction is unsound, does not authorise redesign, does not widen `/fix`, and creates no mutation or later lifecycle authority.
+
+Material candidate or governing-contract movement invalidates or requires refresh of candidate-bound analysis under the existing freshness/state rules. Once current analysis has completed and an authorised remediation based on it produces a new exact candidate, the escalation requirement is satisfied for that remediation attempt. The resulting fresh review begins a new failure sequence; two further materially related failed review/remediation rounds are required to trigger this rule again.
+
+If `/step` is invoked immediately after `CHANGES REQUIRED`, review-response synthesis is the one governed transition. When the repeated-review escalation trigger is established, that synthesis reports stateful/invariant analysis as the next transition and stops without remediation mutation. Otherwise, when it resolves to `BOUNDED_REMEDIATION`, `/step` produces the candidate-bound remediation plan, re-resolves state once, reports `/fix` as the next transition, and stops without performing remediation mutation. Under `/go`, the same synthesis transition may be followed by mandatory read-only stateful/invariant analysis when required, or by authorised `/fix` progression when no such analysis gate remains, because `/go` continues until a real boundary.
 
 ## Continuation policy
 
@@ -136,21 +153,26 @@ Use the first matching case:
    - If the current context is not genuinely fresh, do not review in it. Resolve whether the execution surface can establish an eligible genuinely isolated review context whose information boundary excludes author-side substantive adjudication and expected conclusion. If yes, invoke [Fresh independent review](fresh-independent-review.md) there using the minimal durable review target or equivalent reconstruction reference. The receiving context must independently bootstrap applicable authority, reconstruct the exact candidate/checks/review state, operate only under the bounded `/review` capability profile, and return a disposition/evidence record bound to the exact candidate inspected. If isolation is unavailable, ambiguous, unprovable, incompatible with repository policy, or would require broader capability than `/review` permits → [Next-session handover](next-session-handover.md). Only when no eligible/provable isolated review context is available should the existing fresh-context review handoff be produced and the route stop as `EXTERNAL_REQUIRED`.
    - Fresh-review context resolution is an information-boundary mechanism, not an execution-locality class. Do not probe `connected/native`, `hosted/hermetic`, or owner-local execution merely to create reasoning independence. Creating/selecting a context is not authority, and a delegated context must not simulate a repository requirement for another human or formal reviewer.
 
-3. **A newly supplied bounded approval or execution authority applies to the current proposal or action** → [Autonomous progression](autonomous-progression.md).
+3. **Mandatory or requested stateful/invariant analysis is required now** → [Stateful invariant analysis](stateful-invariant-analysis.md).
+   - Select this route when the repeated-review escalation trigger is established and no current candidate-bound analysis satisfies it.
+   - Also select it for explicit read-only `/analyse` when the target is materially stateful, lifecycle-sensitive, cross-component, concurrency/retry/cache/inference-sensitive, or equivalent.
+   - Do not select it merely because two findings exist or because a simple local correction is available. Analysis completion creates no mutation or redesign authority.
+
+4. **A newly supplied bounded approval or execution authority applies to the current proposal or action** → [Autonomous progression](autonomous-progression.md).
    - Identify the exact proposal or action being authorised. An unambiguous response to the current decision capsule, such as `A`, `accept`, `choose B`, or an equivalent natural-language/voice response, may supply that authority or choice.
    - Refresh decision-critical state and verify that the proposal/action and its authority boundary remain materially unchanged.
    - Consume the approval or authority once, only for that bounded object, then continue routine governed work through autonomous progression.
    - Do not treat approval as authority to expand scope, weaken controls or accept a materially changed proposal. Escalate a genuinely new human choice as `DECISION_REQUIRED`.
 
-4. **A substantive repository documentation assessment is needed and representative reader tasks must be discovered, validated, or assessed together** → [Documentation assessment workflow](documentation-assessment.md).
+5. **A substantive repository documentation assessment is needed and representative reader tasks must be discovered, validated, or assessed together** → [Documentation assessment workflow](documentation-assessment.md).
    - Use this route for broad documentation-quality assessment, navigation or authority problems, or deciding the smallest justified documentation response when reader/task discovery or multi-task validation is part of the work.
    - Do not route ordinary bounded documentation edits, known corrections or explicit drafting tasks through assessment merely because documentation is involved.
    - If one concrete reader task is already known and no multi-task discovery or validation is needed, use [Repository documentation assessment](../documentation/repository-assessment.md) as the proportionate single-task path.
 
-5. **Ordinary governed continuation** → [Autonomous progression](autonomous-progression.md).
+6. **Ordinary governed continuation** → [Autonomous progression](autonomous-progression.md).
    - Continue while current policy, evidence, scope and available capabilities safely determine the next action.
 
-6. **No safe route fits** → fail closed.
+7. **No safe route fits** → fail closed.
    - Do not invent work, authority or a workflow mapping merely to keep moving.
    - Use the terminal-state rules below to identify the real boundary.
 
