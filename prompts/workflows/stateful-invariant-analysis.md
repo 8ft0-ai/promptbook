@@ -2,11 +2,11 @@
 
 ## Purpose
 
-Reconstruct the complete applicable invariant or lifecycle model for a materially stateful behavioural problem before another remediation attempt, without creating mutation or redesign authority.
+Reconstruct the complete applicable invariant or lifecycle model for a materially stateful behavioural problem before another remediation attempt, and perform explicit architecture reconsideration when a prior invariant-closure claim has been falsified, without creating mutation or redesign authority.
 
 ## When to use
 
-Use proportionately when the target is materially stateful, lifecycle-sensitive, cross-component, concurrency-sensitive, retry/recovery-sensitive, cache/inference-sensitive, or when the workflow router has established the mandatory repeated-review escalation rule.
+Use proportionately when the target is materially stateful, lifecycle-sensitive, cross-component, concurrency-sensitive, retry/recovery-sensitive, cache/inference-sensitive, when the workflow router has established the mandatory repeated-review escalation rule, or when durable evidence establishes post-closure same-family recurrence and `ARCHITECTURE_RECONSIDERATION_REQUIRED`.
 
 Do not impose this workflow on a simple local defect whose correct behaviour and bounded correction are already safely determined.
 
@@ -17,7 +17,7 @@ Analyse <ANALYSIS_TARGET> against <GOVERNING_CONTRACT> as a read-only stateful/i
 
 Reconstruct current authoritative state from production code, governing requirements, current candidate identity, durable review/remediation evidence and repository-local instructions. Do not treat a remediation narrative, prior summary, passing tests or the number of findings as proof of the underlying invariant.
 
-First determine whether stateful/invariant analysis is materially applicable. It is applicable when correctness depends on a state machine or lifecycle, cross-component coordination, concurrent or in-flight work, retries or recovery, cache/expiry behaviour, positive-versus-negative inference, partial success, stale completion, or an equivalent behavioural mechanism. It is also mandatory when the workflow router has established the repeated-review escalation trigger.
+First determine whether stateful/invariant analysis is materially applicable. It is applicable when correctness depends on a state machine or lifecycle, cross-component coordination, concurrent or in-flight work, retries or recovery, cache/expiry behaviour, positive-versus-negative inference, partial success, stale completion, or an equivalent behavioural mechanism. It is also mandatory when the workflow router has established the repeated-review escalation trigger or post-closure same-family recurrence requiring architecture reconsideration.
 
 When applicable:
 
@@ -40,7 +40,11 @@ When this analysis is mandatory because two materially related substantive revie
 
 The repeated-review trigger is process-driven, not conclusion-driven. It requires analysis before another remediation attempt; it does not establish that redesign is needed, does not widen `/fix`, and creates no mutation, approval, merge, release, deployment, credential, production or other consequential authority.
 
-If the candidate or governing contract moves materially before remediation, the candidate-bound analysis must be refreshed or invalidated under the normal Promptbook freshness/state rules. Once an authorised remediation based on the current analysis produces a new exact candidate, this escalation requirement is satisfied for that remediation attempt; the next genuinely fresh substantive review starts a new failure sequence.
+When this analysis is required because a previous invariant-closure claim was falsified or a materially same-family blocker recurred after closure, treat it as explicit architecture reconsideration. Bind the record to the prior invariant-closure lineage, including the earlier R1/R2 sequence, the closure analysis, the analysis-backed remediation/candidate, the closure-challenge review where one exists, the recurrence review, the materially shared defect family/invariant and the current governing contract. Independently assess whether the representation or implementation architecture is responsible for the instability; recurrence alone does not prove that it is. Distinguish genuine post-closure same-family recurrence from an intervening regression, a new family, an unrelated domain, a newly applicable requirement or a materially out-of-boundary change.
+
+If the candidate or governing contract moves materially before remediation, candidate-bound analysis must be refreshed or invalidated under the normal Promptbook freshness/state rules. After ordinary invariant-closure analysis, authorised analysis-backed remediation may satisfy the initial R1/R2 analysis gate for that remediation attempt, but the historical `INVARIANT_CLOSURE_ATTEMPTED(X)` lineage remains reconstructable. A subsequent fresh review may establish `CLOSURE_SURVIVED_THIS_REVIEW` without erasing that lineage, or may establish closure falsification/post-closure recurrence and the architecture-reconsideration boundary.
+
+Architecture reconsideration is read-only analysis/decision evidence. Its completion must not silently become another analysis-backed `/fix`; return the architecture assessment, the smallest defensible next proposal and any separate decision/remediation authority required before mutation.
 
 Return a concise analysis record containing:
 - applicability and reason;
@@ -49,8 +53,9 @@ Return a concise analysis record containing:
 - positive-observation versus negative-inference rules;
 - applicable failure/retry/recovery and stale/in-flight behaviours;
 - duplicate/raw semantic implementations and production bypass paths;
-- R1/R2 binding when mandatory escalation applies;
-- bounded remediation plan;
+- R1/R2 binding when initial mandatory escalation applies;
+- prior closure-lineage binding and architecture assessment when post-closure recurrence applies;
+- bounded remediation plan for an ordinary closure analysis, or smallest defensible next proposal for architecture reconsideration;
 - required validation and explicitly untested surface;
 - any product/architecture/security/scope/authority boundary.
 
