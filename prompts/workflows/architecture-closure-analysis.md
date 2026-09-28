@@ -22,7 +22,7 @@ Architecture-closure analysis is read-only. It does not create implementation, r
 ```text
 Perform a read-only architecture-closure analysis of <ANALYSIS_TARGET> against <GOVERNING_CONTRACT>.
 
-Derive the decision-critical architecture universe independently from the candidate model, construct the applicable global closure artefact, reconcile the exact candidate against it, and return the closure disposition and any authority boundary required by this workflow.
+Derive a closed decision-critical source/obligation universe independently from the candidate model, derive the primitive universe from it with total source → primitive coverage, construct the applicable global closure artefact, reconcile the exact candidate against it, and return the closure disposition and any authority boundary required by this workflow.
 
 Do not mutate source, create a design candidate, approve the target, or infer completeness merely from the candidate's own prose, object registry, transition table or known blocker list.
 ```
@@ -56,6 +56,7 @@ therefore candidate is complete
 ```
 
 Completeness requires evidence that the closure universe itself contains the applicable decision-critical obligations **and** that every such obligation is represented in the primitive/model universe. Primitive → source traceability alone is insufficient; source → primitive completeness is mandatory.
+
 ## Required closure artefact
 
 Produce one canonical closure artefact, or repository-appropriate equivalent, covering the following dimensions proportionately to the architecture.
