@@ -1,0 +1,137 @@
+import unittest
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+WORKFLOWS = ROOT / "prompts" / "workflows"
+ENGINEERING = ROOT / "prompts" / "engineering"
+
+
+class ArchitectureClosureCompletenessTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.closure = (WORKFLOWS / "architecture-closure-analysis.md").read_text(encoding="utf-8")
+        cls.closure_lower = cls.closure.lower()
+        cls.router = (WORKFLOWS / "README.md").read_text(encoding="utf-8")
+        cls.router_lower = cls.router.lower()
+        cls.analysis = (WORKFLOWS / "stateful-invariant-analysis.md").read_text(encoding="utf-8")
+        cls.analysis_lower = cls.analysis.lower()
+        cls.fix = (ENGINEERING / "remediate-review-findings.md").read_text(encoding="utf-8")
+        cls.fix_lower = cls.fix.lower()
+        cls.review = (WORKFLOWS / "fresh-independent-review.md").read_text(encoding="utf-8")
+        cls.review_lower = cls.review.lower()
+
+    def test_closure_universe_is_independent_of_candidate_model(self):
+        self.assertIn("derive the decision-critical primitive universe independently", self.closure_lower)
+        self.assertIn("do not define the closure universe by reading the candidate", self.closure_lower)
+        self.assertIn("completeness requires evidence that the closure universe itself contains", self.closure_lower)
+        self.assertIn("governing requirements and externally observable behaviour", self.closure_lower)
+
+    def test_closure_model_has_required_global_dimensions(self):
+        for marker in (
+            "decision-critical primitive universe",
+            "global identity-dependency dag",
+            "ownership / state / transition matrix",
+            "positive reachability witnesses",
+            "end-to-end authority/effect matrix",
+            "observation / ambiguity / crash-recovery matrix",
+            "equivalence / overlap / symmetry proofs",
+            "terminal provenance matrix",
+            "migration / fence matrix when applicable",
+        ):
+            self.assertIn(marker, self.closure_lower)
+
+    def test_global_identity_closure_requires_one_acyclic_construction_order(self):
+        for marker in (
+            "one graph covering every identity-bearing/content-addressed object",
+            "no direct or indirect dependency",
+            "one deterministic topological construction order",
+            "locally valid object definitions that compose into a global cycle",
+        ):
+            self.assertIn(marker, self.closure_lower)
+
+    def test_positive_reachability_rejects_vacuous_safety(self):
+        self.assertIn("at least one valid witness path from an admitted initial state", self.closure_lower)
+        self.assertIn("reject vacuous safety claims", self.closure_lower)
+        self.assertIn("repair semantics whose preconditions can never be satisfied", self.closure_lower)
+
+    def test_effect_closure_reaches_external_consequence_and_recovery(self):
+        for marker in (
+            "external system boundary",
+            "lost-response / ambiguous-result handling",
+            "authoritative terminal projection",
+            "internal state closure is not end-to-end effect closure",
+            "crash-after-effect-before-result",
+            "retry after ambiguous outcome",
+        ):
+            self.assertIn(marker, self.closure_lower)
+
+    def test_equivalence_and_terminal_provenance_are_normative(self):
+        self.assertIn("require a normative proof/witness/validator contract", self.closure_lower)
+        self.assertIn("a prose assertion of equivalence or disjointness is not closure evidence", self.closure_lower)
+        self.assertIn("every terminal state must identify the exact durable result/outcome provenance", self.closure_lower)
+
+    def test_closure_dispositions_distinguish_model_error_from_method_failure(self):
+        for marker in (
+            "architecture_closure_ready",
+            "architecture_closure_not_ready",
+            "closure_method_falsified",
+            "modelled_but_wrong",
+            "unmodelled_decision_critical_primitive",
+        ):
+            self.assertIn(marker, self.closure_lower)
+        self.assertIn("do not falsify the closure method merely because a represented primitive is wrong", self.closure_lower)
+
+    def test_closure_method_falsification_requires_reconstruction_and_blocks_fix(self):
+        for marker in (
+            "closure_method_falsified",
+            "architecture_closure_reconstruction_required",
+            "ordinary isolated",
+            "do not merely append the newly discovered primitive to prose",
+        ):
+            self.assertIn(marker, self.closure_lower)
+        self.assertIn("ordinary isolated", self.fix_lower)
+        self.assertIn("return control to the router", self.fix_lower)
+
+    def test_reconstruction_is_separate_authority_and_one_shot(self):
+        self.assertIn("is a separate-authority boundary", self.closure_lower)
+        self.assertIn("does not silently become unlimited authority to rerun closure reconstruction", self.closure_lower)
+        self.assertIn("perform exactly one fresh closure reconstruction", self.closure_lower)
+        self.assertIn("do not loop into repeated reconstruction while it remains current", self.router_lower)
+
+    def test_first_closure_proof_lives_inside_authorised_reconsideration(self):
+        self.assertIn("if that authorised architecture reconsideration needs to establish architecture closure", self.analysis_lower)
+        self.assertIn("architecture closure analysis", self.analysis_lower)
+        self.assertIn("within the same one-shot read-only reconsideration authority", self.analysis_lower)
+        self.assertIn("the architecture-closure proof is part of the current one-shot read-only reconsideration", self.router_lower)
+
+    def test_review_attacks_internal_correctness_and_universe_completeness(self):
+        self.assertIn("independently review both **internal model correctness** and **closure-universe completeness**", self.review_lower)
+        self.assertIn("actively attempt to identify a decision-critical primitive", self.review_lower)
+        self.assertIn("must not inherit", self.closure_lower)
+        self.assertIn("closure universe is complete", self.closure_lower)
+        self.assertIn("modelled_but_wrong", self.review_lower)
+        self.assertIn("unmodelled_decision_critical_primitive", self.review_lower)
+
+    def test_fix_requires_finding_model_and_parent_non_regression_closure(self):
+        for marker in ("finding_closure", "model_closure", "parent_non_regression"):
+            self.assertIn(marker, self.fix_lower)
+        self.assertIn("patching all reported findings is not enough to claim architecture closure", self.fix_lower)
+
+    def test_negative_cases_do_not_automatically_falsify_closure_method(self):
+        for marker in (
+            "new governing requirement became applicable later",
+            "materially new architecture scope was introduced later",
+            "genuinely unrelated defect family appears",
+            "non-substantive check/test fails",
+        ):
+            self.assertIn(marker, self.closure_lower)
+
+    def test_router_exposes_falsification_before_fix(self):
+        self.assertIn("fresh review establishes", self.router_lower)
+        self.assertIn("closure_method_falsified", self.router_lower)
+        self.assertIn("architecture_closure_reconstruction_required", self.router_lower)
+        self.assertIn("stops without remediation mutation", self.router_lower)
+
+
+if __name__ == "__main__":
+    unittest.main()
