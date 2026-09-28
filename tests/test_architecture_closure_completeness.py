@@ -164,7 +164,7 @@ class ArchitectureClosureCompletenessTests(unittest.TestCase):
         self.assertIn("first attempt to identify an applicable authoritative obligation", self.review_lower)
         self.assertIn("source → primitive completeness", self.review_lower)
         self.assertIn("must not inherit", self.closure_lower)
-        self.assertIn("closure universe is complete", self.closure_lower)
+        self.assertIn("source/obligation universe or primitive universe is complete", self.closure_lower)
         self.assertIn("modelled_but_wrong", self.review_lower)
         self.assertIn("unmodelled_decision_critical_primitive", self.review_lower)
 
