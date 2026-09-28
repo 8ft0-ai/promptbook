@@ -21,10 +21,10 @@ class ArchitectureClosureCompletenessTests(unittest.TestCase):
         cls.review_lower = cls.review.lower()
 
     def test_closure_universe_is_independent_of_candidate_model(self):
-        self.assertIn("derive the decision-critical primitive universe independently", self.closure_lower)
+        self.assertIn("derive a bounded **source/obligation universe** independently", self.closure_lower)
         self.assertIn("do not define the closure universe by reading the candidate", self.closure_lower)
         self.assertIn("completeness requires evidence that the closure universe itself contains", self.closure_lower)
-        self.assertIn("governing requirements and externally observable behaviour", self.closure_lower)
+        self.assertIn("authoritative inputs for this decision", self.closure_lower)
 
     def test_source_obligation_universe_has_total_source_to_primitive_coverage(self):
         self.assertIn("closed source/obligation universe", self.closure_lower)
@@ -78,6 +78,7 @@ class ArchitectureClosureCompletenessTests(unittest.TestCase):
             "primitive → source traceability is not evidence of source → primitive completeness",
             self.review_lower,
         )
+
     def test_closure_model_has_required_global_dimensions(self):
         for marker in (
             "closed source/obligation universe",
@@ -159,7 +160,7 @@ class ArchitectureClosureCompletenessTests(unittest.TestCase):
         self.assertIn("the architecture-closure proof is part of the current one-shot read-only reconsideration", self.router_lower)
 
     def test_review_attacks_internal_correctness_and_universe_completeness(self):
-        self.assertIn("independently review both **internal model correctness** and **closure-universe completeness**", self.review_lower)
+        self.assertIn("independently review **internal model correctness**, **source-universe completeness**, and **source → primitive/model coverage**", self.review_lower)
         self.assertIn("first attempt to identify an applicable authoritative obligation", self.review_lower)
         self.assertIn("source → primitive completeness", self.review_lower)
         self.assertIn("must not inherit", self.closure_lower)
