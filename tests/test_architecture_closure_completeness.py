@@ -26,9 +26,63 @@ class ArchitectureClosureCompletenessTests(unittest.TestCase):
         self.assertIn("completeness requires evidence that the closure universe itself contains", self.closure_lower)
         self.assertIn("governing requirements and externally observable behaviour", self.closure_lower)
 
+    def test_source_obligation_universe_has_total_source_to_primitive_coverage(self):
+        self.assertIn("closed source/obligation universe", self.closure_lower)
+        self.assertIn("total source → primitive coverage", self.closure_lower)
+        self.assertIn(
+            "applicable_source_obligation_without_primitive_count = 0",
+            self.closure_lower,
+        )
+        self.assertIn(
+            "primitive_without_source_or_derivation_basis_count = 0",
+            self.closure_lower,
+        )
+        self.assertIn("candidate silence never closes an obligation", self.closure_lower)
+        self.assertIn("source → primitive completeness is mandatory", self.closure_lower)
+
+    def test_primitive_classification_is_closed_and_unambiguous(self):
+        self.assertIn(
+            "exactly one **primary role** from this closed partition",
+            self.closure_lower,
+        )
+        self.assertIn("secondary annotations may be used", self.closure_lower)
+        self.assertIn(
+            "must not replace the single primary classification",
+            self.closure_lower,
+        )
+
+    def test_five_inventories_and_extensional_ownership_are_required(self):
+        for marker in (
+            "five explicit closure inventories",
+            "same possible irreversible governed real-world consequence",
+            "same_consequence",
+            "disjoint_consequences",
+            "opaque provenance fields are not proof of extensional ownership",
+        ):
+            self.assertIn(marker, self.closure_lower)
+
+    def test_omitted_applicable_source_obligation_blocks_ready(self):
+        self.assertIn(
+            "omitted source obligation with internally valid primitives",
+            self.closure_lower,
+        )
+        self.assertIn(
+            "the analysis must return `architecture_closure_not_ready`",
+            self.closure_lower,
+        )
+        self.assertIn(
+            "it must not infer completeness from the listed primitives",
+            self.closure_lower,
+        )
+        self.assertIn(
+            "primitive → source traceability is not evidence of source → primitive completeness",
+            self.review_lower,
+        )
     def test_closure_model_has_required_global_dimensions(self):
         for marker in (
+            "closed source/obligation universe",
             "decision-critical primitive universe",
+            "five explicit closure inventories",
             "global identity-dependency dag",
             "ownership / state / transition matrix",
             "positive reachability witnesses",
@@ -106,7 +160,8 @@ class ArchitectureClosureCompletenessTests(unittest.TestCase):
 
     def test_review_attacks_internal_correctness_and_universe_completeness(self):
         self.assertIn("independently review both **internal model correctness** and **closure-universe completeness**", self.review_lower)
-        self.assertIn("actively attempt to identify a decision-critical primitive", self.review_lower)
+        self.assertIn("first attempt to identify an applicable authoritative obligation", self.review_lower)
+        self.assertIn("source → primitive completeness", self.review_lower)
         self.assertIn("must not inherit", self.closure_lower)
         self.assertIn("closure universe is complete", self.closure_lower)
         self.assertIn("modelled_but_wrong", self.review_lower)
