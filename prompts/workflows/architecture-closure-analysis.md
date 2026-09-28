@@ -17,6 +17,21 @@ Do not select this workflow merely because an architecture is large, a review fo
 
 Architecture-closure analysis is read-only. It does not create implementation, redesign, remediation, merge, release, deployment, settings, credential, migration, production or other consequential authority.
 
+## Prompt
+
+```text
+Perform a read-only architecture-closure analysis of <ANALYSIS_TARGET> against <GOVERNING_CONTRACT>.
+
+Derive the decision-critical architecture universe independently from the candidate model, construct the applicable global closure artefact, reconcile the exact candidate against it, and return the closure disposition and any authority boundary required by this workflow.
+
+Do not mutate source, create a design candidate, approve the target, or infer completeness merely from the candidate's own prose, object registry, transition table or known blocker list.
+```
+
+## Inputs
+
+- `<ANALYSIS_TARGET>` — the exact architecture candidate, closure artefact, falsifying review, or other durable target being analysed.
+- `<GOVERNING_CONTRACT>` — the current governing issue/design/policy/acceptance criteria and authority constraints that define applicable behaviour and closure obligations.
+
 ## Core rule
 
 Do not define the closure universe by reading the candidate's headings and then checking that every listed item is internally consistent.
@@ -383,6 +398,14 @@ Return a concise architecture-closure record containing:
 - required next authority/decision.
 
 Return control to the workflow router. Do not mutate source, create a design candidate, approve the target, or manufacture follow-on authority.
+
+## What it does
+
+Separates architecture-universe derivation from candidate validation so a design cannot prove completeness only by checking the objects and transitions it already chose to model. It produces a reconstructable closure record that distinguishes internal model defects from closure-method falsification and binds any reconstruction requirement to the correct authority boundary.
+
+## Boundaries / limitations
+
+Use proportionately. This workflow does not require a theorem prover, model checker, graph database, persisted workflow-state object, or any particular artefact format. It does not replace ordinary stateful/invariant analysis, independently decide product or architecture policy, establish that redesign is necessary, or create implementation/remediation/merge/release/deployment/migration/production authority. Its completeness claim remains bounded to the governing contract and evidence actually inspected; genuinely new later requirements require refresh rather than retroactive falsification.
 
 ## Status
 
