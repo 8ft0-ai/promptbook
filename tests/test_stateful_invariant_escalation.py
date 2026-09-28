@@ -133,6 +133,50 @@ class StatefulInvariantEscalationContractTests(unittest.TestCase):
             "the relevant x invariant/surface remained materially within the prior closure attempt",
             self.router_lower,
         )
+        self.assertIn(
+            "belongs to the same defect family covered by x's invariant-closure attempt",
+            self.router_lower,
+        )
+        self.assertIn(
+            "same broader behavioural/invariant domain x that is independently classified "
+            "as a new defect family does not falsify closure",
+            self.router_lower,
+        )
+
+    def test_architecture_reconsideration_requires_authority_and_has_one_shot_satisfaction(self):
+        for marker in (
+            "separate-authority boundary",
+            "does not separately authorise the bounded read-only architecture reconsideration",
+            "must surface `decision_required` rather than enter analysis",
+            "no current architecture-reconsideration record already satisfies the bound recurrence",
+            "architecture_reconsideration_completed",
+            "do not re-enter architecture reconsideration while that record remains current",
+        ):
+            self.assertIn(marker, self.router_lower)
+        self.assertIn(
+            "require and bind a separately governed authority source",
+            self.analysis_lower,
+        )
+        self.assertIn(
+            "do not themselves supply that authority",
+            self.analysis_lower,
+        )
+        self.assertIn(
+            "satisfies the architecture-reconsideration analysis gate",
+            self.analysis_lower,
+        )
+        self.assertIn(
+            "do not repeat or re-enter the reconsideration while the record remains current",
+            self.analysis_lower,
+        )
+        self.assertIn(
+            "authority to perform the read-only architecture reconsideration is not remediation authority",
+            self.fix_lower,
+        )
+        self.assertIn(
+            "require a new candidate-bound remediation plan derived from the architecture result",
+            self.fix_lower,
+        )
 
     def test_regression_is_distinguished_from_post_closure_recurrence(self):
         self.assertIn(
