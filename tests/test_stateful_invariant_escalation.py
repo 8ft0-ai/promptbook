@@ -64,13 +64,18 @@ class StatefulInvariantEscalationContractTests(unittest.TestCase):
     def test_router_rejects_false_escalation_triggers(self):
         for marker in (
             "two blockers in one substantive review",
-            "repeated review against unchanged bytes",
+            "duplicate/repeated review against unchanged bytes that adds no new substantive same-family blocker",
             "materially unrelated r1/r2 domains",
             "governing requirement that became applicable only after r1",
             "duplicate review records of one substantive adjudication",
             "non-substantive check/test failure by itself",
         ):
             self.assertIn(marker, self.router_lower)
+        self.assertIn(
+            "a later genuinely fresh substantive review may still expose a new material "
+            "blocker on unchanged bytes",
+            self.router_lower,
+        )
 
     def test_escalation_is_process_not_redesign_authority(self):
         self.assertIn("process-driven rather than conclusion-driven", self.router_lower)
@@ -88,7 +93,7 @@ class StatefulInvariantEscalationContractTests(unittest.TestCase):
             self.fix_lower,
         )
 
-    def test_analysis_binding_and_reset_are_explicit(self):
+    def test_analysis_binding_and_post_closure_lineage_are_explicit(self):
         for marker in (
             "current exact candidate",
             "r1 and r2 review identities and dispositions",
@@ -101,12 +106,69 @@ class StatefulInvariantEscalationContractTests(unittest.TestCase):
             self.analysis_lower,
         )
         self.assertIn(
+            "historical `invariant_closure_attempted(x)` lineage remains reconstructable",
+            self.analysis_lower,
+        )
+        self.assertIn("closure_survived_this_review", self.analysis_lower)
+        self.assertIn("closure falsification/post-closure recurrence", self.analysis_lower)
+        self.assertNotIn(
             "the next genuinely fresh substantive review starts a new failure sequence",
             self.analysis_lower,
         )
-        self.assertIn(
+        self.assertNotIn(
             "two further materially related failed review/remediation rounds",
             self.router_lower,
+        )
+
+    def test_post_closure_recurrence_routes_to_architecture_reconsideration(self):
+        for marker in (
+            "invariant_closure_attempted(x)",
+            "closure_survived_this_review",
+            "post-closure same-family recurrence",
+            "architecture_reconsideration_required",
+            "ordinary `/fix` ineligible",
+        ):
+            self.assertIn(marker, self.router_lower)
+        self.assertIn(
+            "the relevant x invariant/surface remained materially within the prior closure attempt",
+            self.router_lower,
+        )
+
+    def test_regression_is_distinguished_from_post_closure_recurrence(self):
+        self.assertIn(
+            "intervening regression that demonstrably broke an already-established x contract",
+            self.router_lower,
+        )
+        self.assertIn(
+            "use the regression/restoration path",
+            self.fix_lower,
+        )
+        self.assertIn(
+            "new defect families, unrelated domains, newly applicable governing requirements "
+            "and materially out-of-boundary changes",
+            self.fix_lower,
+        )
+
+    def test_architecture_reconsideration_is_read_only_and_not_fix_authority(self):
+        self.assertIn(
+            "treat it as explicit architecture reconsideration",
+            self.analysis_lower,
+        )
+        self.assertIn(
+            "recurrence alone does not prove that it is",
+            self.analysis_lower,
+        )
+        self.assertIn(
+            "architecture reconsideration is read-only analysis/decision evidence",
+            self.analysis_lower,
+        )
+        self.assertIn(
+            "ordinary `/fix` is ineligible",
+            self.fix_lower,
+        )
+        self.assertIn(
+            "a previous invariant-closure analysis/remediation plan does not satisfy this stronger boundary",
+            self.fix_lower,
         )
 
     def test_stateful_fix_requires_semantic_and_failure_recovery_completeness(self):
@@ -183,14 +245,26 @@ class StatefulInvariantEscalationContractTests(unittest.TestCase):
             self.fresh_lower,
         )
 
-    def test_review_records_enough_domain_evidence_for_later_routing(self):
+    def test_review_records_enough_domain_and_closure_evidence_for_later_routing(self):
         self.assertIn(
-            "retain enough concise relationship evidence to reconstruct its "
-            "behavioural/invariant domain",
+            "retain enough concise relationship evidence to reconstruct its behavioural/invariant domain",
+            self.fresh_lower,
+        )
+        for marker in (
+            "a new defect family",
+            "same-family recurrence before invariant closure",
+            "regression of an already-established contract",
+            "post-closure same-family recurrence",
+            "relevant prior invariant-closure attempt",
+            "pertinent invariant/surface remained materially within that closure boundary",
+        ):
+            self.assertIn(marker, self.fresh_lower)
+        self.assertIn(
+            "must not inherit an author-side conclusion",
             self.fresh_lower,
         )
         self.assertIn(
-            "must not turn finding count into an automatic abstraction diagnosis",
+            "must not turn finding count or historical closure lineage into an automatic abstraction diagnosis",
             self.fresh_lower,
         )
 
