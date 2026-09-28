@@ -74,6 +74,20 @@ class ReviewRelationshipContractTests(unittest.TestCase):
         )
         self.assertIn("rather than manufacturing `/fix` authority", self.fresh_lower)
 
+    def test_post_closure_relationship_evidence_is_independent_and_routable(self):
+        for marker in (
+            "same-family recurrence before invariant closure",
+            "regression of an already-established contract",
+            "post-closure same-family recurrence",
+            "relevant prior invariant-closure attempt",
+            "must not inherit an author-side conclusion",
+        ):
+            self.assertIn(marker, self.fresh_lower)
+        self.assertIn(
+            "do not recommend ordinary `/fix` as though the prior closure attempt did not exist",
+            self.fresh_lower,
+        )
+
     def test_green_ci_does_not_establish_underlying_invariant(self):
         self.assertIn(
             "treat green ci and passing regression examples as evidence for the "
