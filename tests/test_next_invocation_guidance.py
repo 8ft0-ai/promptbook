@@ -382,6 +382,24 @@ class NextInvocationGuidanceTests(unittest.TestCase):
             self.router_lower,
         )
 
+    def test_step_after_post_closure_recurrence_reports_architecture_boundary(self):
+        self.assertIn(
+            "when post-closure same-family recurrence is established",
+            self.router_lower,
+        )
+        self.assertIn(
+            "classifies the response as `architecture_issue`",
+            self.router_lower,
+        )
+        self.assertIn(
+            "reports `architecture_reconsideration_required` as the next transition/boundary",
+            self.router_lower,
+        )
+        self.assertIn(
+            "stops without remediation mutation",
+            self.router_lower,
+        )
+
     def test_compatibility_intents_are_not_public_commands(self):
         self.assertIn("## compatibility intents", self.router_lower)
         for command in ("/implement", "/handoff", "/record", "/analyse"):
