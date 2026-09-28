@@ -329,6 +329,38 @@ The reviewer should actively attempt to derive a security/authority primitive fr
 
 A closure process that cannot survive that challenge is not complete.
 
+## Regression examples
+
+The reusable contract should preserve at least these failure distinctions.
+
+### Global identity cycle hidden by locally valid objects
+
+If registry A's final identity depends on definition D while D's final identity depends on registry A, local object schemas may each look valid but the global identity DAG is cyclic. Return `ARCHITECTURE_CLOSURE_NOT_READY`; do not accept local digest correctness as global constructibility.
+
+### Unmodelled external effect
+
+If an internal claim/result journal closes `CONSUME` but the real governed consequence occurs in an external system and the external effect plus lost-response recovery are absent from the closure universe, a fresh reviewer may establish `UNMODELLED_DECISION_CRITICAL_PRIMITIVE` and therefore `CLOSURE_METHOD_FALSIFIED`.
+
+### Missing durable authority binding
+
+If an activation transition exists but the exact adopted profile/configuration authority is not represented as durable provenance, architecture closure is not ready. If that authority primitive was absent from a previously claimed closure universe and fresh review establishes its applicability, the closure method may be falsified.
+
+### Missing equivalence proof
+
+If two independently sourced rules claim the same canonical key/consequence space but no normative witness or validator proves that equivalence, return `ARCHITECTURE_CLOSURE_NOT_READY`.
+
+### Missing terminal provenance
+
+If a terminal state exists but no exact durable result/outcome object justifies terminality, return `ARCHITECTURE_CLOSURE_NOT_READY`.
+
+### Modelled local defect
+
+If a transition and its governing primitive were already present in the closure universe but fresh review finds a wrong predicate inside that transition, classify it as `MODELLED_BUT_WRONG`. The finding may block approval but does not automatically establish `CLOSURE_METHOD_FALSIFIED`.
+
+### New requirement after closure
+
+If the closure universe was complete for governing contract G1 and a genuinely new requirement G2 becomes applicable later, refresh or rederive under the current contract as required. Do not retroactively classify the prior closure method as falsified solely because G2 did not exist in G1.
+
 ## Output
 
 Return a concise architecture-closure record containing:
