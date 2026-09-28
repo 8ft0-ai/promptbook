@@ -117,7 +117,7 @@ class ArchitectureClosureCompletenessTests(unittest.TestCase):
             self.assertIn(marker, self.fix_lower)
         self.assertIn("patching all reported findings is not enough to claim architecture closure", self.fix_lower)
 
-    def test_negative_cases_do_not_automatically_falsify_closure_method(self):
+    def test_regression_examples_cover_gitstate_failure_classes(self):\n        for marker in (\n            "global identity cycle hidden by locally valid objects",\n            "unmodelled external effect",\n            "missing durable authority binding",\n            "missing equivalence proof",\n            "missing terminal provenance",\n            "modelled local defect",\n            "new requirement after closure",\n        ):\n            self.assertIn(marker, self.closure_lower)\n    def test_negative_cases_do_not_automatically_falsify_closure_method(self):
         for marker in (
             "new governing requirement became applicable later",
             "materially new architecture scope was introduced later",
