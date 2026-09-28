@@ -38,10 +38,14 @@ Do not define the closure universe by reading the candidate's headings and then 
 
 Instead:
 
-1. derive the decision-critical primitive universe independently from the governing contract, authority boundaries, externally observable consequences, mutable authoritative state, identity construction obligations, recovery/ambiguity obligations and migration/cutover obligations;
-2. construct the global closure model from that independent universe;
-3. reconcile the candidate against the model; and only then
-4. decide whether the architecture is closure-ready.
+1. derive a bounded **source/obligation universe** independently from the candidate by enumerating every applicable governing requirement, externally observable governed consequence/effect class, mutable authoritative fact, identity-construction obligation, observation/acquisition obligation, recovery/ambiguity obligation, equivalence/overlap claim, terminal-provenance obligation and migration/cutover obligation in the authoritative inputs for this decision;
+2. assign each source/obligation a stable entry in the closure record, including its authoritative origin and applicability basis, so omission cannot be hidden by the primitive list;
+3. derive the decision-critical primitive universe from that source/obligation universe and prove **total source → primitive coverage**: every applicable source/obligation maps to at least one represented primitive/relation and no decision-critical source/obligation remains unmapped;
+4. construct the global closure model and the required cross-checkable inventories from that independently bounded universe;
+5. reconcile the candidate against the model; and only then
+6. decide whether the architecture is closure-ready.
+
+Candidate prose may help discover a contradiction or an undeclared use, but it must not define the source/obligation universe. A source/obligation may be classified `NOT_APPLICABLE` only with evidence from the governing contract or authoritative environment; silence in the candidate is not evidence of non-applicability.
 
 The invalid argument is:
 
@@ -51,17 +55,39 @@ all elements of U are internally checked
 therefore candidate is complete
 ```
 
-Completeness requires evidence that the closure universe itself contains the applicable decision-critical primitives.
-
+Completeness requires evidence that the closure universe itself contains the applicable decision-critical obligations **and** that every such obligation is represented in the primitive/model universe. Primitive → source traceability alone is insufficient; source → primitive completeness is mandatory.
 ## Required closure artefact
 
 Produce one canonical closure artefact, or repository-appropriate equivalent, covering the following dimensions proportionately to the architecture.
 
-### 1. Decision-critical primitive universe
+### 1. Closed source/obligation universe and total coverage
 
-Derive the primitive set from governing requirements and externally observable behaviour before reconciling it with candidate prose.
+Construct the bounded source/obligation universe before reconciling candidate prose. At minimum enumerate applicable entries from:
 
-For each applicable primitive, classify its role using one or more explicit categories such as:
+- governing requirements, acceptance criteria, policy and repository-local authority;
+- externally observable governed consequence/effect classes and every admissible path capable of reaching them;
+- mutable authoritative facts and ownership/serialisation obligations;
+- identity-bearing objects and identity-construction dependencies;
+- observation/acquisition and negative-inference obligations;
+- failure, retry, ambiguity, crash-recovery and reconciliation obligations;
+- equivalence, overlap, aliasing and disjointness claims;
+- terminal-result/provenance obligations; and
+- migration, fencing, cutover, coexistence and drain obligations where applicable.
+
+For each source/obligation entry record its stable identity, authoritative origin, applicability basis and the primitive/relation IDs that represent it. Require:
+
+```text
+APPLICABLE_SOURCE_OBLIGATION_WITHOUT_PRIMITIVE_COUNT = 0
+PRIMITIVE_WITHOUT_SOURCE_OR_DERIVATION_BASIS_COUNT = 0
+```
+
+An applicable source/obligation with no represented primitive/relation makes the architecture `ARCHITECTURE_CLOSURE_NOT_READY`, even if every listed primitive is internally valid. Candidate silence never closes an obligation.
+
+### 2. Decision-critical primitive universe
+
+Derive the primitive set from the closed source/obligation universe before reconciling it with candidate prose.
+
+Each primitive has exactly one **primary role** from this closed partition:
 
 ```text
 IMMUTABLE_SOURCE
@@ -79,11 +105,23 @@ MIGRATION_OR_FENCE_PRIMITIVE
 EVIDENCE_ONLY
 ```
 
-Record the governing requirement or externally observable obligation that makes each primitive applicable.
+Secondary annotations may be used for cross-cutting concerns, but they must not replace the single primary classification. Record the source/obligation IDs that make each primitive applicable.
 
 No security- or authority-relevant behaviour may exist only as prose outside the closure model.
 
-### 2. Global identity-dependency DAG
+### 3. Five explicit closure inventories
+
+Project the closed source/primitive universe into five cross-checkable inventories, or a representation with exactly equivalent coverage:
+
+1. **Objects** — every decision-critical object type, ID, set, registry, policy, proof/evidence type, snapshot, result, journal, provenance record and immutable manifest/catalog. For content-addressed objects record construction rank/stage and identity dependencies.
+2. **States** — every stateful object's complete closed state enumeration, initial/terminal/blocked states and required fields/invariants by state.
+3. **Operations** — every authority-changing or state-changing transition, including exact source states, reads/preconditions, required authority, emitted objects, writes/effects, resulting states, terminal/provenance behaviour and retry/ambiguity semantics.
+4. **Authorities** — every grant/token/activation authority, including exact scope, bound owner/consequence, permitted operation, cardinality, consumption/reissue rules, replay/substitution constraints and terminal treatment.
+5. **Effects** — every irreversible governed consequence/effect class and every admissible path capable of reaching it, including owner, authority, immutable claim, executor, idempotency key, durable result/journal, lost-response/crash recovery, ambiguity handling and terminal provenance.
+
+Every decision-critical noun/reference used by the architecture must resolve to this model. An undeclared object, state, operation, authority or effect makes closure not ready. A zero-count assertion is meaningful only after this universe-closure and inventory-coverage step passes.
+
+### 4. Global identity-dependency DAG
 
 Construct one graph covering every identity-bearing/content-addressed object and every identity-bearing derivation.
 
@@ -105,7 +143,7 @@ Require:
 
 Acyclicity of isolated sections is insufficient.
 
-### 3. Ownership / state / transition matrix
+### 5. Ownership / state / transition matrix
 
 For every mutable authoritative fact record:
 
@@ -127,7 +165,7 @@ Every authoritative mutation must occur through exactly one closed transition mo
 
 No authority-bearing owner, allocator, registry, reservation, selector or activation binding may exist only by convention.
 
-### 4. Positive reachability witnesses
+### 6. Positive reachability witnesses
 
 For every advertised lifecycle state, repair path, recovery path, migration phase or authority capability, provide at least one valid witness path from an admitted initial state under the actual validation and transition rules.
 
@@ -135,7 +173,7 @@ Reject vacuous safety claims where a state exists in prose but cannot be reached
 
 Reject repair semantics whose preconditions can never be satisfied.
 
-### 5. End-to-end authority/effect matrix
+### 7. End-to-end authority/effect matrix
 
 For every authority-changing consequence, trace the complete path:
 
@@ -157,7 +195,7 @@ Do not stop the model at an internal `CONSUME`, commit flag, queue write, journa
 
 Internal state closure is not end-to-end effect closure.
 
-### 6. Observation / ambiguity / crash-recovery matrix
+### 8. Observation / ambiguity / crash-recovery matrix
 
 Every decision-critical observation must be one of:
 
@@ -178,7 +216,7 @@ Cover applicable:
 - reconciliation after partial success; and
 - prolonged failure.
 
-### 7. Equivalence / overlap / symmetry proofs
+### 9. Equivalence / overlap / symmetry proofs
 
 Whenever the architecture claims that two independently sourced inputs, profiles, namespaces or projections refer to:
 
@@ -192,7 +230,29 @@ require a normative proof/witness/validator contract.
 
 A prose assertion of equivalence or disjointness is not closure evidence.
 
-### 8. Terminal provenance matrix
+For irreversible governed consequences, require the stronger extensional ownership invariant:
+
+```text
+same possible irreversible governed real-world consequence
+  → exactly one canonical consequence identity
+  → exactly one authority owner
+  → every activation / attempt / replacement / effect authority
+     bound to that owner
+```
+
+For every pair of admissible effect paths, or an equivalent complete partition of the path set, establish exactly one of:
+
+```text
+SAME_CONSEQUENCE
+  → both paths provably collapse to the same canonical consequence identity and owner
+
+DISJOINT_CONSEQUENCES
+  → disjointness is justified by a normative proof/witness/validator contract
+```
+
+Specifically attack aliases/sources, profiles, direct versus migration paths, replacement candidates, retries/reissues, multiple executors and protocol revisions. Opaque provenance fields are not proof of extensional ownership.
+
+### 10. Terminal provenance matrix
 
 Every terminal state must identify the exact durable result/outcome provenance that justifies terminality.
 
@@ -204,7 +264,7 @@ No terminal state may depend on:
 - implementation convention;
 - or an unmodelled external effect.
 
-### 9. Migration / fence matrix when applicable
+### 11. Migration / fence matrix when applicable
 
 Where legacy/successor or old/new interpreters may coexist, include:
 
@@ -216,6 +276,19 @@ Where legacy/successor or old/new interpreters may coexist, include:
 - activation provenance; and
 - proof that two interpreters cannot retain live authority over the same consequence.
 
+### Minimum closure checks
+
+The closure artefact must support an explicit result for at least:
+
+1. **Closed universe** — every decision-critical source obligation and noun/reference belongs to the closure model; no undeclared object/state/authority/effect is used elsewhere.
+2. **Identity construction order** — every identity dependency points to an earlier construction rank/stage; no same-stage, higher-stage, self, mutual or undeclared dependency exists unless an explicit identity contract defines the exception.
+3. **Total state closure** — every transition uses declared states and every non-terminal state has a permitted successor or explicit fail-closed interpretation; terminal parents do not strand prohibited live authority-relevant children.
+4. **Authority scope/cardinality** — every authority binds the exact owner/consequence it may mutate and has explicit use, consumption, replay and reissue semantics.
+5. **Extensional ownership** — any paths capable of the same irreversible consequence resolve to one canonical owner; claimed disjoint paths carry proof.
+6. **Effect completion** — irreversible effects are modelled end-to-end as authority → immutable claim → execution → idempotency → durable result/journal → ambiguity/crash recovery → terminal provenance.
+7. **Positive reachability** — every advertised capability/state has at least one valid witness from an admitted initial state to the intended result.
+
+Before declaring closure ready, explicitly attack whether any noun, ID, set, state, authority, effect, result or provenance object appears anywhere but has no row/entry in the closure record.
 ## Closure decision
 
 After deriving the model independently, reconcile the exact candidate against it.
@@ -226,11 +299,15 @@ Return one of:
 
 Use only when all applicable closure dimensions are represented and current evidence establishes:
 
-- a complete decision-critical primitive universe for the governing contract;
+- a closed source/obligation universe for the governing contract and authoritative environment;
+- total source → primitive coverage with no unmapped applicable obligation;
+- a complete decision-critical primitive universe using the closed primary-role partition;
+- complete cross-checkable object/state/operation/authority/effect inventories;
 - a globally acyclic constructible identity graph;
 - closed authoritative ownership/transitions;
 - positive reachability for advertised states/capabilities;
 - end-to-end authority/effect coverage;
+- extensional consequence ownership across every admissible effect path, or proved disjointness;
 - closed ambiguity/recovery semantics;
 - sufficient equivalence/overlap evidence;
 - total terminal provenance; and
@@ -240,13 +317,13 @@ This is analysis evidence only. It does not approve, implement or mutate the arc
 
 ### `ARCHITECTURE_CLOSURE_NOT_READY`
 
-Use when the closure universe contains the relevant primitive but the architecture/model is internally incomplete, inconsistent, cyclic, unreachable, unproven or otherwise not closure-ready.
+Use when the architecture/model is incomplete, internally inconsistent, cyclic, unreachable, unproven or otherwise not closure-ready, including when the independently derived source/obligation universe is not fully represented.
 
-Examples include a represented identity relation that creates a cycle, a represented transition with incomplete terminal provenance, or a represented equivalence relation with no acceptable witness.
+Examples include an applicable source/obligation with no mapped primitive, an undeclared noun/state/operation/authority/effect, a represented identity relation that creates a cycle, a represented transition with incomplete terminal provenance, or a represented equivalence relation with no acceptable witness.
 
 ### `CLOSURE_METHOD_FALSIFIED`
 
-Use when fresh substantive evidence establishes an applicable decision-critical primitive or relationship that should have been present in the prior closure universe but was absent from it.
+Use when fresh substantive evidence establishes an applicable decision-critical source/obligation, primitive or relationship that should have been present in the prior closure universe but was absent from it.
 
 Classify the review evidence as logically equivalent to:
 
@@ -259,7 +336,7 @@ and bind the falsification record to:
 - the prior closure artefact/model;
 - the exact reviewed candidate;
 - the fresh review identity/disposition;
-- the omitted primitive/relation and why it was applicable;
+- the omitted source/obligation, primitive or relation and why it was applicable;
 - the governing contract;
 - the decision-critical effect of the omission.
 
@@ -272,7 +349,6 @@ CLOSURE_METHOD_FALSIFIED
 ```
 
 Do not merely append the newly discovered primitive to prose and resume the previous repair plan.
-
 ## Closure-method falsification boundary
 
 `ARCHITECTURE_CLOSURE_RECONSTRUCTION_REQUIRED` is a separate-authority boundary.
@@ -333,17 +409,17 @@ Patching only the latest finding is insufficient when that finding exposed an om
 
 ## Fresh-review expectation
 
-Fresh architecture/security/authority review of a closure candidate must challenge two independent questions:
+Fresh architecture/security/authority review of a closure candidate must challenge three independent questions:
 
-1. **internal correctness** — are the represented primitives and relations correct?; and
-2. **universe completeness** — is an applicable decision-critical primitive, dependency, authority edge, effect boundary, recovery state, equivalence relation, terminal provenance requirement or migration/fence obligation absent entirely?
+1. **internal correctness** — are the represented primitives and relations correct?;
+2. **source-universe completeness** — did the closure record omit an applicable authoritative requirement, externally observable consequence, mutable fact, identity/observation/recovery/equivalence/terminal/migration obligation before primitive derivation?; and
+3. **representation completeness** — does every applicable source/obligation map to represented primitives and do the object/state/operation/authority/effect inventories and extensional ownership model cover every decision-critical use/path?
 
-The reviewer must not inherit the author's claim that the closure universe is complete.
+The reviewer must not inherit the author's claim that the source/obligation universe or primitive universe is complete.
 
-The reviewer should actively attempt to derive a security/authority primitive from the governing contract or externally observable consequence model that the closure artefact omitted.
+The reviewer should actively attempt to derive an applicable source/obligation from the governing contract or externally observable consequence model that is absent from the source inventory, then attempt to find an inventoried obligation with no primitive mapping, an undeclared decision-critical noun/reference, or an effect path that lacks canonical-owner/disjointness proof.
 
 A closure process that cannot survive that challenge is not complete.
-
 ## Regression examples
 
 The reusable contract should preserve at least these failure distinctions.
@@ -352,6 +428,9 @@ The reusable contract should preserve at least these failure distinctions.
 
 If registry A's final identity depends on definition D while D's final identity depends on registry A, local object schemas may each look valid but the global identity DAG is cyclic. Return `ARCHITECTURE_CLOSURE_NOT_READY`; do not accept local digest correctness as global constructibility.
 
+### Omitted source obligation with internally valid primitives
+
+If governing contract G requires observable consequence E, but E is omitted from the source/obligation universe while every listed primitive is internally valid, the analysis must return `ARCHITECTURE_CLOSURE_NOT_READY`. It must not infer completeness from the listed primitives. If a prior closure record nevertheless claimed ready and a fresh reviewer discovers the omitted applicable obligation, the reviewer may establish `UNMODELLED_DECISION_CRITICAL_PRIMITIVE` and therefore `CLOSURE_METHOD_FALSIFIED`.
 ### Unmodelled external effect
 
 If an internal claim/result journal closes `CONSUME` but the real governed consequence occurs in an external system and the external effect plus lost-response recovery are absent from the closure universe, a fresh reviewer may establish `UNMODELLED_DECISION_CRITICAL_PRIMITIVE` and therefore `CLOSURE_METHOD_FALSIFIED`.
@@ -382,12 +461,16 @@ Return a concise architecture-closure record containing:
 
 - applicability and authority basis;
 - exact candidate and governing contract;
-- independent primitive-universe derivation basis;
+- closed source/obligation-universe identity and authoritative derivation basis;
+- total source → primitive coverage result, including any unmapped applicable obligation;
+- primitive-universe identity and closed primary-role classification result;
+- object/state/operation/authority/effect inventory coverage result;
 - closure artefact/model identity or durable location;
 - global identity-DAG result;
 - ownership/state/transition result;
 - reachability result;
 - authority/effect result;
+- extensional consequence-ownership / disjointness result;
 - ambiguity/recovery result;
 - equivalence/overlap result;
 - terminal-provenance result;
@@ -398,7 +481,6 @@ Return a concise architecture-closure record containing:
 - required next authority/decision.
 
 Return control to the workflow router. Do not mutate source, create a design candidate, approve the target, or manufacture follow-on authority.
-
 ## What it does
 
 Separates architecture-universe derivation from candidate validation so a design cannot prove completeness only by checking the objects and transitions it already chose to model. It produces a reconstructable closure record that distinguishes internal model defects from closure-method falsification and binds any reconstruction requirement to the correct authority boundary.
