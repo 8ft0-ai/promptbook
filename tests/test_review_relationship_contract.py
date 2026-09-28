@@ -90,7 +90,15 @@ class ReviewRelationshipContractTests(unittest.TestCase):
 
     def test_architecture_closure_review_challenges_universe_completeness(self):
         self.assertIn(
-            "closure-universe completeness",
+            "source-universe completeness",
+            self.fresh_lower,
+        )
+        self.assertIn(
+            "source → primitive/model coverage",
+            self.fresh_lower,
+        )
+        self.assertIn(
+            "primitive → source traceability is not evidence of source → primitive completeness",
             self.fresh_lower,
         )
         self.assertIn(
