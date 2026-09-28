@@ -88,6 +88,24 @@ class ReviewRelationshipContractTests(unittest.TestCase):
             self.fresh_lower,
         )
 
+    def test_architecture_closure_review_challenges_universe_completeness(self):
+        self.assertIn(
+            "closure-universe completeness",
+            self.fresh_lower,
+        )
+        self.assertIn(
+            "unmodelled_decision_critical_primitive",
+            self.fresh_lower,
+        )
+        self.assertIn(
+            "closure_method_falsified",
+            self.fresh_lower,
+        )
+        self.assertIn(
+            "modelled_but_wrong",
+            self.fresh_lower,
+        )
+
     def test_green_ci_does_not_establish_underlying_invariant(self):
         self.assertIn(
             "treat green ci and passing regression examples as evidence for the "
