@@ -12,6 +12,7 @@ Promptbook is organised by the task a user wants to perform.
 ## Workflows
 
 - [Workflow router — start here for governed continuation](workflows/README.md)
+- [Architecture closure analysis](workflows/architecture-closure-analysis.md)
 - [Autonomous progression](workflows/autonomous-progression.md)
 - [Capability availability overrides](workflows/capability-availability-overrides.md)
 - [Documentation assessment workflow](workflows/documentation-assessment.md)

@@ -238,7 +238,7 @@ class StatefulInvariantEscalationContractTests(unittest.TestCase):
     def test_explicit_stateful_analyse_precedes_pending_review_route(self):
         routing = self.router.split("## Routing", 1)[1]
         analysis_route = (
-            "2. **Mandatory or requested stateful/invariant analysis is required now**"
+            "2. **Mandatory architecture/stateful analysis is required now**"
         )
         review_route = "3. **An independent substantive review is required now**"
         self.assertLess(routing.index(analysis_route), routing.index(review_route))
@@ -251,6 +251,23 @@ class StatefulInvariantEscalationContractTests(unittest.TestCase):
         self.assertIn(
             "does not discharge, bypass, weaken, or satisfy that review gate",
             routing_lower,
+        )
+
+    def test_closure_method_falsification_routes_before_fix(self):
+        for marker in (
+            "closure_method_falsified",
+            "architecture_closure_reconstruction_required",
+            "unmodelled_decision_critical_primitive",
+            "separate-authority boundary",
+        ):
+            self.assertIn(marker, self.router_lower)
+        self.assertIn(
+            "architecture closure analysis",
+            self.analysis_lower,
+        )
+        self.assertIn(
+            "ordinary isolated `/fix` is ineligible",
+            self.fix_lower,
         )
 
     def test_fix_consumes_analysis_plan_as_authoritative_synthesis_input(self):
