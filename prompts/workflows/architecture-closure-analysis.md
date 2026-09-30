@@ -68,6 +68,7 @@ Construct the bounded source/obligation universe before reconciling candidate pr
 - governing requirements, acceptance criteria, policy and repository-local authority;
 - externally observable governed consequence/effect classes and every admissible path capable of reaching them;
 - mutable authoritative facts and ownership/serialisation obligations;
+- temporal authority-scope obligations, including the state/revision/epoch against which state-sensitive authority is valid and the invalidation/reissue rule after authoritative movement;
 - identity-bearing objects and identity-construction dependencies;
 - observation/acquisition and negative-inference obligations;
 - failure, retry, ambiguity, crash-recovery and reconciliation obligations;
@@ -117,7 +118,7 @@ Project the closed source/primitive universe into five cross-checkable inventori
 1. **Objects** — every decision-critical object type, ID, set, registry, policy, proof/evidence type, snapshot, result, journal, provenance record and immutable manifest/catalog. For content-addressed objects record construction rank/stage and identity dependencies.
 2. **States** — every stateful object's complete closed state enumeration, initial/terminal/blocked states and required fields/invariants by state.
 3. **Operations** — every authority-changing or state-changing transition, including exact source states, reads/preconditions, required authority, emitted objects, writes/effects, resulting states, terminal/provenance behaviour and retry/ambiguity semantics.
-4. **Authorities** — every grant/token/activation authority, including exact scope, bound owner/consequence, permitted operation, cardinality, consumption/reissue rules, replay/substitution constraints and terminal treatment.
+4. **Authorities** — every grant/token/activation authority, including exact scope, bound owner/consequence, permitted operation, cardinality, consumption/reissue rules, replay/substitution constraints and terminal treatment. For every state-sensitive authority, also record the exact bound state/revision/epoch/freshness predicate, or a normative proof that the authority is intentionally revision-invariant, plus the rule by which authoritative state movement invalidates, consumes or requires reissue of that authority.
 5. **Effects** — every irreversible governed consequence/effect class and every admissible path capable of reaching it, including owner, authority, immutable claim, executor, idempotency key, durable result/journal, lost-response/crash recovery, ambiguity handling and terminal provenance.
 
 Every decision-critical noun/reference used by the architecture must resolve to this model. An undeclared object, state, operation, authority or effect makes closure not ready. A zero-count assertion is meaningful only after this universe-closure and inventory-coverage step passes.
@@ -165,6 +166,8 @@ terminality / replay rule
 Every authoritative mutation must occur through exactly one closed transition model or an explicitly defined atomic/composed transaction.
 
 No authority-bearing owner, allocator, registry, reservation, selector or activation binding may exist only by convention.
+
+Cross-check every state-sensitive authority in the Authorities inventory against this matrix. Its validity predicate must bind the exact relevant authoritative state/revision/epoch (or prove revision-invariance), and every transition that moves that binding must define whether the authority is consumed, permanently stale, explicitly carried forward, or reissued under a new identity. Returning later to a semantically similar state must not revive stale authority by state-name coincidence.
 
 ### 6. Positive reachability witnesses
 
@@ -285,11 +288,12 @@ The closure artefact must support an explicit result for at least:
 2. **Identity construction order** — every identity dependency points to an earlier construction rank/stage; no same-stage, higher-stage, self, mutual or undeclared dependency exists unless an explicit identity contract defines the exception.
 3. **Total state closure** — every transition uses declared states and every non-terminal state has a permitted successor or explicit fail-closed interpretation; terminal parents do not strand prohibited live authority-relevant children.
 4. **Authority scope/cardinality** — every authority binds the exact owner/consequence it may mutate and has explicit use, consumption, replay and reissue semantics.
-5. **Extensional ownership** — any paths capable of the same irreversible consequence resolve to one canonical owner; claimed disjoint paths carry proof.
-6. **Effect completion** — irreversible effects are modelled end-to-end as authority → immutable claim → execution → idempotency → durable result/journal → ambiguity/crash recovery → terminal provenance.
-7. **Positive reachability** — every advertised capability/state has at least one valid witness from an admitted initial state to the intended result.
+5. **Authority freshness/state binding** — every state-sensitive authority binds the exact state/revision/epoch/freshness predicate against which it is valid, or carries normative proof of intentional revision-invariance; authoritative movement cannot silently preserve or revive stale authority, and any carry-forward or reissue is explicit and identity-bound.
+6. **Extensional ownership** — any paths capable of the same irreversible consequence resolve to one canonical owner; claimed disjoint paths carry proof.
+7. **Effect completion** — irreversible effects are modelled end-to-end as authority → immutable claim → execution → idempotency → durable result/journal → ambiguity/crash recovery → terminal provenance.
+8. **Positive reachability** — every advertised capability/state has at least one valid witness from an admitted initial state to the intended result.
 
-Before declaring closure ready, explicitly attack whether any noun, ID, set, state, authority, effect, result or provenance object appears anywhere but has no row/entry in the closure record.
+Before declaring closure ready, explicitly attack whether any noun, ID, set, state, authority, effect, result or provenance object appears anywhere but has no row/entry in the closure record. Also attack whether any authority with the correct owner/consequence/operation could remain usable after the authoritative state/revision it was issued against has moved, including paths that later return to the same named state.
 ## Closure decision
 
 After deriving the model independently, reconcile the exact candidate against it.
@@ -306,6 +310,7 @@ Use only when all applicable closure dimensions are represented and current evid
 - complete cross-checkable object/state/operation/authority/effect inventories;
 - a globally acyclic constructible identity graph;
 - closed authoritative ownership/transitions;
+- explicit authority freshness/state binding with no stale-authority revival across authoritative state/revision movement;
 - positive reachability for advertised states/capabilities;
 - end-to-end authority/effect coverage;
 - extensional consequence ownership across every admissible effect path, or proved disjointness;
@@ -320,7 +325,7 @@ This is analysis evidence only. It does not approve, implement or mutate the arc
 
 Use when the architecture/model is incomplete, internally inconsistent, cyclic, unreachable, unproven or otherwise not closure-ready, including when the independently derived source/obligation universe is not fully represented.
 
-Examples include an applicable source/obligation with no mapped primitive, an undeclared noun/state/operation/authority/effect, a represented identity relation that creates a cycle, a represented transition with incomplete terminal provenance, or a represented equivalence relation with no acceptable witness.
+Examples include an applicable source/obligation with no mapped primitive, an undeclared noun/state/operation/authority/effect, a state-sensitive authority with no exact freshness/state-revision binding or justified revision-invariance, a represented identity relation that creates a cycle, a represented transition with incomplete terminal provenance, or a represented equivalence relation with no acceptable witness.
 
 ### `CLOSURE_METHOD_FALSIFIED`
 
@@ -440,6 +445,10 @@ If an internal claim/result journal closes `CONSUME` but the real governed conse
 
 If an activation transition exists but the exact adopted profile/configuration authority is not represented as durable provenance, architecture closure is not ready. If that authority primitive was absent from a previously claimed closure universe and fresh review establishes its applicability, the closure method may be falsified.
 
+### Stale authority survives authoritative movement
+
+If an authority has the correct owner, consequence, permitted operation and cardinality but is state-sensitive and lacks an exact state/revision/epoch/freshness binding, closure is not ready. Advancing authoritative state, or returning later to a compatible named state, must not leave the old authority usable unless a normative revision-invariance rule explicitly permits it. Reissue after movement must create the newly bound authority required by the model rather than reviving the stale authority.
+
 ### Missing equivalence proof
 
 If two independently sourced rules claim the same canonical key/consequence space but no normative witness or validator proves that equivalence, return `ARCHITECTURE_CLOSURE_NOT_READY`.
@@ -469,6 +478,7 @@ Return a concise architecture-closure record containing:
 - closure artefact/model identity or durable location;
 - global identity-DAG result;
 - ownership/state/transition result;
+- authority freshness/state-binding result, including stale-authority invalidation/reissue semantics;
 - reachability result;
 - authority/effect result;
 - extensional consequence-ownership / disjointness result;
