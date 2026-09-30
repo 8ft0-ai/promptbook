@@ -61,6 +61,36 @@ class ArchitectureClosureCompletenessTests(unittest.TestCase):
         ):
             self.assertIn(marker, self.closure_lower)
 
+    def test_authority_freshness_is_cross_bound_to_state_revision(self):
+        for marker in (
+            "state/revision/epoch/freshness predicate",
+            "authoritative state movement invalidates",
+            "returning later to a semantically similar state must not revive stale authority",
+            "authority freshness/state binding",
+            "stale-authority revival",
+            "stale authority survives authoritative movement",
+        ):
+            self.assertIn(marker, self.closure_lower)
+        self.assertIn("state-sensitive authority", self.review_lower)
+        self.assertIn("revive stale authority", self.review_lower)
+
+    def test_extensional_authority_and_effect_challenge_families_are_pinned(self):
+        for marker in (
+            "cardinality",
+            "consumption/reissue",
+            "replay/substitution",
+            "idempotency key",
+            "replacement candidates",
+            "retries/reissues",
+            "multiple executors",
+            "protocol revisions",
+            "direct versus migration paths",
+        ):
+            self.assertIn(marker, self.closure_lower)
+        self.assertIn("for every pair of admissible effect paths", self.closure_lower)
+        self.assertIn("same_consequence", self.closure_lower)
+        self.assertIn("disjoint_consequences", self.closure_lower)
+
     def test_omitted_applicable_source_obligation_blocks_ready(self):
         self.assertIn(
             "omitted source obligation with internally valid primitives",
@@ -178,6 +208,7 @@ class ArchitectureClosureCompletenessTests(unittest.TestCase):
             "global identity cycle hidden by locally valid objects",
             "unmodelled external effect",
             "missing durable authority binding",
+            "stale authority survives authoritative movement",
             "missing equivalence proof",
             "missing terminal provenance",
             "modelled local defect",
