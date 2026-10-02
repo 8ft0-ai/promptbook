@@ -4,7 +4,7 @@
 
 Derive and challenge a decision-critical architecture-closure model whose completeness does not depend on the candidate's own self-defined object, relation, transition or prose universe.
 
-Use this workflow only for materially security-, authority-, identity-, lifecycle-, recovery- or migration-sensitive architecture work when current governed state requires architecture closure or reconstruction. It is intentionally stronger than ordinary stateful/invariant analysis and does not replace that proportional workflow for routine stateful defects.
+Use this workflow only for materially security-, authority-, identity-, lifecycle-, recovery/ambiguity-, irreversible-effect-, or migration/cutover-sensitive architecture work when current governed state requires architecture closure or reconstruction. It is intentionally stronger than ordinary stateful/invariant analysis and does not replace that proportional workflow for routine stateful defects.
 
 ## When to use
 
@@ -339,7 +339,10 @@ The closure artefact must support an explicit result for at least:
 Before declaring closure ready, explicitly attack whether any noun, ID, set, state, authority, effect, result or provenance object appears anywhere but has no row/entry in the closure record. Also attack whether any authority with the correct owner/consequence/operation could remain usable after the authoritative state/revision it was issued against has moved, including paths that later return to the same named state.
 ## Closure decision
 
-After deriving the model independently, reconcile the exact candidate against it.
+After deriving the model independently, resolve the entry mode before disposition:
+
+- **Proactive pre-candidate entry:** no candidate exists yet. Assess the independently derived closure artefact against the governing contract and authoritative environment without requiring candidate reconciliation. `ARCHITECTURE_CLOSURE_READY` means the closure artefact is sufficient to support separately authorised closure-ready candidate authoring; it is not candidate approval.
+- **Candidate-present entry:** reconcile the exact candidate against the independently derived model before disposition. This includes reactive reconsideration/reconstruction and any later analysis of an existing candidate.
 
 Return one of:
 
@@ -361,6 +364,8 @@ Use only when all applicable closure dimensions are represented and current evid
 - sufficient equivalence/overlap evidence;
 - total terminal provenance; and
 - migration/fence closure where applicable.
+
+For proactive pre-candidate entry, this disposition applies to the closure artefact/model only: no candidate identity is required, and no candidate approval is implied. For candidate-present entry, it additionally requires the exact candidate reconciliation described above.
 
 This is analysis evidence only. It does not approve, implement or mutate the architecture.
 
@@ -513,7 +518,7 @@ If the closure universe was complete for governing contract G1 and a genuinely n
 Return a concise architecture-closure record containing:
 
 - applicability and authority basis;
-- exact candidate and governing contract;
+- entry mode (`PRE_CANDIDATE` or `CANDIDATE_PRESENT`), candidate binding (`PRE_CANDIDATE` when no candidate exists, otherwise the exact immutable candidate), and governing contract;
 - closed source/obligation-universe identity and authoritative derivation basis;
 - total source → primitive coverage result, including any unmapped applicable obligation;
 - primitive-universe identity and closed primary-role classification result;
