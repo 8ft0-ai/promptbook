@@ -4,16 +4,19 @@
 
 Derive and challenge a decision-critical architecture-closure model whose completeness does not depend on the candidate's own self-defined object, relation, transition or prose universe.
 
-Use this workflow only for materially security-, authority-, identity-, lifecycle-, recovery- or migration-sensitive architecture work when current governed state requires architecture closure or reconstruction. It is intentionally stronger than ordinary stateful/invariant analysis and does not replace that proportional workflow for routine stateful defects.
+Use this workflow only for materially security-, authority-, identity-, lifecycle-, recovery/ambiguity-, irreversible-effect-, or migration/cutover-sensitive architecture work when current governed state requires architecture closure or reconstruction. It is intentionally stronger than ordinary stateful/invariant analysis and does not replace that proportional workflow for routine stateful defects.
 
 ## When to use
 
 Use this workflow when current authoritative evidence establishes one of:
 
+- proposed work is materially security-, authority-, identity-, recovery/ambiguity-, irreversible-effect-, or migration/cutover-sensitive **and** the resulting architecture is intended to claim or be treated as closed-world, architecture-closed, closure-ready, complete over its decision-critical authority/effect universe, or an equivalent strong completeness claim;
 - an authorised architecture reconsideration whose result requires an architecture-closure proof before a candidate can safely be treated as closure-ready; or
 - `CLOSURE_METHOD_FALSIFIED` / `ARCHITECTURE_CLOSURE_RECONSTRUCTION_REQUIRED` because a fresh substantive review identified an applicable unmodelled decision-critical primitive, relation, authority edge, effect boundary, recovery state, identity dependency, equivalence claim, terminal-provenance requirement or migration/fence obligation that should have been present in the prior closure universe.
 
-Do not select this workflow merely because an architecture is large, a review found several blockers, or a modelled element is locally wrong. Ordinary architecture/design reasoning or bounded remediation remains appropriate unless the closure-completeness conditions above are established.
+The proactive trigger is conjunctive. Do not select this workflow merely because an architecture is large, because a security/authority word appears, because a review found several blockers, or because a modelled element is locally wrong. Ordinary bounded design, local architecture decisions, exploratory proposals and explicitly modelled-but-incomplete drafts remain eligible for proportionate workflows when they do not make the strong completeness claim.
+
+For proactive entry, derive the closure artefact **before** a candidate is authored or published as closure-ready. The candidate must be a projection of the independently derived closure model; it must not define the universe used to prove its own completeness.
 
 Architecture-closure analysis is read-only. It does not create implementation, redesign, remediation, merge, release, deployment, settings, credential, migration, production or other consequential authority.
 
@@ -22,9 +25,9 @@ Architecture-closure analysis is read-only. It does not create implementation, r
 ```text
 Perform a read-only architecture-closure analysis of <ANALYSIS_TARGET> against <GOVERNING_CONTRACT>.
 
-Derive a closed decision-critical source/obligation universe independently from the candidate model, derive the primitive universe from it with total source → primitive coverage, construct the applicable global closure artefact, reconcile the exact candidate against it, and return the closure disposition and any authority boundary required by this workflow.
+Derive a closed decision-critical source/obligation universe independently from the candidate model, derive the primitive universe from it with total source → primitive coverage, construct the applicable global closure artefact, reconcile the exact candidate against it when one already exists, and return the closure disposition and any authority boundary required by this workflow.
 
-Do not mutate source, create a design candidate, approve the target, or infer completeness merely from the candidate's own prose, object registry, transition table or known blocker list.
+For a proactive pre-candidate invocation, return the current closure artefact before closure-ready candidate authoring begins. Do not mutate source, create a design candidate, approve the target, or infer completeness merely from the candidate's own prose, object registry, transition table or known blocker list.
 ```
 
 ## Inputs
@@ -42,8 +45,20 @@ Instead:
 2. assign each source/obligation a stable entry in the closure record, including its authoritative origin and applicability basis, so omission cannot be hidden by the primitive list;
 3. derive the decision-critical primitive universe from that source/obligation universe and prove **total source → primitive coverage**: every applicable source/obligation maps to at least one represented primitive/relation and no decision-critical source/obligation remains unmapped;
 4. construct the global closure model and the required cross-checkable inventories from that independently bounded universe;
-5. reconcile the candidate against the model; and only then
-6. decide whether the architecture is closure-ready.
+5. reconcile the candidate against the model when a candidate already exists; and only then
+6. decide whether the closure evidence is sufficient for a closure-ready architecture claim.
+
+For proactive pre-candidate work, preserve this derivation invariant:
+
+```text
+governing sources
+→ source/obligation universe
+→ primitive universe
+→ closure artefact
+→ closure-ready candidate
+```
+
+Never invert it into candidate → candidate-derived inventories → self-closure claim.
 
 Candidate prose may help discover a contradiction or an undeclared use, but it must not define the source/obligation universe. A source/obligation may be classified `NOT_APPLICABLE` only with evidence from the governing contract or authoritative environment; silence in the candidate is not evidence of non-applicability.
 
@@ -56,6 +71,34 @@ therefore candidate is complete
 ```
 
 Completeness requires evidence that the closure universe itself contains the applicable decision-critical obligations **and** that every such obligation is represented in the primitive/model universe. Primitive → source traceability alone is insufficient; source → primitive completeness is mandatory.
+
+## Publication gate and closure-evidence freshness
+
+When the proactive trigger applies, a candidate must not be labelled, routed, published or treated as closure-ready until a **current** architecture-closure artefact establishes the required source/obligation coverage and global closure checks.
+
+At minimum the publication evidence must support results equivalent to:
+
+```text
+APPLICABLE_SOURCE_OBLIGATION_WITHOUT_PRIMITIVE_COUNT = 0
+PRIMITIVE_WITHOUT_SOURCE_OR_DERIVATION_BASIS_COUNT = 0
+UNDECLARED_DECISION_CRITICAL_REFERENCE_COUNT = 0
+UNCONSTRUCTABLE_IDENTITY_COUNT = 0
+UNDECLARED_STATE_COUNT = 0
+AUTHORITY_WITHOUT_ISSUER_OR_PROVENANCE_COUNT = 0
+STATE_SENSITIVE_AUTHORITY_WITHOUT_FRESHNESS_BINDING_COUNT = 0
+IRREVERSIBLE_EFFECT_WITHOUT_CLAIM_RESULT_RECOVERY_COUNT = 0
+TERMINAL_STATE_WITHOUT_EXACT_PROVENANCE_COUNT = 0
+UNREACHABLE_ADVERTISED_CAPABILITY_COUNT = 0
+UNPROVED_CONSEQUENCE_OVERLAP_COUNT = 0
+```
+
+Equivalent structured evidence is acceptable; the field names are not normative.
+
+Bind the artefact to the governing contract and the architecture scope it covers. Material movement of either binding that introduces or changes a decision-critical primitive, authority edge, effect class, state family, identity dependency, equivalence/overlap claim, recovery obligation or migration/fence obligation invalidates the affected closure evidence for a new closure-ready claim and requires refresh or rederivation before publication.
+
+Do not require full reconstruction merely because candidate bytes changed. A local correction wholly inside an already-modelled primitive may continue to rely on the existing artefact when current evidence proves the governing contract, closure universe and affected coverage remain applicable.
+
+A current closure artefact is analysis evidence, not architecture approval. Candidate authoring, publication, remediation, merge or later lifecycle effects still require their own authority, and genuinely fresh substantive review remains a separate challenge boundary.
 
 ## Required closure artefact
 
@@ -296,7 +339,10 @@ The closure artefact must support an explicit result for at least:
 Before declaring closure ready, explicitly attack whether any noun, ID, set, state, authority, effect, result or provenance object appears anywhere but has no row/entry in the closure record. Also attack whether any authority with the correct owner/consequence/operation could remain usable after the authoritative state/revision it was issued against has moved, including paths that later return to the same named state.
 ## Closure decision
 
-After deriving the model independently, reconcile the exact candidate against it.
+After deriving the model independently, resolve the entry mode before disposition:
+
+- **Proactive pre-candidate entry:** no candidate exists yet. Assess the independently derived closure artefact against the governing contract and authoritative environment without requiring candidate reconciliation. `ARCHITECTURE_CLOSURE_READY` means the closure artefact is sufficient to support separately authorised closure-ready candidate authoring; it is not candidate approval.
+- **Candidate-present entry:** reconcile the exact candidate against the independently derived model before disposition. This includes reactive reconsideration/reconstruction and any later analysis of an existing candidate.
 
 Return one of:
 
@@ -318,6 +364,8 @@ Use only when all applicable closure dimensions are represented and current evid
 - sufficient equivalence/overlap evidence;
 - total terminal provenance; and
 - migration/fence closure where applicable.
+
+For proactive pre-candidate entry, this disposition applies to the closure artefact/model only: no candidate identity is required, and no candidate approval is implied. For candidate-present entry, it additionally requires the exact candidate reconciliation described above.
 
 This is analysis evidence only. It does not approve, implement or mutate the architecture.
 
@@ -470,7 +518,7 @@ If the closure universe was complete for governing contract G1 and a genuinely n
 Return a concise architecture-closure record containing:
 
 - applicability and authority basis;
-- exact candidate and governing contract;
+- entry mode (`PRE_CANDIDATE` or `CANDIDATE_PRESENT`), candidate binding (`PRE_CANDIDATE` when no candidate exists, otherwise the exact immutable candidate), and governing contract;
 - closed source/obligation-universe identity and authoritative derivation basis;
 - total source → primitive coverage result, including any unmapped applicable obligation;
 - primitive-universe identity and closed primary-role classification result;
