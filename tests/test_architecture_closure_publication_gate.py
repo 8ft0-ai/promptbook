@@ -31,6 +31,26 @@ class ArchitectureClosurePublicationGateTests(unittest.TestCase):
         self.assertIn("both conditions are established", self.router)
         self.assertIn("before closure-ready candidate authoring/publication", self.router)
 
+    def test_proactive_applicability_scope_includes_irreversible_effects(self):
+        purpose = self.closure.split("## when to use", 1)[0]
+        self.assertIn("irreversible-effect-", purpose)
+        self.assertIn("migration/cutover-sensitive", purpose)
+
+    def test_pre_candidate_closure_can_complete_without_candidate_reconciliation(self):
+        self.assertIn("proactive pre-candidate entry", self.closure)
+        self.assertIn("no candidate exists yet", self.closure)
+        self.assertIn("without requiring candidate reconciliation", self.closure)
+        self.assertIn("candidate-present entry", self.closure)
+        self.assertIn(
+            "candidate binding (`pre_candidate` when no candidate exists",
+            self.closure,
+        )
+        self.assertIn("no candidate approval is implied", self.closure)
+        self.assertNotIn(
+            "after deriving the model independently, reconcile the exact candidate against it.",
+            self.closure,
+        )
+
     def test_b_current_independent_closure_artefact_precedes_candidate_and_review(self):
         self.assertIn(
             "governing sources\n→ source/obligation universe\n→ primitive universe\n→ closure artefact\n→ closure-ready candidate",
