@@ -88,8 +88,9 @@ class RemediationReadinessContractTests(unittest.TestCase):
         ):
             self.assertIn(marker, self.router)
             self.assertIn(marker, self.fix)
-        self.assertIn("resulting frozen candidate b identity", self.fix)
-        self.assertIn("validation/evidence bound to b", self.fix)
+        self.assertIn("starting candidate identity (candidate a)", self.fix)
+        self.assertIn("resulting candidate identity (frozen candidate b)", self.fix)
+        self.assertIn("validation/evidence bound to the resulting candidate b", self.fix)
 
     def test_public_fix_summaries_reflect_readiness_without_new_command(self):
         self.assertIn("challenge review-readiness proportionately", self.root_readme)
