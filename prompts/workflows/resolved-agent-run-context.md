@@ -19,7 +19,7 @@ Before substantive governed execution, resolve an ephemeral Resolved Agent Run C
 
 Bind the operation to the repository, governing work identity, immutable candidate or lifecycle identity where applicable, resolved authority sources, applicable repository instructions and their provenance, effective and prohibited capabilities, owner-decision boundaries, and required evidence.
 
-For `/fix`, also bind the starting candidate, remediation scope, required validation, and candidate transition before substantive mutation.
+For `/fix`, also bind the starting candidate, remediation scope, required validation, remediation-readiness requirements, fresh-review boundary, and candidate transition before substantive mutation.
 
 For `/go` or `/step`, also bind the governing objective, current lifecycle state, current candidate and review disposition where applicable, progression depth, continuation mode, proposed next governed action, required preconditions, required evidence, and completion conditions. Before every consequential progression transition, classify the exact proposed action through the existing `/go` action gateway and execute only an `ALLOW` action that remains executable after refreshing decision-critical state. `/step` differs from `/go` only by progression depth: execute at most one governed transition, perform verification intrinsic to establishing that result, re-resolve once, and stop.
 
@@ -240,6 +240,8 @@ prohibited_capabilities
 owner_decision_boundaries
 resolved_capability_availability
 required_validation
+remediation_readiness_requirements
+fresh_review_boundary_requirement
 required_evidence
 ```
 
@@ -248,6 +250,8 @@ required_evidence
 `starting_candidate_identity` is the immutable reviewed candidate or equivalent revision to which the blocking findings and remediation authority apply. `remediation_scope` is derived from the governing findings, task/design, accepted plan where applicable, repository instructions, and explicit current authority. It is not inferred merely from what a tool could change.
 
 `remediation_plan` is the candidate-bound remediation plan required when review-response synthesis has classified the response as `BOUNDED_REMEDIATION`. It binds the source candidate identity, blocker set, material finding relationships or shared invariant, bounded correction, required validation, and explicit scope boundaries that synthesis determined. The plan is authoritative synthesis input to `/fix`, not mutation authority: `/fix` must refresh current state and authority before acting, and must fail closed or return to response routing if the plan is stale, conflicts with current authoritative evidence, or would require a broader correction. When direct `/fix` follows `CHANGES REQUIRED` and no valid remediation plan exists yet, the router must perform the required non-mutating response synthesis before substantive mutation.
+
+`remediation_readiness_requirements` describe the bounded author-side falsification that must complete before a substantive-review remediation candidate can be treated as review-ready. They are derived from the governing contract, complete review finding set and relationship diagnosis, actual changed integration paths, repository instructions, applicable producer/consumer contracts, and any already-required invariant/model artefact. They do not create mutation authority or independent review state. `fresh_review_boundary_requirement` records whether the resulting candidate requires genuinely fresh substantive review and must remain unsatisfied by this authoring/remediation context.
 
 `available_capabilities` and `authority_derived_capabilities` may be retained as intermediate derived sets when useful for reconstruction, but they are not new authority sources.
 
@@ -325,7 +329,13 @@ Treat remediation as a transition between immutable candidate identities rather 
 FixRunContext(A)
     + authorised bounded actions
     → remediation
-    → FixResult(B, delta, validation, evidence, remaining boundaries)
+    → provisional candidate B0
+    → required validation bound to B0
+    → remediation-readiness sweep bound to B0
+    → [bounded sibling defect still ALLOW] mutate Bn → Bn+1, invalidate affected evidence, revalidate, repeat affected readiness challenges
+    → [broader authority/design/escalation boundary] stop mutation and return to routing
+    → freeze final exact candidate B only when validation and readiness are current for B
+    → FixResult(B, delta, validation, readiness, evidence, remaining boundaries)
 ```
 
 `starting_candidate_identity` belongs to the resolved pre-mutation context for candidate A. `resulting_candidate_identity` belongs to the remediation result after candidate B exists.
@@ -334,7 +344,9 @@ Immediately before the first material write, refresh the expected starting candi
 
 Once changed bytes produce candidate B, prior candidate-specific review and validation attached to candidate A expire for B. They may remain historical evidence about A, but they must not silently transfer as review or validation of B.
 
-Run the required validation against candidate B and bind the observed result to `resulting_candidate_identity`. Where the governing workflow requires fresh substantive review, the context that authored or materially shaped B must preserve that fresh-context boundary rather than reviewing B as independent evidence.
+Run the required validation against the current provisional candidate and bind the observed result to that exact identity. Before a substantive-review remediation can become review-ready, complete the proportional remediation-readiness sweep required by the governing workflow. If the sweep discovers another objectively bounded defect whose correction remains attributable to the resolved remediation scope and independently passes the action gateway as `ALLOW`, correct it in the same remediation cycle; that mutation creates a new provisional candidate, invalidates affected prior validation/readiness evidence, and requires affected validation and readiness challenges to be repeated. If the sweep exposes a broader authority/design boundary or an existing stronger escalation trigger, stop mutation and return to routing rather than widening `/fix`.
+
+Freeze `resulting_candidate_identity` only after the current exact candidate simultaneously has current required validation and a completed readiness sweep, with no unresolved material readiness defect inside the applicable surface. Where the governing workflow requires fresh substantive review, the context that authored or materially shaped the final B must preserve that fresh-context boundary rather than reviewing B as independent evidence.
 
 ## `/fix` remediation result
 
@@ -342,10 +354,15 @@ The resulting remediation record or hand-off should be reconstructable as the lo
 
 ```text
 governing_finding_or_remediation_authority
+source_review_identity_and_disposition
 starting_candidate_identity
 bounded_implementation_delta
 resulting_candidate_identity
-validation_and_evidence
+required_validation_bound_to_resulting_candidate
+remediation_readiness_surface_and_evidence
+remediation_readiness_sweep_complete
+exact_resulting_candidate_frozen
+fresh_review_boundary_preserved
 remaining_boundaries
 next_governed_state
 ```
@@ -674,7 +691,7 @@ Resolve the evidence necessary to support the requested operation before adjudic
 - a reproducible test;
 - a static source observation;
 - an applicable repository-rule or authority citation;
-- for `/fix`, the bounded implementation delta and resulting candidate identity;
+- for `/fix`, the bounded implementation delta, final exact resulting candidate identity, required validation bound to that final candidate, remediation-readiness surface/evidence, and preserved fresh-review boundary;
 - for `/go` or `/step`, the starting state, proposed action, authority classification, applicable availability, resolved execution locality when material, resolved fresh-review context when material, resulting state/identity, validation/evidence, and remaining boundaries;
 - for `/save`, the selected canonical durable home, persistence action, operation-ceiling classification, and resulting durable evidence.
 
@@ -711,7 +728,7 @@ Makes the effective execution state of supported governed operations explicit an
 
 For `/review`, it keeps the existing Promptbook review-recording model intact: ordinary router `/review` may publish only the requested review record, while `/review --read-only` remains zero-write. When review is delegated from a non-fresh originating context, it additionally binds affirmative isolation evidence, a minimal reconstruction target, a newly resolved child `/review` capability profile and the exact candidate/result identity without transmitting author-side substantive adjudication.
 
-For `/fix`, it permits only bounded remediation mutation derived from current authority, classifies material actions before execution, distinguishes candidate A from candidate B, and prevents A-specific review or validation from silently carrying forward after bytes change.
+For `/fix`, it permits only bounded remediation mutation derived from current authority, classifies material actions before execution, distinguishes starting candidate A from provisional and final candidate identities, requires the proportional remediation-readiness sweep before final freeze, and prevents validation/readiness evidence from silently carrying forward after bytes change.
 
 For `/go`, it derives effective lifecycle capabilities by monotonic narrowing, classifies every consequential transition through an explicit authority gateway, resolves eligible execution locality before human-operated external fallback, separately resolves eligible fresh-review context before manual fresh-context fallback, consumes bounded decisions only for their exact effect, invalidates stale state across candidate/result transitions, and prevents a successful intermediate action from being mistaken for completion. `/step` reuses that exact progression model but stops after one verified governed transition and one re-resolution. `/next`, `/status`, and `/help` project the same resolved state read-only instead of creating parallel lifecycle truth.
 
@@ -761,8 +778,11 @@ production routing
 → pre-action gateway classification
 → resolved capability availability when applicable
 → bounded ALLOW mutations only
-→ resulting immutable candidate B
-→ B-bound validation/evidence
+→ provisional candidate B0
+→ B0-bound required validation
+→ proportional remediation-readiness sweep
+→ bounded ALLOW sibling correction loop with affected evidence invalidation/revalidation when needed
+→ exact final candidate B frozen only with current B-bound validation + readiness evidence
 → remediation record / remaining boundaries
 → fresh-review boundary or other correct governed next state
 ```
@@ -774,10 +794,10 @@ Before substantive mutation:
 3. establish instruction and authority provenance;
 4. derive the bounded `remediation_scope`;
 5. derive effective/prohibited capabilities by monotonic narrowing;
-6. resolve `required_validation` and `required_evidence`;
+6. resolve `required_validation`, `remediation_readiness_requirements`, `fresh_review_boundary_requirement`, and `required_evidence`;
 7. refresh candidate A immediately before the first material write.
 
-During remediation, classify each material action through the action gateway and execute only `ALLOW` actions that are actually available. For a named availability-controlled action, consume the one resolved availability record after the gateway classification. After changed bytes produce B, invalidate A-specific review/validation for B, run the required validation against B, and record the resulting candidate/evidence without crossing a required fresh-review boundary. Return control to the router so that boundary can be satisfied through an eligible isolated reviewer or, failing that, the existing manual hand-off.
+During remediation, classify each material action through the action gateway and execute only `ALLOW` actions that are actually available. For a named availability-controlled action, consume the one resolved availability record after the gateway classification. After changed bytes produce a provisional candidate, invalidate stale candidate-specific review/validation/readiness evidence, run required validation against the current provisional identity, and complete the proportional remediation-readiness sweep. A sweep-discovered sibling correction may remain in the same cycle only when it is still attributable to the resolved remediation scope and independently passes the action gateway as `ALLOW`; after such a mutation, rebind affected validation and readiness evidence to the new provisional identity before continuing. Freeze the final exact candidate only when required validation and readiness completion are current for that same identity, record the resulting evidence, and do not cross a required fresh-review boundary. Return control to the router so that boundary can be satisfied through an eligible isolated reviewer or, failing that, the existing manual hand-off.
 
 ## `/go` lifecycle
 
