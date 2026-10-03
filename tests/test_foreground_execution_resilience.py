@@ -114,7 +114,14 @@ class ForegroundExecutionResilienceTests(unittest.TestCase):
         ):
             self.assertIn(marker, self.contract_lower)
         self.assertIn("recover that exact candidate", self.autonomous_lower)
-        self.assertIn("continuing exact-head ci observation", self.autonomous_lower)
+        self.assertIn(
+            "reconstruct the governing operation's outstanding candidate-bound assurance",
+            self.autonomous_lower,
+        )
+        self.assertIn(
+            "resume that assurance before resolving any later boundary",
+            self.autonomous_lower,
+        )
 
     def test_session_split_does_not_create_authority_or_review_freshness(self):
         self.assertIn("crossing a session boundary grants no new", self.contract_lower)
