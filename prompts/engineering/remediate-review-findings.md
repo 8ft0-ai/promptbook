@@ -73,10 +73,10 @@ Treat remediation as an immutable candidate transition: starting candidate A plu
 
 Return a remediation record reconstructable as:
 - governing finding/remediation authority and source review identity/disposition;
-- starting candidate A identity;
+- starting candidate identity (candidate A);
 - bounded implementation delta;
-- resulting frozen candidate B identity;
-- validation/evidence bound to B;
+- resulting candidate identity (frozen candidate B);
+- validation/evidence bound to the resulting candidate B;
 - the applicable remediation plan and any current invariant/model artefact consumed;
 - a compact readiness artefact equivalent to `DOMAIN | INVARIANT | ADVERSARIAL_CHALLENGE | RESULT | EVIDENCE` for the materially applicable surface;
 - any materially untested surface that remains;
@@ -108,7 +108,7 @@ When routed, it returns the remediation record to the governing workflow while p
 
 Use only where the expected correction is objectively bounded by existing requirements and authority. An invariant/boundary-level correction is permitted only when it is objectively determined by the governing contract/findings and already within the resolved remediation scope; materially new architecture, authority, security, product, or scope decisions should be resolved separately. Repeated findings never create redesign authority by themselves. Merge, release/tag, deployment, unrelated repository mutation, infrastructure/provider mutation, and settings/credential/secret mutation are not granted by this workflow merely because a capability exists.
 
-Author-side remediation, including a completed remediation-readiness sweep, cannot substitute for fresh independent review when that gate is required. Automatic fresh-context resolution changes only how an eligible independent context is reached; it never makes this remediation context fresh or bypasses repository rules that require another human or formal reviewer. The action gateway is a workflow contract, not a new approval service, sandbox, or persisted policy object.
+Author-side remediation cannot substitute for fresh independent review when that gate is required. A completed remediation-readiness sweep does not change that boundary. Automatic fresh-context resolution changes only how an eligible independent context is reached; it never makes this remediation context fresh or bypasses repository rules that require another human or formal reviewer. The action gateway is a workflow contract, not a new approval service, sandbox, or persisted policy object.
 
 ## Status
 
