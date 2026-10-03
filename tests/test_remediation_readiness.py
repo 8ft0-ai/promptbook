@@ -145,17 +145,20 @@ class RemediationReadinessContractTests(unittest.TestCase):
     def test_go_progression_cannot_skip_readiness_before_fresh_review(self):
         for surface in (self.autonomous, self.go_lifecycle):
             self.assertIn("remediation-readiness sweep", surface)
-        go_fix = self.go_lifecycle.index("/fix produces provisional candidate b0")
-        go_validation = self.go_lifecycle.index(
+        scenario = self.go_lifecycle.split(
+            "### 2. review changes required, bounded remediation, fresh re-review", 1
+        )[1].split("### 3.", 1)[0]
+        go_fix = scenario.index("/fix produces provisional candidate b0")
+        go_validation = scenario.index(
             "required validation bound to current provisional candidate"
         )
-        go_readiness = self.go_lifecycle.index(
+        go_readiness = scenario.index(
             "proportional author-side remediation-readiness sweep"
         )
-        go_freeze = self.go_lifecycle.index(
+        go_freeze = scenario.index(
             "freeze exact final candidate b only when validation + readiness evidence are current for b"
         )
-        go_review = self.go_lifecycle.index(
+        go_review = scenario.index(
             "resolve eligible isolated fresh-review context"
         )
         self.assertLess(go_fix, go_validation)
