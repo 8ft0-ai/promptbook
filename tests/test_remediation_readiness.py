@@ -29,6 +29,9 @@ class RemediationReadinessContractTests(unittest.TestCase):
         cls.go_lifecycle = (
             ROOT / "guides" / "go-lifecycle.md"
         ).read_text(encoding="utf-8").lower()
+        cls.foreground = (
+            WORKFLOWS / "foreground-execution-resilience.md"
+        ).read_text(encoding="utf-8").lower()
 
     def test_enumerated_findings_are_not_the_exhaustive_readiness_surface(self):
         self.assertIn("findings are strong inputs but not the exhaustive search universe", self.fix)
@@ -171,6 +174,40 @@ class RemediationReadinessContractTests(unittest.TestCase):
         self.assertLess(go_freeze, go_review)
         self.assertIn(
             "complete the proportional author-side remediation-readiness sweep",
+            self.autonomous,
+        )
+
+    def test_foreground_recovery_cannot_recreate_review_eligibility(self):
+        self.assertIn(
+            "not the semantic owner of review-readiness or fresh-review eligibility",
+            self.foreground,
+        )
+        recovered = self.foreground.index("exact candidate c recovered")
+        assurance = self.foreground.index("applicable assurance resumed for c", recovered)
+        lifecycle = self.foreground.index(
+            "governing operation establishes its own next eligible lifecycle state",
+            assurance,
+        )
+        fresh = self.foreground.index(
+            "genuinely fresh review boundary reached only when that governing lifecycle establishes fresh-review eligibility",
+            lifecycle,
+        )
+        self.assertLess(recovered, assurance)
+        self.assertLess(assurance, lifecycle)
+        self.assertLess(lifecycle, fresh)
+        for marker in (
+            "required validation",
+            "remediation-readiness requirements",
+            "affected evidence rebinding",
+            "exact final-candidate freeze",
+        ):
+            self.assertIn(marker, self.foreground)
+        self.assertIn(
+            "reconstruct the outstanding `/fix` assurance from the canonical resolved agent run context",
+            self.fix,
+        )
+        self.assertIn(
+            "foreground recovery does not independently establish review-readiness or fresh-review eligibility",
             self.autonomous,
         )
 
