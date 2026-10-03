@@ -69,6 +69,10 @@ class RemediationReadinessContractTests(unittest.TestCase):
         self.assertIn("correct it in the same remediation cycle", self.fix)
         self.assertIn("repeat required validation affected by the changed candidate", self.fix)
         self.assertIn("do not freeze candidate b until those affected challenges are satisfied", self.fix)
+        self.assertIn("bounded sibling defect discovered by the sweep", self.router)
+        self.assertIn("still attributable to the resolved remediation scope", self.router)
+        self.assertIn("not an exhaustive search universe for the readiness sweep", self.fresh)
+        self.assertIn("independently passes the `/fix` action gateway as `allow`", self.fresh)
 
     def test_new_authority_or_design_boundary_stops_mutation(self):
         self.assertIn("stop mutation and return to response routing", self.fix)
