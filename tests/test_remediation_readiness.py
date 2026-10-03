@@ -20,6 +20,15 @@ class RemediationReadinessContractTests(unittest.TestCase):
         cls.bootstrap = (
             ROOT / "guides" / "project-bootstrap.md"
         ).read_text(encoding="utf-8").lower()
+        cls.run_context = (
+            WORKFLOWS / "resolved-agent-run-context.md"
+        ).read_text(encoding="utf-8").lower()
+        cls.autonomous = (
+            WORKFLOWS / "autonomous-progression.md"
+        ).read_text(encoding="utf-8").lower()
+        cls.go_lifecycle = (
+            ROOT / "guides" / "go-lifecycle.md"
+        ).read_text(encoding="utf-8").lower()
 
     def test_enumerated_findings_are_not_the_exhaustive_readiness_surface(self):
         self.assertIn("findings are strong inputs but not the exhaustive search universe", self.fix)
@@ -91,6 +100,72 @@ class RemediationReadinessContractTests(unittest.TestCase):
         self.assertIn("starting candidate identity (candidate a)", self.fix)
         self.assertIn("resulting candidate identity (frozen candidate b)", self.fix)
         self.assertIn("validation/evidence bound to the resulting candidate b", self.fix)
+
+    def test_canonical_run_context_owns_readiness_transition(self):
+        candidate = self.run_context.index("→ provisional candidate b0")
+        validation = self.run_context.index("→ b0-bound required validation")
+        readiness = self.run_context.index("→ proportional remediation-readiness sweep")
+        freeze = self.run_context.index(
+            "→ exact final candidate b frozen only with current b-bound validation + readiness evidence"
+        )
+        fresh = self.run_context.index(
+            "→ fresh-review boundary or other correct governed next state"
+        )
+        self.assertLess(candidate, validation)
+        self.assertLess(validation, readiness)
+        self.assertLess(readiness, freeze)
+        self.assertLess(freeze, fresh)
+        for marker in (
+            "remediation_readiness_requirements",
+            "fresh_review_boundary_requirement",
+            "remediation_readiness_surface_and_evidence",
+            "remediation_readiness_sweep_complete",
+            "exact_resulting_candidate_frozen",
+            "fresh_review_boundary_preserved",
+        ):
+            self.assertIn(marker, self.run_context)
+
+    def test_sweep_discovered_mutation_rebinds_final_candidate_evidence(self):
+        for marker in (
+            "invalidates affected prior validation/readiness evidence",
+            "requires affected validation and readiness challenges to be repeated",
+            "freeze `resulting_candidate_identity` only after the current exact candidate",
+            "current required validation and a completed readiness sweep",
+        ):
+            self.assertIn(marker, self.run_context)
+        self.assertIn(
+            "still attributable to the resolved remediation scope",
+            self.run_context,
+        )
+        self.assertIn(
+            "independently passes the action gateway as `allow`",
+            self.run_context,
+        )
+
+    def test_go_progression_cannot_skip_readiness_before_fresh_review(self):
+        for surface in (self.autonomous, self.go_lifecycle):
+            self.assertIn("remediation-readiness sweep", surface)
+        go_fix = self.go_lifecycle.index("/fix produces provisional candidate b0")
+        go_validation = self.go_lifecycle.index(
+            "required validation bound to current provisional candidate"
+        )
+        go_readiness = self.go_lifecycle.index(
+            "proportional author-side remediation-readiness sweep"
+        )
+        go_freeze = self.go_lifecycle.index(
+            "freeze exact final candidate b only when validation + readiness evidence are current for b"
+        )
+        go_review = self.go_lifecycle.index(
+            "resolve eligible isolated fresh-review context"
+        )
+        self.assertLess(go_fix, go_validation)
+        self.assertLess(go_validation, go_readiness)
+        self.assertLess(go_readiness, go_freeze)
+        self.assertLess(go_freeze, go_review)
+        self.assertIn(
+            "complete the proportional author-side remediation-readiness sweep",
+            self.autonomous,
+        )
 
     def test_public_fix_summaries_reflect_readiness_without_new_command(self):
         self.assertIn("challenge review-readiness proportionately", self.root_readme)
