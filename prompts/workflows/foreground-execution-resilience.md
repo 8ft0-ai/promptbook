@@ -29,11 +29,11 @@ Before establishing that checkpoint:
 
 Do not prefer a half-written workspace, avoidable transient multi-commit state, or known unsafe/incoherent publication merely to create a checkpoint quickly.
 
-Distinguish pre-publication safety checks from authoritative candidate-bound assurance. Safety checks justify preserving the candidate; they are not substitutes for repository-required tests, static checks, CI, integration evidence, review, or any other required assurance. Validation evidence from different bytes must never silently transfer to the checkpoint candidate.
+Distinguish pre-publication safety checks from authoritative candidate-bound assurance. Safety checks justify preserving the candidate; they are not substitutes for repository-required tests, static checks, CI, integration evidence, review, or any other required assurance. Validation evidence from different bytes must never silently transfer to the checkpoint candidate. Foreground resilience is not the semantic owner of review-readiness or fresh-review eligibility: the governing operation's canonical run context/lifecycle owns those states and their prerequisites.
 
-After the immutable candidate exists, spend remaining foreground budget on work that can be resumed safely against that exact identity, including repository-required candidate-bound assurance, exact-head CI observation, pull-request/evidence reconciliation, and preparation for the genuinely fresh review boundary.
+After the immutable candidate exists, spend remaining foreground budget on work that can be resumed safely against that exact identity, including repository-required candidate-bound assurance, exact-head CI observation, pull-request/evidence reconciliation, and the outstanding operation-specific assurance required before the governing lifecycle may reach its next boundary. For substantive-review remediation, that outstanding assurance includes the `/fix` run context's required validation, remediation-readiness requirements, affected evidence rebinding after any later mutation, and exact final-candidate freeze before fresh-review eligibility. Other governed operations resume only the assurance applicable to their own canonical lifecycle; this resilience contract must not invent a universal remediation-readiness requirement.
 
-If the session ends after the checkpoint, a later governed session may continue from the same exact candidate only after reconstructing current authority, repository/task policy, lifecycle state, candidate identity, validation/CI state, and material evidence from durable authoritative sources. Prior-chat memory must not be required for safe continuation. Crossing a session boundary grants no new implementation, mutation, pull-request, merge, release, deployment, credential, production, close-out, or other lifecycle authority.
+If the session ends after the checkpoint, a later governed session may continue from the same exact candidate only after reconstructing current authority, repository/task policy, lifecycle state, candidate identity, validation/CI state, material evidence, and the governing operation's outstanding candidate-bound assurance obligations from durable authoritative sources. Resume that operation-specific lifecycle from its actual reconstructed state; do not derive review-readiness merely from checkpoint recovery, CI completion, reconciliation, or session restart. Prior-chat memory must not be required for safe continuation. Crossing a session boundary grants no new implementation, mutation, pull-request, merge, release, deployment, credential, production, close-out, or other lifecycle authority.
 
 A continuation context that authored, remediated, reconciled, or otherwise materially shaped the candidate remains non-fresh for substantive independent review. Session splitting does not create review independence; use the existing fresh-review contract.
 
@@ -45,17 +45,20 @@ Do not add a new conversational terminal state for foreground exhaustion. Repres
 
 The deterministic recoverable sequence is:
 
-substantial governed implementation
+substantial governed implementation or remediation
   -> foreground budget risk becomes material
   -> coherent candidate C is persisted durably
-  -> session ends before CI/reconciliation completes
+  -> session ends before all required candidate-bound assurance completes
   -> later session starts without prior-chat memory
-  -> authority and lifecycle state reconstructed from durable sources
+  -> authority, lifecycle state and outstanding operation-specific assurance reconstructed from durable sources
   -> exact candidate C recovered
-  -> exact-head CI/reconciliation completed
-  -> genuinely fresh review boundary reached
+  -> applicable assurance resumed for C
+       -> if later authorised mutation produces C': invalidate affected C-bound assurance and continue on C'
+       -> otherwise complete the still-required assurance for C
+  -> governing operation establishes its own next eligible lifecycle state
+  -> genuinely fresh review boundary reached only when that governing lifecycle establishes fresh-review eligibility
 
-The sequence remains fail closed. Candidate C is a persistence identity, not evidence that validation passed, review occurred, or the broader objective completed.
+The sequence remains fail closed. Candidate C is a persistence identity, not evidence that validation passed, remediation-readiness completed, final candidate freeze occurred, review eligibility was established, review occurred, or the broader objective completed.
 ```
 
 ## Inputs
@@ -66,7 +69,7 @@ The sequence remains fail closed. Candidate C is a persistence identity, not evi
 
 ## What it does
 
-Creates an early immutable persistence boundary before optional or deferrable assurance consumes the remaining practical foreground budget, while preserving the distinction between pre-publication safety and authoritative candidate-bound validation. It makes later recovery depend on durable repository evidence rather than prior conversation memory, so exact-head CI observation, PR/evidence reconciliation, remaining candidate-bound assurance, and preparation for genuinely fresh review can continue from the same exact candidate when still authorised.
+Creates an early immutable persistence boundary before optional or deferrable assurance consumes the remaining practical foreground budget, while preserving the distinction between pre-publication safety and authoritative candidate-bound validation. It makes later recovery depend on durable repository evidence rather than prior conversation memory, so exact-head CI observation, PR/evidence reconciliation, and the governing operation's remaining candidate-bound assurance can continue from the same exact candidate when still authorised. It deliberately does not own the transition to review-ready or fresh-review-eligible state.
 
 [Implement an approved issue](../engineering/implement-an-approved-issue.md) applies this contract when implementation or remediation work faces material foreground-execution risk. [Autonomous progression](autonomous-progression.md) applies the reconstruction side when governed continuation resumes from a durable checkpoint.
 
@@ -77,7 +80,7 @@ The contract must never be interpreted to mean that:
 - approximately 18 minutes is a documented hard platform limit;
 - incoherent, unsafe, secret-bearing, or knowingly out-of-scope work should be published to beat a timer;
 - candidate or PR mutation authority may be manufactured by budget pressure;
-- a checkpoint is validated, approved, review-ready, merged, released, deployed, or complete merely because it is durable;
+- a checkpoint is validated, approved, review-ready, fresh-review eligible, merged, released, deployed, or complete merely because it is durable;
 - stale validation applies to changed bytes;
 - a continuation session is fresh for review merely because it is new;
 - an otherwise prohibited execution surface becomes eligible to avoid a foreground limit; or
