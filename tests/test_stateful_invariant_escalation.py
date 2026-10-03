@@ -143,6 +143,41 @@ class StatefulInvariantEscalationContractTests(unittest.TestCase):
             self.router_lower,
         )
 
+    def test_adjacent_model_omission_blocks_fix_until_model_closure(self):
+        for marker in (
+            "adjacent_model_omission",
+            "omitted a necessary semantic owner",
+            "ordinary `/fix` is ineligible",
+            "bounded transition/adversarial matrix",
+            "positive reachability",
+            "one encompassing remediation plan",
+        ):
+            self.assertIn(marker, self.router_lower)
+        self.assertIn(
+            "canonical_multi_owner_intent_model",
+            self.analysis_lower,
+        )
+        self.assertIn(
+            "adversarial_interleaving_matrix",
+            self.analysis_lower,
+        )
+        self.assertIn(
+            "also stop before material mutation",
+            self.fix_lower,
+        )
+        self.assertIn(
+            "genuinely independent new defect families",
+            self.fix_lower,
+        )
+        self.assertIn(
+            "adjacent_model_omission",
+            self.fresh_lower,
+        )
+        self.assertIn(
+            "adjacency, shared terminology or finding count alone is insufficient",
+            self.fresh_lower,
+        )
+
     def test_architecture_reconsideration_requires_authority_and_has_one_shot_satisfaction(self):
         for marker in (
             "separate-authority boundary",
