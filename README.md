@@ -30,7 +30,7 @@ Once Promptbook is configured for a project, common workflow intents can be invo
 | `/help [topic-or-question]` | Advise what to do next and why from current governed state, read-only |
 | `/plan [target]` | Plan bounded work |
 | `/review [target]` | Perform substantive fresh review and record the requested GitHub review by default |
-| `/fix [target]` | Remediate bounded review findings, validate, then return control |
+| `/fix [target]` | Remediate bounded review findings, validate, challenge review-readiness proportionately, then return control |
 | `/save [target]` | Persist the material result in the smallest correct durable repository-native home |
 | `/prompt [target-or-request]` | Generate a context-transfer prompt artefact without executing it |
 
