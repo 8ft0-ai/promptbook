@@ -348,8 +348,12 @@ state reconstructed
 candidate A
   -> fresh review: CHANGES REQUIRED
   -> bounded remediation already authorised
-  -> /fix produces candidate B
-  -> validation bound to B
+  -> /fix produces provisional candidate B0
+  -> required validation bound to current provisional candidate
+  -> proportional author-side remediation-readiness sweep
+       -> if bounded sibling correction is still ALLOW: mutate, invalidate affected evidence, revalidate, repeat affected challenges
+       -> if broader authority/design/escalation boundary appears: return to routing
+  -> freeze exact final candidate B only when validation + readiness evidence are current for B
   -> authoring context is no longer fresh for B
   -> resolve eligible isolated fresh-review context
       -> if eligible: child /review independently reconstructs and reviews exact candidate B
@@ -359,7 +363,7 @@ candidate A
 
 **Primary friction source:** genuine freshness boundary, with avoidable human context transport when isolation can be proved automatically.
 
-**Control to preserve:** the authoring/remediation context never reviews B as independent evidence. Fresh-review context resolution is distinct from execution locality, does not require probing hosted or owner-local executors, and does not bypass a repository requirement for another human/formal reviewer.
+**Control to preserve:** `/go` must not route a remediated candidate to fresh review merely because the reported blockers were patched and validation passed; the applicable remediation-readiness sweep and final exact-candidate evidence binding must complete first. The authoring/remediation context never reviews B as independent evidence. Fresh-review context resolution is distinct from execution locality, does not require probing hosted or owner-local executors, and does not bypass a repository requirement for another human/formal reviewer.
 
 ### 3. Approved candidate, separately authorised merge, post-merge evidence
 
