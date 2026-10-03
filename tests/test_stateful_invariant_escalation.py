@@ -178,6 +178,29 @@ class StatefulInvariantEscalationContractTests(unittest.TestCase):
             self.fresh_lower,
         )
 
+    def test_adjacent_model_challenge_precedes_bounded_remediation_without_prior_closure(self):
+        synthesis_start = self.router_lower.index(
+            "when a completed review exposes `changes required`"
+        )
+        bounded_start = self.router_lower.index(
+            "when response synthesis selects `bounded_remediation`"
+        )
+        synthesis_gate = self.router_lower[synthesis_start:bounded_start]
+        for marker in (
+            "adjacent_model_omission",
+            "immediately preceding remediation",
+            "did not represent",
+            "can change correctness beyond the named reproduction or local predicate",
+            "risk continuing an example-by-example review/fix loop",
+            "does not require a prior r1/r2 invariant-closure attempt or post-closure lineage",
+            "do not select ordinary `bounded_remediation` or route directly to `/fix`",
+        ):
+            self.assertIn(marker, synthesis_gate)
+        self.assertIn(
+            "whether or not a prior r1/r2 invariant-closure attempt exists",
+            self.router_lower,
+        )
+
     def test_architecture_reconsideration_requires_authority_and_has_one_shot_satisfaction(self):
         for marker in (
             "separate-authority boundary",
