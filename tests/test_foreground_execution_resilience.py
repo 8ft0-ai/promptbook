@@ -134,20 +134,34 @@ class ForegroundExecutionResilienceTests(unittest.TestCase):
         self.assertIn("do not add a new conversational terminal state", self.contract_lower)
         self.assertIn("existing promptbook terminal-state model", self.contract_lower)
 
-    def test_deterministic_recovery_sequence_reaches_fresh_review_boundary(self):
+    def test_deterministic_recovery_sequence_resumes_operation_specific_assurance(self):
         markers = (
-            "substantial governed implementation",
+            "substantial governed implementation or remediation",
             "foreground budget risk becomes material",
             "coherent candidate c is persisted durably",
-            "session ends before ci/reconciliation completes",
+            "session ends before all required candidate-bound assurance completes",
             "later session starts without prior-chat memory",
-            "authority and lifecycle state reconstructed from durable sources",
+            "authority, lifecycle state and outstanding operation-specific assurance reconstructed from durable sources",
             "exact candidate c recovered",
-            "exact-head ci/reconciliation completed",
-            "genuinely fresh review boundary reached",
+            "applicable assurance resumed for c",
+            "governing operation establishes its own next eligible lifecycle state",
+            "genuinely fresh review boundary reached only when that governing lifecycle establishes fresh-review eligibility",
         )
         positions = [self.contract_lower.index(marker) for marker in markers]
         self.assertEqual(positions, sorted(positions))
+
+    def test_foreground_resilience_does_not_own_review_eligibility(self):
+        for marker in (
+            "not the semantic owner of review-readiness or fresh-review eligibility",
+            "governing operation's canonical run context/lifecycle owns those states",
+            "do not derive review-readiness merely from checkpoint recovery, ci completion, reconciliation, or session restart",
+            "does not own the transition to review-ready or fresh-review-eligible state",
+        ):
+            self.assertIn(marker, self.contract_lower)
+        self.assertIn(
+            "this resilience contract must not invent a universal remediation-readiness requirement",
+            self.contract_lower,
+        )
 
     def test_remediation_path_applies_checkpoint_contract_without_widening_authority(self):
         self.assertIn(
@@ -163,7 +177,13 @@ class ForegroundExecutionResilienceTests(unittest.TestCase):
             "candidate or pull-request mutation remains subject to the resolved `/fix` authority and action gateway",
             self.remediate_lower,
         )
-        self.assertIn("required validation and fresh re-review remain bound", self.remediate_lower)
+        for marker in (
+            "reconstruct the outstanding `/fix` assurance from the canonical resolved agent run context",
+            "`remediation_readiness_requirements`",
+            "exact final-candidate freeze",
+            "must not independently decide that ci/reconciliation completion makes the candidate review-ready or fresh-review eligible",
+        ):
+            self.assertIn(marker, self.remediate_lower)
 
     def test_integration_points_link_to_the_contract(self):
         link = "foreground-execution-resilience.md"
