@@ -8,6 +8,8 @@ Reconstruct the complete applicable invariant or lifecycle model for a materiall
 
 Use proportionately when the target is materially stateful, lifecycle-sensitive, cross-component, concurrency-sensitive, retry/recovery-sensitive, cache/inference-sensitive, when the workflow router has established the mandatory repeated-review escalation rule, or when durable evidence establishes post-closure same-family recurrence and `ARCHITECTURE_RECONSIDERATION_REQUIRED`.
 
+Also use it when the router establishes `ADJACENT_MODEL_OMISSION`: a fresh blocker may be a distinct defect family yet still prove that the immediately preceding remediation omitted a necessary dimension of the shared state, ownership, identity/currentness, transition, recovery, equivalence or effect model. That classification is evidence-based; adjacency or finding count alone is insufficient.
+
 Do not impose this workflow on a simple local defect whose correct behaviour and bounded correction are already safely determined.
 
 ## Prompt
@@ -31,6 +33,10 @@ When applicable:
 8. Where the evidence permits, distinguish a pre-existing escape from behaviour introduced by the intervening remediation.
 9. Determine whether the existing abstraction remains sound. Recurrence or finding count alone never proves an abstraction failure.
 10. Produce the smallest bounded invariant-level remediation plan that follows from the governing contract and current evidence. If the necessary correction requires materially new product, architecture, security, scope, owner or other authority, expose that boundary instead of manufacturing remediation authority.
+
+When analysis is mandatory because `ADJACENT_MODEL_OMISSION` was established, do not stop at the latest counterexample. Reconstruct the complete relevant semantic-owner/state/currentness model and derive a bounded consistency matrix that covers authoritative state dimensions, ownership, supersession/currentness, global transitions, adversarial interleavings, failure/recovery and positive reachability. For multi-owner intent/currentness problems, retain outputs equivalent to `CANONICAL_MULTI_OWNER_INTENT_MODEL`, `DESIRED_STATE_MODEL`, `CURRENTNESS_AND_SUPERSESSION_MODEL`, `GLOBAL_TRANSITION_MATRIX`, `ADVERSARIAL_INTERLEAVING_MATRIX` and `POSITIVE_REACHABILITY_CHECK`; these names are illustrative rather than a mandatory schema. The resulting plan must be one encompassing model-driven remediation, not a list of patches for the reported reproductions.
+
+If this adjacent-model analysis concerns a materially security-, authority-, identity- or recovery-sensitive architecture that is being treated as closure-ready, invoke [Architecture closure analysis](architecture-closure-analysis.md) within the same bounded read-only analysis authority so the independently derived source/obligation universe, primitive coverage and global closure checks constrain the remediation model. Do not infer `CLOSURE_METHOD_FALSIFIED` unless the stronger existing falsification conditions are independently established.
 
 When this analysis is mandatory because two materially related substantive review rounds failed, bind the analysis record to:
 - the current exact candidate;
