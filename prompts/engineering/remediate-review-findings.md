@@ -59,17 +59,33 @@ When foreground-execution exhaustion becomes a material risk during an authorise
 
 Execute only `ALLOW` actions that are actually available. Implement the bounded corrections, add or adjust regression coverage that would have caught the defect, run the relevant required validation, and inspect the complete resulting diff for accidental scope expansion. If unexpected external candidate movement is detected during remediation, fail closed and reconcile/re-resolve before continuing.
 
+After the authorised correction and required validation, perform an author-side **remediation-readiness sweep** before treating the result as ready for fresh review. Findings are strong inputs but not the exhaustive search universe. Reconstruct the currently applicable decision-critical remediation surface from the governing issue/design/contract, the complete review finding set and relationship diagnosis, the actual resulting candidate and changed integration paths, repository-local instructions, applicable producer/consumer or caller/callee contracts, and any current invariant/model artefact already required by the existing escalation rules.
+
+Challenge that surface proportionately. Where materially applicable, test whether identity aliases or alternate equality paths evade the rule; caller-controlled/configurable state changes governed semantics without changing canonical output identity; alternate production entry paths bypass the corrected helper/policy; stale, future or non-current evidence is admitted; provenance permits stronger output claims than the inputs justify; sibling lifecycle, retry, partial-success, failure and recovery paths disagree; unknown, incomplete, contradictory or malformed-but-valid states fail open; tightened guards destroy positive reachability; two sides/windows/records receive asymmetric uncertainty handling; producer/consumer contracts drift; or derived effects claim more certainty, authority, completeness or canonicality than the evidence permits. A simple local fix with no meaningful sibling surface may satisfy this with lightweight adjacent caller/path inspection and one or more plausible negative/boundary challenges; do not manufacture a state machine or architecture matrix merely to satisfy the sweep.
+
+Use the original findings as seeds for adversarial questions: what other caller-controlled input can influence this semantic; what other production path implements or bypasses it; what symmetric case reaches the same comparison; what valid-but-adversarial input reaches the boundary differently; what output identity/authority claim depends on the input; what nearby state/transition shares the corrected invariant; what assumption in the remediation plan remains unenforced; and what materially adjacent path would a fresh reviewer naturally inspect next. When a concrete plausible escape is representable and in scope, prefer hostile-but-valid regression evidence such as substituted configuration, alternate canonical identity, incomplete/unknown evidence on either side, stale/future/currentness boundaries, repeated attempts, bypass paths, zero/empty/reference cases, or contradictory structurally valid records. Do not add irrelevant tests merely to populate categories.
+
+If this sweep finds another objectively bounded defect inside current remediation authority, correct it in the same remediation cycle, update regression evidence, repeat required validation affected by the changed candidate, and repeat the affected readiness challenges. Do not freeze candidate B until those affected challenges are satisfied. If the sweep instead exposes a broader product, architecture, security, scope, owner or other authority boundary, stop mutation and return to response routing. If the new evidence establishes an existing stronger escalation trigger such as repeated-review stateful escalation, post-closure recurrence, closure-method falsification or `ADJACENT_MODEL_OMISSION`, that route takes precedence; the readiness sweep is not authority to perform the required analysis or redesign.
+
+For substantive-review remediation, successful completion requires all of: `FINDINGS_ADDRESSED`, `REQUIRED_VALIDATION_PASSED`, `REMEDIATION_READINESS_SWEEP_COMPLETE`, `EXACT_RESULTING_CANDIDATE_FROZEN`, and `FRESH_REVIEW_BOUNDARY_PRESERVED`. The resulting status may be expressed as `REMEDIATION_COMPLETE_PENDING_FRESH_REVIEW` with `REMEDIATION_READINESS_SWEEP=COMPLETE`. Never represent that author-side result as `APPROVED`, `REVIEW_PASSED`, formal/independent review evidence, or an architecture-closure result.
+
 Treat remediation as an immutable candidate transition: starting candidate A plus authorised bounded remediation produces candidate B. Once bytes change, candidate-A-specific review and validation do not silently transfer to B. Bind the resulting validation and evidence to B's exact immutable identity.
 
 Return a remediation record reconstructable as:
-- governing finding/remediation authority;
-- starting candidate identity;
+- governing finding/remediation authority and source review identity/disposition;
+- starting candidate A identity;
 - bounded implementation delta;
-- resulting candidate identity;
-- validation/evidence bound to the resulting candidate;
+- resulting frozen candidate B identity;
+- validation/evidence bound to B;
+- the applicable remediation plan and any current invariant/model artefact consumed;
+- a compact readiness artefact equivalent to `DOMAIN | INVARIANT | ADVERSARIAL_CHALLENGE | RESULT | EVIDENCE` for the materially applicable surface;
+- any materially untested surface that remains;
+- any new authority/design boundary discovered during the sweep;
 - any `REQUIRE OWNER / SEPARATE AUTHORITY` or `FORBID` boundaries encountered;
 - any authorised action that could not execute because of a capability boundary;
 - remaining boundaries and next governed state.
+
+The readiness artefact is author-side evidence of remediation completeness. It may support reconstruction of what changed and what was executed, but it is not substantive adjudication for the fresh reviewer.
 
 Classify evidence honestly as `STATIC`, `EXECUTED`, or `DURABLE` according to the Resolved Agent Run Context contract. Do not imply execution occurred where only static reasoning was performed. Clearly identify any finding that still requires a separate decision rather than pretending remediation is complete.
 
@@ -84,7 +100,7 @@ Preserve any required independent re-review boundary; do not present author-side
 
 ## What it does
 
-Keeps remediation narrow, makes mutation authority explicit, classifies material actions before execution, makes review findings traceable to regression evidence, and prevents a repair cycle from becoming an unbounded redesign. It also preserves review-level diagnosis of materially related findings so an already-authorised invariant/boundary correction may be recognised as the minimum safe change instead of forcing repeated example-by-example patches. It binds remediation to starting candidate A and the resulting validation/evidence to candidate B, preventing candidate-specific review or validation from silently carrying across changed bytes. When foreground-execution exhaustion becomes a material risk, it applies the shared resilience contract so a coherent immutable remediation candidate is preserved before deferrable assurance without widening `/fix` authority.
+Keeps remediation narrow, makes mutation authority explicit, classifies material actions before execution, makes review findings traceable to regression evidence, and requires a proportional author-side readiness challenge so a repaired blocker list is not mistaken for a review-ready candidate. It also preserves review-level diagnosis of materially related findings so an already-authorised invariant/boundary correction may be recognised as the minimum safe change instead of forcing repeated example-by-example patches. It binds remediation to starting candidate A and the resulting validation/evidence to candidate B, preventing candidate-specific review or validation from silently carrying across changed bytes. When foreground-execution exhaustion becomes a material risk, it applies the shared resilience contract so a coherent immutable remediation candidate is preserved before deferrable assurance without widening `/fix` authority.
 
 When routed, it returns the remediation record to the governing workflow while preserving the mandatory fresh-context boundary for re-review of a candidate changed in this context. The router may satisfy that boundary through an eligible isolated fresh-review context before requiring the owner to transport the review manually.
 
@@ -92,7 +108,7 @@ When routed, it returns the remediation record to the governing workflow while p
 
 Use only where the expected correction is objectively bounded by existing requirements and authority. An invariant/boundary-level correction is permitted only when it is objectively determined by the governing contract/findings and already within the resolved remediation scope; materially new architecture, authority, security, product, or scope decisions should be resolved separately. Repeated findings never create redesign authority by themselves. Merge, release/tag, deployment, unrelated repository mutation, infrastructure/provider mutation, and settings/credential/secret mutation are not granted by this workflow merely because a capability exists.
 
-Author-side remediation cannot substitute for fresh independent review when that gate is required. Automatic fresh-context resolution changes only how an eligible independent context is reached; it never makes this remediation context fresh or bypasses repository rules that require another human or formal reviewer. The action gateway is a workflow contract, not a new approval service, sandbox, or persisted policy object.
+Author-side remediation, including a completed remediation-readiness sweep, cannot substitute for fresh independent review when that gate is required. Automatic fresh-context resolution changes only how an eligible independent context is reached; it never makes this remediation context fresh or bypasses repository rules that require another human or formal reviewer. The action gateway is a workflow contract, not a new approval service, sandbox, or persisted policy object.
 
 ## Status
 
