@@ -95,6 +95,8 @@ class ArchitectureClosureReviewGateTests(unittest.TestCase):
         self.assertEqual(row["next"], "COMPLEXITY_DISPOSITION_REQUIRED")
         self.assertIn("equivalent_same_family_structural_falsification", self.router)
         self.assertIn("equivalent_same_family_structural_falsification", self.closure)
+        self.assertIn("equivalent_same_family_structural_falsification", self.review)
+        self.assertIn("complexity_disposition_required", self.analysis)
         self.assertIn("local regression inside a still-sound model", self.router)
 
     def test_bounded_remediation_and_local_design_do_not_acquire_closure_gate(self):
