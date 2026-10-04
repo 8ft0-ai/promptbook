@@ -54,8 +54,12 @@ For proactive pre-candidate work, preserve this derivation invariant:
 governing sources
 → source/obligation universe
 → primitive universe
-→ closure artefact
-→ closure-ready candidate
+→ frozen closure snapshot
+→ genuinely fresh closure review
+→ approved closure snapshot
+→ separately authorised candidate projection
+→ validation/readiness as applicable
+→ genuinely fresh candidate review
 ```
 
 Never invert it into candidate → candidate-derived inventories → self-closure claim.
@@ -74,7 +78,7 @@ Completeness requires evidence that the closure universe itself contains the app
 
 ## Publication gate and closure-evidence freshness
 
-When the proactive trigger applies, a candidate must not be labelled, routed, published or treated as closure-ready until a **current** architecture-closure artefact establishes the required source/obligation coverage and global closure checks.
+When the proactive trigger applies, a candidate must not be labelled, routed, published or treated as closure-ready until a **current** architecture-closure artefact establishes the required source/obligation coverage and global closure checks **and that exact artefact has passed the required genuinely fresh architecture-closure review**.
 
 At minimum the publication evidence must support results equivalent to:
 
@@ -94,7 +98,7 @@ UNPROVED_CONSEQUENCE_OVERLAP_COUNT = 0
 
 Equivalent structured evidence is acceptable; the field names are not normative.
 
-Bind the artefact to the governing contract and the architecture scope it covers. Material movement of either binding that introduces or changes a decision-critical primitive, authority edge, effect class, state family, identity dependency, equivalence/overlap claim, recovery obligation or migration/fence obligation invalidates the affected closure evidence for a new closure-ready claim and requires refresh or rederivation before publication.
+Bind the artefact to the governing contract and the architecture scope it covers. Freeze each reviewable closure generation as an exact snapshot. If its durable carrier can be edited in place while retaining the same locator, its identity must include an edit-sensitive content/version witness; the locator alone is not an exact closure identity. Material movement of the closure body, governing contract or architecture scope that introduces or changes a decision-critical primitive, authority edge, effect class, state family, identity dependency, equivalence/overlap claim, recovery obligation or migration/fence obligation creates a new closure snapshot generation and invalidates the affected prior approval/evidence for a new closure-ready claim.
 
 Do not require full reconstruction merely because candidate bytes changed. A local correction wholly inside an already-modelled primitive may continue to rely on the existing artefact when current evidence proves the governing contract, closure universe and affected coverage remain applicable.
 
@@ -341,7 +345,7 @@ Before declaring closure ready, explicitly attack whether any noun, ID, set, sta
 
 After deriving the model independently, resolve the entry mode before disposition:
 
-- **Proactive pre-candidate entry:** no candidate exists yet. Assess the independently derived closure artefact against the governing contract and authoritative environment without requiring candidate reconciliation. `ARCHITECTURE_CLOSURE_READY` means the closure artefact is sufficient to support separately authorised closure-ready candidate authoring; it is not candidate approval.
+- **Proactive pre-candidate entry:** no candidate exists yet. Assess the independently derived closure artefact against the governing contract and authoritative environment without requiring candidate reconciliation. `ARCHITECTURE_CLOSURE_READY` means the author-side closure artefact is complete enough to enter the required genuinely fresh architecture-closure review; it does **not** by itself make closure-ready candidate authoring eligible.
 - **Candidate-present entry:** reconcile the exact candidate against the independently derived model before disposition. This includes reactive reconsideration/reconstruction and any later analysis of an existing candidate.
 
 Return one of:
@@ -365,9 +369,11 @@ Use only when all applicable closure dimensions are represented and current evid
 - total terminal provenance; and
 - migration/fence closure where applicable.
 
-For proactive pre-candidate entry, this disposition applies to the closure artefact/model only: no candidate identity is required, and no candidate approval is implied. For candidate-present entry, it additionally requires the exact candidate reconciliation described above.
+For proactive pre-candidate entry, this disposition applies to the frozen closure snapshot/model only: no candidate identity is required, and no candidate approval is implied. For candidate-present entry, it additionally requires the exact candidate reconciliation described above. `ARCHITECTURE_CLOSURE_READY` means the snapshot is eligible to enter fresh closure review; it is not candidate-projection eligibility.
 
-This is analysis evidence only. It does not approve, implement or mutate the architecture.
+When the governing lifecycle requires architecture closure before replacement/closure-ready candidate projection, this disposition establishes `CLOSURE_REVIEW_REQUIRED` bound to the exact durable closure artefact. The next gate is a genuinely fresh review of the closure artefact itself. Candidate authoring remains ineligible until that exact artefact receives `APPROVED_FOR_CANDIDATE_PROJECTION`.
+
+This is analysis evidence only. It does not approve, implement or mutate the architecture, and it does not self-approve the closure artefact.
 
 ### `ARCHITECTURE_CLOSURE_NOT_READY`
 
@@ -419,7 +425,9 @@ Before reconstruction, require a current separately governed authority source sp
 
 A current reconstruction record satisfies that analysis gate for those exact bindings. Do not loop automatically into repeated reconstruction while it remains current. Material movement of a decision-critical binding requires refresh under normal freshness rules.
 
-The reconstruction result still creates no design-mutation/remediation authority. Any resulting candidate change requires separately established current authority and a new candidate-bound remediation/design plan derived from the reconstructed closure model.
+The reconstruction result still creates no design-mutation/remediation authority. When reconstruction reaches `ARCHITECTURE_CLOSURE_READY`, the exact reconstructed closure artefact must pass the required genuinely fresh architecture-closure review before any resulting candidate may be projected from it. Any resulting candidate change also requires separately established current authority and a new candidate-bound remediation/design plan derived from the exact approved closure model.
+
+If a prior closure artefact had already received `APPROVED_FOR_CANDIDATE_PROJECTION` and later fresh evidence establishes either `CLOSURE_METHOD_FALSIFIED` or `EQUIVALENT_SAME_FAMILY_STRUCTURAL_FALSIFICATION`, perform a proportional complexity disposition before automatically expanding the model again. The equivalent structural class requires independent evidence that a same-family recurrence demonstrates structural inadequacy of the approved closure/model; a local regression inside a still-sound represented primitive is not enough. Explicitly consider state/authority/configuration/effect removal, platform-primitive reuse, moving authority to the actual authoritative boundary, lifecycle/contract decomposition, objective narrowing, and retirement of contradictory active surface. Record `SIMPLIFY_OR_DECOMPOSE` or `ADDITIONAL_MODEL_COMPLEXITY_JUSTIFIED`; simplification is first-class, not mandatory when additional complexity is genuinely necessary.
 
 ## Modelled defect versus missing primitive
 
@@ -445,6 +453,18 @@ Likewise, do not falsify the prior closure method solely because:
 
 ## Remediation completeness for closure candidates
 
+### Approved-closure candidate projection
+
+When a candidate is to be authored from a closure artefact that is subject to the fresh closure-review gate, require durable/reconstructable bindings equivalent to:
+
+```text
+ARCHITECTURE_CLOSURE_SOURCE=<exact closure artefact identity>
+ARCHITECTURE_CLOSURE_REVIEW=<exact fresh review identity with APPROVED_FOR_CANDIDATE_PROJECTION>
+```
+
+Candidate projection may realise or refine already-modelled elements, but it must not silently introduce a new decision-critical primitive, authority edge, state family, effect class, identity dependency, recovery rule, equivalence/overlap claim, migration obligation or external/platform boundary. If projection needs any such new semantic, invalidate projection eligibility and enter closure reconstruction/analysis first; freeze a new `ARCHITECTURE_CLOSURE_READY` snapshot generation before another genuinely fresh closure review. Never route directly from new decision-critical projection semantics to review of the old snapshot. Byte-level change inside an already-modelled primitive does not by itself invalidate the closure approval. After a candidate is successfully projected within the approved universe, complete the applicable validation and remediation-/authoring-readiness evidence for that exact candidate before the separately fresh candidate review.
+
+
 For any later authorised architecture candidate derived from this workflow, completion evidence must establish all three layers:
 
 ```text
@@ -463,7 +483,7 @@ Patching only the latest finding is insufficient when that finding exposed an om
 
 ## Fresh-review expectation
 
-Fresh architecture/security/authority review of a closure candidate must challenge three independent questions:
+Before candidate projection when `CLOSURE_REVIEW_REQUIRED` applies, genuinely fresh review of the **closure artefact itself** must independently challenge the closure universe and return `APPROVED_FOR_CANDIDATE_PROJECTION` or `CHANGES_REQUIRED`. After projection, fresh architecture/security/authority review of the resulting candidate remains a separate gate and must challenge three independent questions:
 
 1. **internal correctness** — are the represented primitives and relations correct?;
 2. **source-universe completeness** — did the closure record omit an applicable authoritative requirement, externally observable consequence, mutable fact, identity/observation/recovery/equivalence/terminal/migration obligation before primitive derivation?; and
@@ -535,6 +555,8 @@ Return a concise architecture-closure record containing:
 - terminal-provenance result;
 - migration/fence result when applicable;
 - disposition: `ARCHITECTURE_CLOSURE_READY`, `ARCHITECTURE_CLOSURE_NOT_READY`, or `CLOSURE_METHOD_FALSIFIED`;
+- `CLOSURE_REVIEW_REQUIRED` and the exact closure artefact identity when a fresh closure-review gate applies;
+- `COMPLEXITY_DISPOSITION_REQUIRED` plus `SIMPLIFY_OR_DECOMPOSE` or `ADDITIONAL_MODEL_COMPLEXITY_JUSTIFIED` when an approved closure is later structurally falsified;
 - any resulting `ARCHITECTURE_CLOSURE_RECONSTRUCTION_REQUIRED` boundary;
 - explicitly untested or unresolved surface;
 - required next authority/decision.

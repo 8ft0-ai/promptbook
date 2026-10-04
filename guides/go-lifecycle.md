@@ -365,6 +365,34 @@ candidate A
 
 **Control to preserve:** `/go` must not route a remediated candidate to fresh review merely because the reported blockers were patched and validation passed; the applicable remediation-readiness sweep and final exact-candidate evidence binding must complete first. The authoring/remediation context never reviews B as independent evidence. Fresh-review context resolution is distinct from execution locality, does not require probing hosted or owner-local executors, and does not bypass a repository requirement for another human/formal reviewer.
 
+### 2b. Architecture closure, fresh closure review, candidate projection
+
+```text
+structural/model escalation
+  -> authorised architecture-closure analysis
+  -> freeze exact closure snapshot: ARCHITECTURE_CLOSURE_READY
+  -> CLOSURE_REVIEW_REQUIRED
+  -> resolve eligible genuinely fresh review context
+      -> REVIEW_TYPE=ARCHITECTURE_CLOSURE
+      -> CHANGES REQUIRED
+           -> exact snapshot rejected
+           -> reconstruct/revise closure
+           -> freeze a new closure snapshot generation
+           -> fresh closure review again
+      -> APPROVED_FOR_CANDIDATE_PROJECTION
+           -> bind exact closure snapshot + unedited review-record snapshot
+           -> refresh both identities before use
+           -> separately resolve candidate-authoring authority
+           -> project candidate without new decision-critical semantics
+           -> required validation/readiness for the exact candidate
+           -> genuinely fresh candidate review
+```
+
+**Primary friction source:** architecture completeness being falsified too late, after a full candidate has already been authored.
+
+**Control to preserve:** repository object IDs are locators, not sufficient identities for mutable closure/review comments. `ARCHITECTURE_CLOSURE_READY` is not self-approval. `/go` must not propose candidate authoring while `CLOSURE_REVIEW_REQUIRED` is unsatisfied, closure approval does not create candidate-write authority, and projection does not become review-ready until applicable validation/readiness completes. If projection introduces a new decision-critical primitive or relation, the approved closure no longer covers that projection: return to closure reconstruction/analysis, freeze a new ready closure snapshot, and only then perform another fresh closure review.
+
+
 ### 3. Approved candidate, separately authorised merge, post-merge evidence
 
 ```text

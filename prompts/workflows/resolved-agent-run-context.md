@@ -33,7 +33,7 @@ For `/prompt`, do not derive mutation capability merely because another context 
 
 For an authorised `/go` or `/step` action whose initially selected mechanism is unavailable or genuinely insufficient, resolve execution locality before selecting a human-operated `EXTERNAL_REQUIRED` hand-off. Prefer an eligible connected/native mechanism, then governed hosted/hermetic execution when the required truth does not depend on owner-private state, then a separately governed bounded owner-local executor when owner-local/private state is genuinely decision-critical. Locality selection may narrow mechanism and projected capability only; it must never create authority, bypass configured suppression, or widen credentials, network, mutation, or other effect boundaries.
 
-When independent review is required and the current context is not genuinely fresh, resolve fresh-review context eligibility separately from execution locality. A candidate child reviewer is eligible only when the execution surface can establish a reasoning/information boundary that excludes author-side substantive adjudication, expected conclusion and hidden conversational state as review evidence. Bind only the minimal durable review target or equivalent reconstruction reference needed for the child to independently bootstrap applicable authority and reconstruct the exact candidate, checks and review state. Resolve the child as a new `/review` operation under the `/review` ceiling rather than inheriting the originating `/go`, `/implement` or `/fix` capability profile. If isolation is unavailable, ambiguous or unprovable, preserve the manual fresh-context fallback rather than manufacturing independence.
+When independent review is required and the current context is not genuinely fresh, resolve fresh-review context eligibility separately from execution locality. A candidate child reviewer is eligible only when the execution surface can establish a reasoning/information boundary that excludes author-side substantive adjudication, expected conclusion and hidden conversational state as review evidence. Bind only the minimal durable review target or equivalent reconstruction reference needed for the child to independently bootstrap applicable authority and reconstruct the exact review target, checks/evidence and review state, plus candidate identity when applicable. Resolve the child as a new `/review` operation under the `/review` ceiling rather than inheriting the originating `/go`, `/implement` or `/fix` capability profile. If isolation is unavailable, ambiguous or unprovable, preserve the manual fresh-context fallback rather than manufacturing independence.
 
 Use the operation-specific capability profile and lifecycle below. Collect bounded reconstructable evidence, distinguish static observation from executed and durable evidence, and bind candidate- or result-specific evidence to the immutable state for which it was actually observed.
 ```
@@ -116,7 +116,12 @@ For `/review`, resolve at least:
 operation
 repository_identity
 work_item_identity
-immutable_candidate_identity
+review_target_identity
+review_target_snapshot_identity_when_mutable
+review_target_type
+immutable_candidate_identity_when_applicable
+architecture_closure_identity_when_applicable
+review_record_target
 resolved_authority_sources
 applicable_repository_instructions
 effective_capabilities
@@ -128,13 +133,15 @@ required_evidence
 
 `resolved_fresh_review_context` is required only when the `/review` operation is entered through delegated fresh-context resolution. Ordinary review performed directly in a current context that is already genuinely fresh need not create a child-context record.
 
-## Immutable review candidate
+`review_target_identity` identifies the durable object or immutable object locator being adjudicated. When that object can be edited in place without changing its locator, `review_target_snapshot_identity_when_mutable` is also required and must bind an edit-sensitive content/version witness sufficient to distinguish materially different bodies; locator equality is not snapshot equality. `review_target_type` distinguishes ordinary candidate/design/evidence review from `ARCHITECTURE_CLOSURE` review. `immutable_candidate_identity_when_applicable` is required for candidate review but is explicitly `NOT_APPLICABLE` for a pre-candidate closure review; do not manufacture a future candidate identity merely to satisfy the generic review model. `architecture_closure_identity_when_applicable` is required when `review_target_type=ARCHITECTURE_CLOSURE` and must identify the exact closure **snapshot**, not merely its issue/comment locator. `review_record_target` identifies the permitted durable publication location when write-back applies; for a GitHub issue/comment closure artefact this is the owning issue thread. A closure-review result is stale for a different or materially changed closure snapshot. `APPROVED_FOR_CANDIDATE_PROJECTION` is review evidence only and cannot add candidate-write or later-lifecycle capability to the `/review` profile.
 
-Where the review target has an immutable Git identity, bind the context to the exact candidate commit or equivalent immutable revision actually inspected.
+## Immutable review target and candidate binding
 
-Candidate-specific review authority and evidence are valid only for that candidate. If the candidate identity changes, invalidate the prior candidate-specific context and re-resolve before relying on earlier findings or publishing a review disposition.
+Bind `review_target_identity` to the immutable object identity or durable locator actually inspected, and when the target is mutable bind `review_target_snapshot_identity_when_mutable` to the exact inspected content/version snapshot. For candidate review, bind the context to the exact candidate commit or equivalent immutable revision through `immutable_candidate_identity_when_applicable`. For pre-candidate architecture-closure review, candidate identity is `NOT_APPLICABLE` while the exact closure snapshot remains the review target.
 
-Immediately before review publication, refresh the candidate identity and reconcile any movement. Never publish a stale candidate-specific disposition merely because the conversation still contains the earlier conclusion.
+Review-target-specific authority and evidence are valid only for that exact snapshot. If a mutable target's locator remains the same but its content/version witness changes, invalidate the prior target-specific context exactly as if the locator changed. When candidate identity applies and changes, invalidate the prior candidate-specific context and re-resolve before relying on candidate-bound evidence.
+
+Immediately before review publication and again before later consumption of the review result, refresh the exact review-target snapshot identity and reconcile material movement. Refresh the candidate identity as well when applicable. Never publish or consume a stale target-specific disposition merely because the durable locator or conversation still contains the earlier conclusion.
 
 ## Review capability profile
 
@@ -151,7 +158,7 @@ ALLOW
 FORBID
 - repository mutation
 - branch mutation
-- PR mutation except the review-record publication explicitly authorised by the governing `/review` mode
+- PR/work-item mutation except the single review-record publication explicitly authorised by the governing `/review` mode
 - merge
 - release
 - unrelated external execution
@@ -189,7 +196,9 @@ child_review_capabilities
 child_projection_provenance
 attempt_identity_or_equivalent
 failure_class
-result_candidate_identity
+result_review_target_identity
+result_candidate_identity_when_applicable
+result_review_record_identity_when_published
 result_disposition_or_evidence
 ```
 
@@ -198,11 +207,11 @@ The representation may remain ephemeral. Its purpose is to make the fresh-contex
 Eligibility requires all of the following:
 
 1. the child receives only a minimal durable review target or equivalent reconstruction reference, not author-side substantive reasoning or a proposed disposition;
-2. the child independently bootstraps applicable project/repository authority and reconstructs the exact candidate, governing contract, checks and review state from authoritative sources;
+2. the child independently bootstraps applicable project/repository authority and reconstructs the exact review target, governing contract, checks/evidence and review state from authoritative sources; candidate identity is required only when the target is a candidate;
 3. the information boundary does not expose author-side hidden conversational state, private reasoning, expected conclusion or other substantive adjudication as review evidence;
 4. the child resolves as operation `/review` and is constrained by the existing `/review` capability profile and recording mode;
 5. repository-local policy does not require a distinct human or formal reviewer that this child context cannot satisfy; and
-6. the returned review disposition/evidence is bound to the exact candidate actually inspected.
+6. the returned review disposition/evidence is bound to the exact review target actually inspected, with candidate identity additionally bound when applicable.
 
 Project/repository instructions and durable governing records are not prohibited merely because the originating context also saw them. Freshness concerns inherited adjudication, not shared authoritative rules.
 
@@ -216,7 +225,7 @@ effective_review_authority
 
 The child must not inherit `candidate_write`, bounded remediation mutation, `merge`, `release_publish`, `deploy`, repository-settings mutation, provider mutation, production-data mutation or another author-side capability merely because the originating context possessed it. Creating/selecting the child is not authority and cannot refresh stale parent authority.
 
-If isolation cannot be established, the durable target is ambiguous or insufficient, repository policy requires a genuinely distinct human/formal reviewer, the candidate moves so the returned result is stale, or the child would require broader capability than `/review` permits, the child is ineligible. Preserve the existing manual fresh-context `EXTERNAL_REQUIRED` hand-off or the stronger repository-policy boundary.
+If isolation cannot be established, the durable target is ambiguous or insufficient, repository policy requires a genuinely distinct human/formal reviewer, the exact review target moves so the returned result is stale, or the child would require broader capability than `/review` permits, the child is ineligible. Preserve the existing manual fresh-context `EXTERNAL_REQUIRED` hand-off or the stronger repository-policy boundary.
 
 Do not repeatedly create equivalent failed review contexts while the target, isolation evidence and bounded review-capability state remain unchanged. A materially changed target, isolation mechanism, policy or capability state may justify a new resolution attempt.
 
@@ -451,6 +460,12 @@ governing_objective_identity
 current_lifecycle_state
 current_candidate_identity
 current_review_disposition
+current_architecture_closure_identity
+current_architecture_closure_snapshot_identity
+current_closure_review_requirement
+current_closure_review_identity
+current_closure_review_snapshot_identity
+current_closure_review_disposition
 resolved_authority_sources
 applicable_repository_instructions
 effective_capabilities
@@ -475,6 +490,8 @@ completion_conditions
 `governing_objective_identity` should normally identify the lifecycle object that can reconstruct the complete governed objective, such as the governing issue, rather than collapsing `/go` onto one intermediate pull request when post-merge verification or close-out remains part of the objective.
 
 `current_candidate_identity` and `current_review_disposition` may be absent when the current lifecycle state has no candidate/review concept, but their absence must be explicit rather than silently filled from conversation memory.
+
+The architecture-closure review fields are material only when current state is on a closure-governed path. `ARCHITECTURE_CLOSURE_READY` sets `current_closure_review_requirement=CLOSURE_REVIEW_REQUIRED` for the exact closure artefact. Candidate projection is not an executable next action until `current_closure_review_disposition=APPROVED_FOR_CANDIDATE_PROJECTION` is current for that same closure identity **and** separate candidate-authoring authority permits projection. A `CHANGES REQUIRED` closure review or material movement of the closure/governing bindings keeps projection ineligible and routes back to closure analysis/reconstruction.
 
 `next_governed_action` is a proposed transition, not permission to execute it. The exact action must still pass the `/go` action gateway immediately before consequential execution. `/step` consumes this same action gateway and stops after one verified transition/re-resolution; `/next`, `/status`, and `/help` may expose or interpret the proposal read-only without executing it.
 
@@ -726,7 +743,7 @@ The human-facing review may remain concise. It does not need to print a verbose 
 
 Makes the effective execution state of supported governed operations explicit and reconstructable without introducing a new durable per-run artefact. It separates authority from capability, preserves repository-instruction provenance, and requires honest evidence classes bound to the candidate or resulting state for which they were observed.
 
-For `/review`, it keeps the existing Promptbook review-recording model intact: ordinary router `/review` may publish only the requested review record, while `/review --read-only` remains zero-write. When review is delegated from a non-fresh originating context, it additionally binds affirmative isolation evidence, a minimal reconstruction target, a newly resolved child `/review` capability profile and the exact candidate/result identity without transmitting author-side substantive adjudication.
+For `/review`, it keeps the existing Promptbook review-recording model intact: ordinary router `/review` may publish only the requested review record, while `/review --read-only` remains zero-write. When review is delegated from a non-fresh originating context, it additionally binds affirmative isolation evidence, a minimal reconstruction target, a newly resolved child `/review` capability profile, the exact review-target/result identity and candidate identity when applicable, without transmitting author-side substantive adjudication.
 
 For `/fix`, it permits only bounded remediation mutation derived from current authority, classifies material actions before execution, distinguishes starting candidate A from provisional and final candidate identities, requires the proportional remediation-readiness sweep before final freeze, and prevents validation/readiness evidence from silently carrying forward after bytes change.
 
@@ -762,7 +779,7 @@ Before substantive adjudication:
 6. identify the evidence required for a safe disposition;
 7. when review was delegated, verify the resolved fresh-review isolation binding and independently reconstruct decision-critical state from the durable target before adjudication.
 
-During review, collect only evidence permitted by the effective capability set and relevant to the governing contract. Before publication, refresh candidate identity and any decision-critical evidence that can stale.
+During review, collect only evidence permitted by the effective capability set and relevant to the governing contract. Before publication, refresh the exact review-target identity and any decision-critical evidence that can stale, plus candidate identity when applicable.
 
 ## `/fix` lifecycle
 
