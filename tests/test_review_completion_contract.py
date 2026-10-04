@@ -140,7 +140,15 @@ class ReviewCompletionContractTests(unittest.TestCase):
             self.remediate_lower,
         )
         self.assertIn(
-            "complete identified blocker set without another routine approval",
+            "enter the bounded remediation cycle without another routine approval",
+            self.fresh_lower,
+        )
+        self.assertIn(
+            "not an exhaustive search universe for the readiness sweep",
+            self.fresh_lower,
+        )
+        self.assertIn(
+            "remains attributable to the resolved remediation scope",
             self.fresh_lower,
         )
         self.assertIn(

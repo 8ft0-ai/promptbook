@@ -176,7 +176,9 @@ class ResolvedAgentRunContextTests(unittest.TestCase):
 
     def test_fix_candidate_transition_is_explicit(self):
         self.assertIn("FixRunContext(A)", self.contract)
-        self.assertIn("FixResult(B, delta, validation, evidence, remaining boundaries)", self.contract)
+        self.assertIn("FixResult(B, delta, validation, readiness, evidence, remaining boundaries)", self.contract)
+        self.assertIn("provisional candidate B0", self.contract)
+        self.assertIn("freeze final exact candidate B", self.contract)
         self.assertIn("starting_candidate_identity", self.contract)
         self.assertIn("resulting_candidate_identity", self.contract)
         self.assertIn("immediately before the first material write", self.contract_lower)
@@ -185,7 +187,9 @@ class ResolvedAgentRunContextTests(unittest.TestCase):
     def test_candidate_a_review_and_validation_expire_for_b(self):
         self.assertIn("prior candidate-specific review and validation attached to candidate a expire for b", self.contract_lower)
         self.assertIn("must not silently transfer as review or validation of b", self.contract_lower)
-        self.assertIn("bind the observed result to `resulting_candidate_identity`", self.contract_lower)
+        self.assertIn("bind the observed result to that exact identity", self.contract_lower)
+        self.assertIn("freeze `resulting_candidate_identity` only after the current exact candidate", self.contract_lower)
+        self.assertIn("current required validation and a completed readiness sweep", self.contract_lower)
         self.assertIn("fresh-context boundary", self.contract_lower)
 
     def test_go_capabilities_are_monotonically_narrowed(self):
@@ -361,8 +365,11 @@ class ResolvedAgentRunContextTests(unittest.TestCase):
             "effective/prohibited capabilities",
             "pre-action gateway classification",
             "bounded allow mutations only",
-            "resulting immutable candidate b",
-            "b-bound validation/evidence",
+            "provisional candidate b0",
+            "b0-bound required validation",
+            "proportional remediation-readiness sweep",
+            "bounded allow sibling correction loop with affected evidence invalidation/revalidation when needed",
+            "exact final candidate b frozen only with current b-bound validation + readiness evidence",
             "fresh-review boundary or other correct governed next state",
         ):
             self.assertIn(stage, self.contract_lower)
