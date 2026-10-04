@@ -48,7 +48,8 @@ class ArchitectureClosureReviewGateTests(unittest.TestCase):
 
     def test_lifecycle_table_routes_required_scenarios(self):
         expected = {
-            ("ORDINARY_BOUNDED_REMEDIATION", "REVIEW_CHANGES_REQUIRED"): ("REMEDIATION_READINESS_REQUIRED", "NOT_APPLICABLE", "FIX"),
+            ("ORDINARY_BOUNDED_REMEDIATION", "REVIEW_CHANGES_REQUIRED"): ("FIX_REQUIRED", "NOT_APPLICABLE", "FIX"),
+            ("FIX_REQUIRED", "REMEDIATION_IMPLEMENTED_AND_VALIDATED"): ("REMEDIATION_READINESS_REQUIRED", "NOT_APPLICABLE", "READINESS_SWEEP"),
             ("ADJACENT_MODEL_OMISSION", "ARCHITECTURE_CLOSURE_SELECTED"): ("ARCHITECTURE_CLOSURE_ANALYSIS_REQUIRED", "NO", "ANALYSE_CLOSURE"),
             ("ARCHITECTURE_CLOSURE_READY", "NONE"): ("CLOSURE_REVIEW_REQUIRED", "NO", "FRESH_CLOSURE_REVIEW"),
             ("CLOSURE_REVIEW_REQUIRED", "DURABLE_CHANGES_REQUIRED_RECORDED"): ("CLOSURE_RECONSTRUCTION_REQUIRED", "NO", "REVISE_OR_RECONSTRUCT_CLOSURE"),
@@ -99,7 +100,11 @@ class ArchitectureClosureReviewGateTests(unittest.TestCase):
     def test_bounded_remediation_and_local_design_do_not_acquire_closure_gate(self):
         remediation = self.transition("ORDINARY_BOUNDED_REMEDIATION", "REVIEW_CHANGES_REQUIRED")
         local = self.transition("LOCAL_OR_INCOMPLETE_DESIGN", "NO_STRONG_CLOSURE_CLAIM")
+        self.assertEqual(remediation["next"], "FIX_REQUIRED")
         self.assertEqual(remediation["action"], "FIX")
+        readiness = self.transition("FIX_REQUIRED", "REMEDIATION_IMPLEMENTED_AND_VALIDATED")
+        self.assertEqual(readiness["next"], "REMEDIATION_READINESS_REQUIRED")
+        self.assertEqual(readiness["action"], "READINESS_SWEEP")
         self.assertEqual(local["action"], "NO_CLOSURE_REVIEW")
         self.assertIn("ordinary `/fix` and its remediation-readiness sweep cannot satisfy that gate", self.fix)
 
