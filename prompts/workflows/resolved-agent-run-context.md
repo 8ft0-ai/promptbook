@@ -776,7 +776,7 @@ Before substantive adjudication:
 6. identify the evidence required for a safe disposition;
 7. when review was delegated, verify the resolved fresh-review isolation binding and independently reconstruct decision-critical state from the durable target before adjudication.
 
-During review, collect only evidence permitted by the effective capability set and relevant to the governing contract. Before publication, refresh candidate identity and any decision-critical evidence that can stale.
+During review, collect only evidence permitted by the effective capability set and relevant to the governing contract. Before publication, refresh the exact review-target identity and any decision-critical evidence that can stale, plus candidate identity when applicable.
 
 ## `/fix` lifecycle
 
