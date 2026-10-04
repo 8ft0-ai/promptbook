@@ -116,9 +116,11 @@ For `/review`, resolve at least:
 operation
 repository_identity
 work_item_identity
+review_target_identity
 review_target_type
-immutable_candidate_identity
-architecture_closure_identity
+immutable_candidate_identity_when_applicable
+architecture_closure_identity_when_applicable
+review_record_target
 resolved_authority_sources
 applicable_repository_instructions
 effective_capabilities
@@ -130,7 +132,7 @@ required_evidence
 
 `resolved_fresh_review_context` is required only when the `/review` operation is entered through delegated fresh-context resolution. Ordinary review performed directly in a current context that is already genuinely fresh need not create a child-context record.
 
-`review_target_type` distinguishes ordinary candidate/design/evidence review from `ARCHITECTURE_CLOSURE` review. `architecture_closure_identity` is required when `review_target_type=ARCHITECTURE_CLOSURE` and must identify the exact durable closure artefact being independently adjudicated. A closure-review result is stale for a different or materially changed closure artefact. `APPROVED_FOR_CANDIDATE_PROJECTION` is review evidence only and cannot add candidate-write or later-lifecycle capability to the `/review` profile.
+`review_target_identity` identifies the exact immutable or durable object actually being adjudicated. `review_target_type` distinguishes ordinary candidate/design/evidence review from `ARCHITECTURE_CLOSURE` review. `immutable_candidate_identity_when_applicable` is required for candidate review but is explicitly `NOT_APPLICABLE` for a pre-candidate closure review; do not manufacture a future candidate identity merely to satisfy the generic review model. `architecture_closure_identity_when_applicable` is required when `review_target_type=ARCHITECTURE_CLOSURE` and must identify the exact durable closure artefact being independently adjudicated. `review_record_target` identifies the permitted durable publication location when write-back applies; for a GitHub issue/comment closure artefact this is the owning issue thread. A closure-review result is stale for a different or materially changed closure artefact. `APPROVED_FOR_CANDIDATE_PROJECTION` is review evidence only and cannot add candidate-write or later-lifecycle capability to the `/review` profile.
 
 ## Immutable review candidate
 
@@ -155,7 +157,7 @@ ALLOW
 FORBID
 - repository mutation
 - branch mutation
-- PR mutation except the review-record publication explicitly authorised by the governing `/review` mode
+- PR/work-item mutation except the single review-record publication explicitly authorised by the governing `/review` mode
 - merge
 - release
 - unrelated external execution
@@ -193,7 +195,9 @@ child_review_capabilities
 child_projection_provenance
 attempt_identity_or_equivalent
 failure_class
-result_candidate_identity
+result_review_target_identity
+result_candidate_identity_when_applicable
+result_review_record_identity_when_published
 result_disposition_or_evidence
 ```
 
@@ -202,11 +206,11 @@ The representation may remain ephemeral. Its purpose is to make the fresh-contex
 Eligibility requires all of the following:
 
 1. the child receives only a minimal durable review target or equivalent reconstruction reference, not author-side substantive reasoning or a proposed disposition;
-2. the child independently bootstraps applicable project/repository authority and reconstructs the exact candidate, governing contract, checks and review state from authoritative sources;
+2. the child independently bootstraps applicable project/repository authority and reconstructs the exact review target, governing contract, checks/evidence and review state from authoritative sources; candidate identity is required only when the target is a candidate;
 3. the information boundary does not expose author-side hidden conversational state, private reasoning, expected conclusion or other substantive adjudication as review evidence;
 4. the child resolves as operation `/review` and is constrained by the existing `/review` capability profile and recording mode;
 5. repository-local policy does not require a distinct human or formal reviewer that this child context cannot satisfy; and
-6. the returned review disposition/evidence is bound to the exact candidate actually inspected.
+6. the returned review disposition/evidence is bound to the exact review target actually inspected, with candidate identity additionally bound when applicable.
 
 Project/repository instructions and durable governing records are not prohibited merely because the originating context also saw them. Freshness concerns inherited adjudication, not shared authoritative rules.
 
@@ -220,7 +224,7 @@ effective_review_authority
 
 The child must not inherit `candidate_write`, bounded remediation mutation, `merge`, `release_publish`, `deploy`, repository-settings mutation, provider mutation, production-data mutation or another author-side capability merely because the originating context possessed it. Creating/selecting the child is not authority and cannot refresh stale parent authority.
 
-If isolation cannot be established, the durable target is ambiguous or insufficient, repository policy requires a genuinely distinct human/formal reviewer, the candidate moves so the returned result is stale, or the child would require broader capability than `/review` permits, the child is ineligible. Preserve the existing manual fresh-context `EXTERNAL_REQUIRED` hand-off or the stronger repository-policy boundary.
+If isolation cannot be established, the durable target is ambiguous or insufficient, repository policy requires a genuinely distinct human/formal reviewer, the exact review target moves so the returned result is stale, or the child would require broader capability than `/review` permits, the child is ineligible. Preserve the existing manual fresh-context `EXTERNAL_REQUIRED` hand-off or the stronger repository-policy boundary.
 
 Do not repeatedly create equivalent failed review contexts while the target, isolation evidence and bounded review-capability state remain unchanged. A materially changed target, isolation mechanism, policy or capability state may justify a new resolution attempt.
 
