@@ -116,7 +116,9 @@ For `/review`, resolve at least:
 operation
 repository_identity
 work_item_identity
+review_target_type
 immutable_candidate_identity
+architecture_closure_identity
 resolved_authority_sources
 applicable_repository_instructions
 effective_capabilities
@@ -127,6 +129,8 @@ required_evidence
 ```
 
 `resolved_fresh_review_context` is required only when the `/review` operation is entered through delegated fresh-context resolution. Ordinary review performed directly in a current context that is already genuinely fresh need not create a child-context record.
+
+`review_target_type` distinguishes ordinary candidate/design/evidence review from `ARCHITECTURE_CLOSURE` review. `architecture_closure_identity` is required when `review_target_type=ARCHITECTURE_CLOSURE` and must identify the exact durable closure artefact being independently adjudicated. A closure-review result is stale for a different or materially changed closure artefact. `APPROVED_FOR_CANDIDATE_PROJECTION` is review evidence only and cannot add candidate-write or later-lifecycle capability to the `/review` profile.
 
 ## Immutable review candidate
 
@@ -451,6 +455,10 @@ governing_objective_identity
 current_lifecycle_state
 current_candidate_identity
 current_review_disposition
+current_architecture_closure_identity
+current_closure_review_requirement
+current_closure_review_identity
+current_closure_review_disposition
 resolved_authority_sources
 applicable_repository_instructions
 effective_capabilities
@@ -475,6 +483,8 @@ completion_conditions
 `governing_objective_identity` should normally identify the lifecycle object that can reconstruct the complete governed objective, such as the governing issue, rather than collapsing `/go` onto one intermediate pull request when post-merge verification or close-out remains part of the objective.
 
 `current_candidate_identity` and `current_review_disposition` may be absent when the current lifecycle state has no candidate/review concept, but their absence must be explicit rather than silently filled from conversation memory.
+
+The architecture-closure review fields are material only when current state is on a closure-governed path. `ARCHITECTURE_CLOSURE_READY` sets `current_closure_review_requirement=CLOSURE_REVIEW_REQUIRED` for the exact closure artefact. Candidate projection is not an executable next action until `current_closure_review_disposition=APPROVED_FOR_CANDIDATE_PROJECTION` is current for that same closure identity **and** separate candidate-authoring authority permits projection. A `CHANGES REQUIRED` closure review or material movement of the closure/governing bindings keeps projection ineligible and routes back to closure analysis/reconstruction.
 
 `next_governed_action` is a proposed transition, not permission to execute it. The exact action must still pass the `/go` action gateway immediately before consequential execution. `/step` consumes this same action gateway and stops after one verified transition/re-resolution; `/next`, `/status`, and `/help` may expose or interpret the proposal read-only without executing it.
 

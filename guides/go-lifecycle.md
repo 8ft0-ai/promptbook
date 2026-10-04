@@ -365,6 +365,31 @@ candidate A
 
 **Control to preserve:** `/go` must not route a remediated candidate to fresh review merely because the reported blockers were patched and validation passed; the applicable remediation-readiness sweep and final exact-candidate evidence binding must complete first. The authoring/remediation context never reviews B as independent evidence. Fresh-review context resolution is distinct from execution locality, does not require probing hosted or owner-local executors, and does not bypass a repository requirement for another human/formal reviewer.
 
+### 2b. Architecture closure, fresh closure review, candidate projection
+
+```text
+structural/model escalation
+  -> authorised architecture-closure analysis
+  -> exact closure artefact: ARCHITECTURE_CLOSURE_READY
+  -> CLOSURE_REVIEW_REQUIRED
+  -> resolve eligible genuinely fresh review context
+      -> REVIEW_TYPE=ARCHITECTURE_CLOSURE
+      -> CHANGES REQUIRED
+           -> revise/reconstruct closure only
+           -> no candidate projection
+      -> APPROVED_FOR_CANDIDATE_PROJECTION
+           -> bind exact closure artefact + review identity
+           -> separately resolve candidate-authoring authority
+           -> project candidate without new decision-critical semantics
+           -> validate/readiness as applicable
+           -> genuinely fresh candidate review
+```
+
+**Primary friction source:** architecture completeness being falsified too late, after a full candidate has already been authored.
+
+**Control to preserve:** `ARCHITECTURE_CLOSURE_READY` is not self-approval. `/go` must not propose candidate authoring while `CLOSURE_REVIEW_REQUIRED` is unsatisfied, and closure approval does not create candidate-write authority. If projection introduces a new decision-critical primitive or relation, the approved closure no longer covers that projection and the lifecycle returns to closure analysis/review rather than silently expanding the candidate.
+
+
 ### 3. Approved candidate, separately authorised merge, post-merge evidence
 
 ```text

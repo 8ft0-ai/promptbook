@@ -53,9 +53,11 @@ class ArchitectureClosurePublicationGateTests(unittest.TestCase):
 
     def test_b_current_independent_closure_artefact_precedes_candidate_and_review(self):
         self.assertIn(
-            "governing sources\n→ source/obligation universe\n→ primitive universe\n→ closure artefact\n→ closure-ready candidate",
+            "governing sources\n→ source/obligation universe\n→ primitive universe\n→ closure artefact",
             self.closure,
         )
+        self.assertIn("closure_review_required", self.closure)
+        self.assertIn("approved_for_candidate_projection", self.closure)
         self.assertIn("current independently derived", self.implement)
         self.assertIn("consume/project that artefact into the candidate", self.implement)
         self.assertIn("genuinely fresh substantive review remains a separate challenge boundary", self.closure)
@@ -122,7 +124,7 @@ class ArchitectureClosurePublicationGateTests(unittest.TestCase):
 
     def test_planning_and_authoring_cannot_reconstruct_completeness_from_candidate_prose(self):
         self.assertIn("pre-authoring dependency", self.plan)
-        self.assertIn("governing sources → closure artefact → candidate → fresh review", self.plan)
+        self.assertIn("governing sources → closure artefact → genuinely fresh closure review → approved closure artefact → candidate projection → genuinely fresh candidate review", self.plan)
         self.assertIn("do not plan to infer the completeness universe from candidate prose", self.plan)
         self.assertIn("do not reconstruct the completeness universe from candidate prose", self.implement)
 
