@@ -53,7 +53,7 @@ class ArchitectureClosurePublicationGateTests(unittest.TestCase):
 
     def test_b_current_independent_closure_artefact_precedes_candidate_and_review(self):
         self.assertIn(
-            "governing sources\n→ source/obligation universe\n→ primitive universe\n→ closure artefact",
+            "governing sources\n→ source/obligation universe\n→ primitive universe\n→ frozen closure snapshot",
             self.closure,
         )
         self.assertIn("closure_review_required", self.closure)
@@ -80,7 +80,7 @@ class ArchitectureClosurePublicationGateTests(unittest.TestCase):
     def test_e_scope_movement_stales_coverage_but_local_modelled_change_can_reuse(self):
         for marker in (
             "material movement",
-            "invalidates the affected closure evidence",
+            "invalidates the affected prior approval/evidence",
             "requires refresh or rederivation before publication",
             "local correction wholly inside an already-modelled primitive",
         ):
