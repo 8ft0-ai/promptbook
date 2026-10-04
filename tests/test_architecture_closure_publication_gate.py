@@ -59,7 +59,7 @@ class ArchitectureClosurePublicationGateTests(unittest.TestCase):
         self.assertIn("closure_review_required", self.closure)
         self.assertIn("approved_for_candidate_projection", self.closure)
         self.assertIn("current independently derived", self.implement)
-        self.assertIn("consume/project that artefact into the candidate", self.implement)
+        self.assertIn("consume/project that approved snapshot into the candidate", self.implement)
         self.assertIn("genuinely fresh substantive review remains a separate challenge boundary", self.closure)
 
     def test_c_ordinary_architecture_draft_does_not_trigger_heavyweight_closure(self):
@@ -81,7 +81,7 @@ class ArchitectureClosurePublicationGateTests(unittest.TestCase):
         for marker in (
             "material movement",
             "invalidates the affected prior approval/evidence",
-            "requires refresh or rederivation before publication",
+            "creates a new closure snapshot generation",
             "local correction wholly inside an already-modelled primitive",
         ):
             self.assertIn(marker, self.closure)
