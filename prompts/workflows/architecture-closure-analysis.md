@@ -54,8 +54,12 @@ For proactive pre-candidate work, preserve this derivation invariant:
 governing sources
 → source/obligation universe
 → primitive universe
-→ closure artefact
-→ closure-ready candidate
+→ frozen closure snapshot
+→ genuinely fresh closure review
+→ approved closure snapshot
+→ separately authorised candidate projection
+→ validation/readiness as applicable
+→ genuinely fresh candidate review
 ```
 
 Never invert it into candidate → candidate-derived inventories → self-closure claim.
@@ -94,7 +98,7 @@ UNPROVED_CONSEQUENCE_OVERLAP_COUNT = 0
 
 Equivalent structured evidence is acceptable; the field names are not normative.
 
-Bind the artefact to the governing contract and the architecture scope it covers. Material movement of either binding that introduces or changes a decision-critical primitive, authority edge, effect class, state family, identity dependency, equivalence/overlap claim, recovery obligation or migration/fence obligation invalidates the affected closure evidence for a new closure-ready claim and requires refresh or rederivation before publication.
+Bind the artefact to the governing contract and the architecture scope it covers. Freeze each reviewable closure generation as an exact snapshot. If its durable carrier can be edited in place while retaining the same locator, its identity must include an edit-sensitive content/version witness; the locator alone is not an exact closure identity. Material movement of the closure body, governing contract or architecture scope that introduces or changes a decision-critical primitive, authority edge, effect class, state family, identity dependency, equivalence/overlap claim, recovery obligation or migration/fence obligation creates a new closure snapshot generation and invalidates the affected prior approval/evidence for a new closure-ready claim.
 
 Do not require full reconstruction merely because candidate bytes changed. A local correction wholly inside an already-modelled primitive may continue to rely on the existing artefact when current evidence proves the governing contract, closure universe and affected coverage remain applicable.
 
@@ -365,7 +369,7 @@ Use only when all applicable closure dimensions are represented and current evid
 - total terminal provenance; and
 - migration/fence closure where applicable.
 
-For proactive pre-candidate entry, this disposition applies to the closure artefact/model only: no candidate identity is required, and no candidate approval is implied. For candidate-present entry, it additionally requires the exact candidate reconciliation described above.
+For proactive pre-candidate entry, this disposition applies to the frozen closure snapshot/model only: no candidate identity is required, and no candidate approval is implied. For candidate-present entry, it additionally requires the exact candidate reconciliation described above. `ARCHITECTURE_CLOSURE_READY` means the snapshot is eligible to enter fresh closure review; it is not candidate-projection eligibility.
 
 When the governing lifecycle requires architecture closure before replacement/closure-ready candidate projection, this disposition establishes `CLOSURE_REVIEW_REQUIRED` bound to the exact durable closure artefact. The next gate is a genuinely fresh review of the closure artefact itself. Candidate authoring remains ineligible until that exact artefact receives `APPROVED_FOR_CANDIDATE_PROJECTION`.
 
@@ -458,7 +462,7 @@ ARCHITECTURE_CLOSURE_SOURCE=<exact closure artefact identity>
 ARCHITECTURE_CLOSURE_REVIEW=<exact fresh review identity with APPROVED_FOR_CANDIDATE_PROJECTION>
 ```
 
-Candidate projection may realise or refine already-modelled elements, but it must not silently introduce a new decision-critical primitive, authority edge, state family, effect class, identity dependency, recovery rule, equivalence/overlap claim, migration obligation or external/platform boundary. If projection needs any such new semantic, invalidate projection eligibility for the affected closure and return to closure analysis plus genuinely fresh closure review before continuing. Byte-level change inside an already-modelled primitive does not by itself invalidate the closure approval.
+Candidate projection may realise or refine already-modelled elements, but it must not silently introduce a new decision-critical primitive, authority edge, state family, effect class, identity dependency, recovery rule, equivalence/overlap claim, migration obligation or external/platform boundary. If projection needs any such new semantic, invalidate projection eligibility and enter closure reconstruction/analysis first; freeze a new `ARCHITECTURE_CLOSURE_READY` snapshot generation before another genuinely fresh closure review. Never route directly from new decision-critical projection semantics to review of the old snapshot. Byte-level change inside an already-modelled primitive does not by itself invalidate the closure approval. After a candidate is successfully projected within the approved universe, complete the applicable validation and remediation-/authoring-readiness evidence for that exact candidate before the separately fresh candidate review.
 
 
 For any later authorised architecture candidate derived from this workflow, completion evidence must establish all three layers:

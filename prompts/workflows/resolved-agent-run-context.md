@@ -117,6 +117,7 @@ operation
 repository_identity
 work_item_identity
 review_target_identity
+review_target_snapshot_identity_when_mutable
 review_target_type
 immutable_candidate_identity_when_applicable
 architecture_closure_identity_when_applicable
@@ -132,15 +133,15 @@ required_evidence
 
 `resolved_fresh_review_context` is required only when the `/review` operation is entered through delegated fresh-context resolution. Ordinary review performed directly in a current context that is already genuinely fresh need not create a child-context record.
 
-`review_target_identity` identifies the exact immutable or durable object actually being adjudicated. `review_target_type` distinguishes ordinary candidate/design/evidence review from `ARCHITECTURE_CLOSURE` review. `immutable_candidate_identity_when_applicable` is required for candidate review but is explicitly `NOT_APPLICABLE` for a pre-candidate closure review; do not manufacture a future candidate identity merely to satisfy the generic review model. `architecture_closure_identity_when_applicable` is required when `review_target_type=ARCHITECTURE_CLOSURE` and must identify the exact durable closure artefact being independently adjudicated. `review_record_target` identifies the permitted durable publication location when write-back applies; for a GitHub issue/comment closure artefact this is the owning issue thread. A closure-review result is stale for a different or materially changed closure artefact. `APPROVED_FOR_CANDIDATE_PROJECTION` is review evidence only and cannot add candidate-write or later-lifecycle capability to the `/review` profile.
+`review_target_identity` identifies the durable object or immutable object locator being adjudicated. When that object can be edited in place without changing its locator, `review_target_snapshot_identity_when_mutable` is also required and must bind an edit-sensitive content/version witness sufficient to distinguish materially different bodies; locator equality is not snapshot equality. `review_target_type` distinguishes ordinary candidate/design/evidence review from `ARCHITECTURE_CLOSURE` review. `immutable_candidate_identity_when_applicable` is required for candidate review but is explicitly `NOT_APPLICABLE` for a pre-candidate closure review; do not manufacture a future candidate identity merely to satisfy the generic review model. `architecture_closure_identity_when_applicable` is required when `review_target_type=ARCHITECTURE_CLOSURE` and must identify the exact closure **snapshot**, not merely its issue/comment locator. `review_record_target` identifies the permitted durable publication location when write-back applies; for a GitHub issue/comment closure artefact this is the owning issue thread. A closure-review result is stale for a different or materially changed closure snapshot. `APPROVED_FOR_CANDIDATE_PROJECTION` is review evidence only and cannot add candidate-write or later-lifecycle capability to the `/review` profile.
 
 ## Immutable review target and candidate binding
 
-Bind `review_target_identity` to the exact immutable or durable object actually inspected. For candidate review, bind the context to the exact candidate commit or equivalent immutable revision through `immutable_candidate_identity_when_applicable`. For pre-candidate architecture-closure review, candidate identity is `NOT_APPLICABLE` while the exact durable closure artefact remains the review target.
+Bind `review_target_identity` to the immutable object identity or durable locator actually inspected, and when the target is mutable bind `review_target_snapshot_identity_when_mutable` to the exact inspected content/version snapshot. For candidate review, bind the context to the exact candidate commit or equivalent immutable revision through `immutable_candidate_identity_when_applicable`. For pre-candidate architecture-closure review, candidate identity is `NOT_APPLICABLE` while the exact closure snapshot remains the review target.
 
-Review-target-specific authority and evidence are valid only for that target. If the review-target identity changes, invalidate the prior target-specific context and re-resolve before relying on earlier findings or publishing a disposition. When candidate identity applies and changes, invalidate the prior candidate-specific context and re-resolve before relying on candidate-bound evidence.
+Review-target-specific authority and evidence are valid only for that exact snapshot. If a mutable target's locator remains the same but its content/version witness changes, invalidate the prior target-specific context exactly as if the locator changed. When candidate identity applies and changes, invalidate the prior candidate-specific context and re-resolve before relying on candidate-bound evidence.
 
-Immediately before review publication, refresh the exact review-target identity and reconcile material movement. Refresh the candidate identity as well when applicable. Never publish a stale target-specific disposition merely because the conversation still contains the earlier conclusion.
+Immediately before review publication and again before later consumption of the review result, refresh the exact review-target snapshot identity and reconcile material movement. Refresh the candidate identity as well when applicable. Never publish or consume a stale target-specific disposition merely because the durable locator or conversation still contains the earlier conclusion.
 
 ## Review capability profile
 
@@ -460,8 +461,10 @@ current_lifecycle_state
 current_candidate_identity
 current_review_disposition
 current_architecture_closure_identity
+current_architecture_closure_snapshot_identity
 current_closure_review_requirement
 current_closure_review_identity
+current_closure_review_snapshot_identity
 current_closure_review_disposition
 resolved_authority_sources
 applicable_repository_instructions

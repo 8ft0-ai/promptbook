@@ -124,7 +124,7 @@ class ArchitectureClosurePublicationGateTests(unittest.TestCase):
 
     def test_planning_and_authoring_cannot_reconstruct_completeness_from_candidate_prose(self):
         self.assertIn("pre-authoring dependency", self.plan)
-        self.assertIn("governing sources → closure artefact → genuinely fresh closure review → approved closure artefact → candidate projection → genuinely fresh candidate review", self.plan)
+        self.assertIn("governing sources → frozen closure snapshot → genuinely fresh closure review → approved closure snapshot → separately authorised candidate projection → validation/readiness as applicable → genuinely fresh candidate review", self.plan)
         self.assertIn("do not plan to infer the completeness universe from candidate prose", self.plan)
         self.assertIn("do not reconstruct the completeness universe from candidate prose", self.implement)
 
