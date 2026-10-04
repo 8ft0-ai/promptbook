@@ -423,7 +423,7 @@ A current reconstruction record satisfies that analysis gate for those exact bin
 
 The reconstruction result still creates no design-mutation/remediation authority. When reconstruction reaches `ARCHITECTURE_CLOSURE_READY`, the exact reconstructed closure artefact must pass the required genuinely fresh architecture-closure review before any resulting candidate may be projected from it. Any resulting candidate change also requires separately established current authority and a new candidate-bound remediation/design plan derived from the exact approved closure model.
 
-If the prior closure artefact had already received `APPROVED_FOR_CANDIDATE_PROJECTION` and later fresh evidence falsifies that closure, perform a proportional complexity disposition before automatically expanding the model again. Explicitly consider state/authority/configuration/effect removal, platform-primitive reuse, moving authority to the actual authoritative boundary, lifecycle/contract decomposition, objective narrowing, and retirement of contradictory active surface. Record `SIMPLIFY_OR_DECOMPOSE` or `ADDITIONAL_MODEL_COMPLEXITY_JUSTIFIED`; simplification is first-class, not mandatory when additional complexity is genuinely necessary.
+If a prior closure artefact had already received `APPROVED_FOR_CANDIDATE_PROJECTION` and later fresh evidence establishes either `CLOSURE_METHOD_FALSIFIED` or `EQUIVALENT_SAME_FAMILY_STRUCTURAL_FALSIFICATION`, perform a proportional complexity disposition before automatically expanding the model again. The equivalent structural class requires independent evidence that a same-family recurrence demonstrates structural inadequacy of the approved closure/model; a local regression inside a still-sound represented primitive is not enough. Explicitly consider state/authority/configuration/effect removal, platform-primitive reuse, moving authority to the actual authoritative boundary, lifecycle/contract decomposition, objective narrowing, and retirement of contradictory active surface. Record `SIMPLIFY_OR_DECOMPOSE` or `ADDITIONAL_MODEL_COMPLEXITY_JUSTIFIED`; simplification is first-class, not mandatory when additional complexity is genuinely necessary.
 
 ## Modelled defect versus missing primitive
 
@@ -552,6 +552,7 @@ Return a concise architecture-closure record containing:
 - migration/fence result when applicable;
 - disposition: `ARCHITECTURE_CLOSURE_READY`, `ARCHITECTURE_CLOSURE_NOT_READY`, or `CLOSURE_METHOD_FALSIFIED`;
 - `CLOSURE_REVIEW_REQUIRED` and the exact closure artefact identity when a fresh closure-review gate applies;
+- `COMPLEXITY_DISPOSITION_REQUIRED` plus `SIMPLIFY_OR_DECOMPOSE` or `ADDITIONAL_MODEL_COMPLEXITY_JUSTIFIED` when an approved closure is later structurally falsified;
 - any resulting `ARCHITECTURE_CLOSURE_RECONSTRUCTION_REQUIRED` boundary;
 - explicitly untested or unresolved surface;
 - required next authority/decision.
