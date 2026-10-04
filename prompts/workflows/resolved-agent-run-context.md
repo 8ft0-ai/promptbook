@@ -136,7 +136,7 @@ required_evidence
 
 ## Immutable review target and candidate binding
 
-Bind `review_target_identity` to the exact immutable or durable object actually inspected. For candidate review, additionally bind `immutable_candidate_identity_when_applicable` to the exact candidate commit or equivalent immutable revision. For pre-candidate architecture-closure review, candidate identity is `NOT_APPLICABLE` while the exact durable closure artefact remains the review target.
+Bind `review_target_identity` to the exact immutable or durable object actually inspected. For candidate review, bind the context to the exact candidate commit or equivalent immutable revision through `immutable_candidate_identity_when_applicable`. For pre-candidate architecture-closure review, candidate identity is `NOT_APPLICABLE` while the exact durable closure artefact remains the review target.
 
 Review-target-specific authority and evidence are valid only for that target. If the review-target identity changes, invalidate the prior target-specific context and re-resolve before relying on earlier findings or publishing a disposition; candidate movement is an additional invalidator when candidate identity applies.
 
