@@ -47,7 +47,7 @@ class IntentPilotTests(unittest.TestCase):
 
     def test_challenge_cannot_launder_adversarial_reasoning_into_approval(self):
         self.assertIn("no_material_challenge_found", self.challenge)
-        self.assertIn("is not `approved`", self.challenge)
+        self.assertIn("is not approved", self.challenge)
         self.assertIn("cannot approve", self.challenge)
         self.assertIn("cannot", self.challenge)
         self.assertIn("satisfy a qualified review gate", self.challenge)
