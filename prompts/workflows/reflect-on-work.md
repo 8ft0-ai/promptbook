@@ -1,34 +1,24 @@
 # Reflect on completed work
 
-Use this workflow to examine a bounded episode after or during governed work and extract justified lessons about expectations, reasoning, process, and outcome.
-
-This is a read-only retrospective workflow. Self-assessment is allowed. Reflection is not fresh independent review and cannot create approval evidence or activate follow-up scope.
-
 ## Purpose
 
-Compare what was expected with what actually happened, identify useful lessons at the narrowest justified scope, and propose follow-up only where evidence supports it.
+Compare expectations with observed outcomes and extract justified lessons about reasoning, process, and results at the narrowest supported scope.
 
-## Inputs and evidence
+## When to use
 
-Bound the episode being reflected on. Recover the expected result or process where available, the observed outcome, and the evidence needed to explain material differences.
+Use for a bounded retrospective after or during governed work when the operator wants to understand what worked, what surprised us, and what should be learned without performing a fresh independent review.
 
-Preserve subject, provenance, scope, and currentness. Do not generalise a local episode merely because a broader lesson sounds plausible.
-
-## Operation
-
-1. State the relevant expectation.
-2. State the observed outcome.
-3. Identify what worked and what contributed to that result.
-4. Identify surprises, failed assumptions, unnecessary cost, reasoning errors, or process weaknesses supported by evidence.
-5. Derive episode-bound lessons.
-6. Distinguish local lessons from candidates that might justify later generalisation.
-7. Suggest follow-up without activating or authorising it.
-
-## Output
-
-Report, proportionately:
+## Prompt
 
 ```text
+Reflect on <BOUNDED_EPISODE> using the evidence available for that episode.
+
+Recover the expected result or process where available and the observed outcome. Preserve subject, provenance, scope, and currentness. Do not generalise a local episode merely because a broader lesson sounds plausible.
+
+Compare expectation with outcome. Identify what worked, surprises, failed assumptions, unnecessary cost, reasoning errors, or process weaknesses supported by evidence. Derive episode-bound lessons. Distinguish local lessons from candidates that might justify later generalisation. Suggest follow-up without activating or authorising it.
+
+Report proportionately:
+
 EXPECTED
 OBSERVED
 WHAT WORKED
@@ -36,18 +26,22 @@ WHAT DID NOT / SURPRISED
 LESSONS
 POSSIBLE FOLLOW-UP
 SCOPE OF LESSON
+
+Keep lessons traceable to the episode and evidence from which they were derived.
+
+Reflection is not fresh independent review. Self-assessment is allowed, but it cannot satisfy fresh independent review, approve a candidate, expand active scope, establish a decision, persist portfolio policy, mutate governed state, cause external effects, or create authority. A proposed reusable lesson remains a candidate until an appropriate learning/retention or repository-governance mechanism promotes it.
+
+A valid result may be NO_JUSTIFIED_RESULT, BLOCKED_BY_MISSING_INPUT, STALE_INPUT, or NO_CHANGE_RECOMMENDED. Do not manufacture a lesson or process change merely because reflection was requested.
 ```
 
-A lesson should remain traceable to the episode and evidence from which it was derived.
+## What it does
 
-## Authority boundary
+Creates a bounded retrospective that separates observed episode evidence from lessons and possible follow-up, while keeping local learning from silently becoming policy or approval evidence.
 
-Reflection may read evidence and produce a retrospective artefact. It cannot satisfy fresh independent review, approve a candidate, expand active scope, establish a decision, persist portfolio policy, mutate governed state, cause external effects, or create authority.
+## Boundaries / limitations
 
-A proposed reusable lesson remains a candidate until an appropriate learning/retention or repository-governance mechanism promotes it.
+This workflow is read-only and may be self-assessment. It cannot satisfy fresh independent review, activate proposed follow-up, automatically promote a local lesson, establish decisions, mutate governed state, cause external effects, or create authority.
 
-## Terminal behaviour
+## Status
 
-A valid reflection may conclude `NO_JUSTIFIED_RESULT`, `BLOCKED_BY_MISSING_INPUT`, `STALE_INPUT`, or `NO_CHANGE_RECOMMENDED`.
-
-Do not manufacture a lesson or process change merely because reflection was requested.
+`experimental`
