@@ -14,6 +14,8 @@ Promptbook is organised by the task a user wants to perform.
 - [Workflow router — start here for governed continuation](workflows/README.md)
 - [Architecture closure analysis](workflows/architecture-closure-analysis.md)
 - [Autonomous progression](workflows/autonomous-progression.md)
+- [Assess risk](workflows/assess-risk.md)
+- [Challenge assumptions](workflows/challenge-assumptions.md)
 - [Capability availability overrides](workflows/capability-availability-overrides.md)
 - [Documentation assessment workflow](workflows/documentation-assessment.md)
 - [Executor capability projection](workflows/executor-capability-projection.md)
@@ -22,6 +24,7 @@ Promptbook is organised by the task a user wants to perform.
 - [Next-session handover](workflows/next-session-handover.md)
 - [Operational artifact hand-off](workflows/operational-artifact-handoff.md)
 - [Resolved agent run context](workflows/resolved-agent-run-context.md)
+- [Reflect on completed work](workflows/reflect-on-work.md)
 - [Stateful invariant analysis](workflows/stateful-invariant-analysis.md)
 
 ## Documentation
