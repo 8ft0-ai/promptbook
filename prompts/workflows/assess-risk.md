@@ -40,6 +40,10 @@ This is read-only reasoning. There is no authority to accept risk, establish an 
 A valid result may be INDETERMINATE, BLOCKED_BY_MISSING_INPUT, STALE_INPUT, or NO_CHANGE_RECOMMENDED. Do not manufacture a rating, recommendation, acceptance, or coherent disposition merely to complete the assessment.
 ```
 
+## Inputs
+
+- `<TARGET>` — the bounded state, action, proposal, or decision whose material risk should be assessed.
+
 ## What it does
 
 Separates evidence-backed risk assessment from risk acceptance and hard-requirement satisfaction, while producing a compact assessment that preserves uncertainty and legitimate disposition boundaries.
