@@ -145,6 +145,9 @@ The canonical command semantics live in [`prompts/workflows/README.md`](../promp
 - `/fix [target]` — remediate objectively bounded review findings under existing authority, validate the changed candidate, complete a proportional author-side remediation-readiness sweep, then return control rather than silently continuing to later lifecycle effects.
 - `/save [target]` — persist the material result using only the narrow repository-native persistence authority defined by the router/run-context contract.
 - `/prompt [target-or-request]` — generate a continuation, delegation, or intended-independent context-transfer prompt artefact; do not execute it or treat generation as freshness/authority.
+- `/risk [target-or-question]` — assess material risk, controls, residual risk, and legitimate disposition boundaries without accepting risk or satisfying violated invariants.
+- `/reflect [target-or-episode]` — reflect on a bounded episode for justified lessons and possible follow-up without creating fresh-review evidence or activating new scope.
+- `/challenge [target-or-proposal]` — adversarially test assumptions, evidence, model, contract, or proposed course without satisfying a qualified review gate.
 
 Commands are intentionally not a mini CLI. `/review --read-only` is the one explicit modifier justified by the write-back boundary; otherwise add natural-language qualifiers when needed, for example:
 
