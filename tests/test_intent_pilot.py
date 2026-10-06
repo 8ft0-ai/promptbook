@@ -54,8 +54,8 @@ class IntentPilotTests(unittest.TestCase):
 
     def test_pilot_uses_dedicated_workflows_not_generic_intent_runtime(self):
         for workflow in (self.risk, self.reflect, self.challenge):
-            self.assertIn("authority boundary", workflow)
-            self.assertIn("terminal behaviour", workflow)
+            self.assertIn("read-only", workflow)
+            self.assertTrue(any(term in workflow for term in ("indeterminate", "no_justified_result", "no_material_challenge_found")))
         for forbidden in ("intent registry", "intent engine", "claim database", "type checker"):
             self.assertNotIn(forbidden, self.router)
 
