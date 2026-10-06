@@ -82,6 +82,9 @@ class NextInvocationGuidanceTests(unittest.TestCase):
             "/fix": "suggest",
             "/save": "stop",
             "/prompt": "stop",
+            "/risk": "stop",
+            "/reflect": "stop",
+            "/challenge": "stop",
         }
         for command, mode in expected.items():
             self.assertIn(f"| `{command}` | `{mode}` |", self.router)
@@ -423,6 +426,9 @@ class NextInvocationGuidanceTests(unittest.TestCase):
                 "/fix",
                 "/save",
                 "/prompt",
+                "/risk",
+                "/reflect",
+                "/challenge",
             },
             commands,
         )
