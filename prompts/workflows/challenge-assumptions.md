@@ -33,6 +33,10 @@ This is read-only adversarial reasoning. It cannot approve or reject a qualified
 A valid result may be NO_MATERIAL_CHALLENGE_FOUND, INDETERMINATE, BLOCKED_BY_MISSING_INPUT, STALE_INPUT, or NO_CHANGE_RECOMMENDED. NO_MATERIAL_CHALLENGE_FOUND is not APPROVED and is not review evidence. Do not invent a blocker merely to demonstrate adversarial depth.
 ```
 
+## Inputs
+
+- `<TARGET>` — the exact proposition, design, assumption set, governing contract, or proposed course to challenge.
+
 ## What it does
 
 Tests assumptions and governing models more broadly than contract-bound review while preserving the critical distinction between adversarial reasoning and qualified approval evidence.
