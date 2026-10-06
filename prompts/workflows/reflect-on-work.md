@@ -34,6 +34,10 @@ Reflection is not fresh independent review. Self-assessment is allowed, but it c
 A valid result may be NO_JUSTIFIED_RESULT, BLOCKED_BY_MISSING_INPUT, STALE_INPUT, or NO_CHANGE_RECOMMENDED. Do not manufacture a lesson or process change merely because reflection was requested.
 ```
 
+## Inputs
+
+- `<BOUNDED_EPISODE>` — the bounded episode, objective, or completed work whose expectations and outcomes should be reflected on.
+
 ## What it does
 
 Creates a bounded retrospective that separates observed episode evidence from lessons and possible follow-up, while keeping local learning from silently becoming policy or approval evidence.
