@@ -194,6 +194,9 @@ The command defaults are:
 | `/fix` | `suggest` |
 | `/save` | `stop` |
 | `/prompt` | `stop` |
+| `/risk` | `stop` |
+| `/reflect` | `stop` |
+| `/challenge` | `stop` |
 
 Explicit `/fix` is a scope-control request. Automatic remediation followed by further review/merge/verification progression remains available through `/go`; the bounded `/fix` invocation itself does not silently become `/go`.
 
