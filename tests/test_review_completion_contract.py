@@ -14,6 +14,9 @@ PUBLIC_COMMANDS = {
     "/fix",
     "/save",
     "/prompt",
+    "/risk",
+    "/reflect",
+    "/challenge",
 }
 
 
