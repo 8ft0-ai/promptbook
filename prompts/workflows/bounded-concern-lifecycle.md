@@ -17,7 +17,15 @@ Run the bounded concern lifecycle for <GOVERNED_GENERATION> under <GOVERNING_OBJ
 
 Before progression, bind an immutable empirical CASE_ID supplied by separately governed case-selection authority, the generation/predecessor identity, frozen objective and assurance claim, frozen CONCERN_REGISTER, and each externally owned CONCERN_CONTRACT identity.
 
-Maintain a generation-lifetime append-only OUTCOME_RECORD from generation creation. Record material lifecycle events, correction consumption, admission attempts/failures, fresh reviews and classifications, governing-disposition events, effort/timing measurements, pending/terminal outcomes, and later governing disposition. Preserve negative, null, abandoned, decomposed, and non-convergent outcomes.
+Each frozen CONCERN_REGISTER entry must record the concern identifier/name, decision-critical claim, authoritative source/owner, exact CONCERN_CONTRACT identity/version/locator, applicability rationale, explicit exclusions, required evidence outputs, closure disposition, and reconstruction inputs.
+
+Each referenced CONCERN_CONTRACT must expose its exact identity/version/locator, owner/authority, finite obligation/output set for this invocation, closure criterion, evidence required to reconstruct the advertised result, correction boundary, and the conditions that constitute scope/assurance/authority movement outside that boundary. Promptbook may validate this interface and reconstruction but does not become the semantic owner of the concern.
+
+At S3 freeze a REVIEW_PACKAGE manifest with exact durable locators and integrity identities for the exact candidate/review target, frozen CONCERN_REGISTER, every invoked CONCERN_CONTRACT, required inputs, advertised author-side outputs/results, and generated evidence required by those contracts.
+
+At S4, using only that frozen package, require every required locator to resolve, integrity identities to match, required inputs/outputs to be present, advertised reconstructable checks to rerun as specified, and regenerated/recomputed outputs to match the advertised result wherever the applicable concern contract requires exact reproduction. If any required condition fails, REVIEW_PACKAGE_REPRODUCIBLE=false and S5 is unreachable.
+
+Maintain a generation-lifetime append-only OUTCOME_RECORD from generation creation. The record itself must retain, as applicable: generation and predecessor identities; CASE_ID; frozen objective/assurance and CONCERN_REGISTER identities; concern count and CONCERN_CONTRACT identities; author-side defects and correction consumption; admission attempts/failures; fresh-review identities, findings and routing classifications; post-review correction attempts; GD trigger and consumed allowances; fresh-review count; the consistently defined effort proxy and lifecycle timestamps; pending/terminal governing disposition; and the final governing disposition when later made. Record material lifecycle events as they occur and preserve negative, null, abandoned, decomposed, and non-convergent outcomes.
 
 Use this lifecycle:
 
