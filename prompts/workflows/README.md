@@ -366,6 +366,7 @@ Fail closed when the next invocation is not safely determined. `DECISION_REQUIRE
 ## Current workflows
 
 - [Autonomous progression](autonomous-progression.md) — continue already-governed work with minimal human orchestration.
+- [Bounded concern lifecycle](bounded-concern-lifecycle.md) — orchestrate explicitly selected finite concern-specific closure packages and empirical convergence without claiming universal semantic completeness.
 - [Documentation assessment workflow](documentation-assessment.md) — discover and approve representative reader tasks, then continue a substantive documentation assessment with a pinned external method.
 - [Fresh independent review](fresh-independent-review.md) — reconstruct and adjudicate a candidate from a genuinely fresh context, including when an eligible isolated review context is delegated by the governing workflow.
 - [Assess risk](assess-risk.md) — characterise material risk and legitimate disposition boundaries without accepting risk or manufacturing authority.
