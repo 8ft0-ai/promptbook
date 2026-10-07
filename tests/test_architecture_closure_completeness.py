@@ -184,7 +184,7 @@ class ArchitectureClosureCompletenessTests(unittest.TestCase):
             self.assertIn(marker, self.closure_lower)
         self.assertIn("do not falsify the closure method merely because a represented primitive is wrong", self.closure_lower)
 
-    def test_closure_method_falsification_requires_reconstruction_and_blocks_fix(self):
+    def test_closure_method_falsification_requires_governing_disposition_and_blocks_fix(self):
         for marker in (
             "closure_method_falsified",
             "governing_disposition_required",
@@ -246,7 +246,7 @@ class ArchitectureClosureCompletenessTests(unittest.TestCase):
     def test_router_exposes_falsification_before_fix(self):
         self.assertIn("fresh review establishes", self.router_lower)
         self.assertIn("closure_method_falsified", self.router_lower)
-        self.assertIn("architecture_closure_reconstruction_required", self.router_lower)
+        self.assertIn("governing_disposition_required", self.router_lower)
         self.assertIn("stops without remediation mutation", self.router_lower)
 
 
