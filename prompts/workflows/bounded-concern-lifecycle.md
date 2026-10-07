@@ -1,0 +1,92 @@
+# Bounded concern lifecycle
+
+## Purpose
+
+Provide a bounded pre-review lifecycle for explicitly selected high-consequence governed work without claiming universal semantic completeness. Each frozen declared concern receives an externally owned finite closure contract and reconstructable evidence before genuinely fresh substantive review. Empirical convergence is measured across durable case-linked outcomes, including negative and non-convergent outcomes.
+
+## When to use
+
+Use only when current governing authority explicitly selects this lifecycle for a bounded generation or experiment. Do not infer applicability merely from task size, security terminology, or complexity.
+
+This workflow is intentionally weaker than architecture closure. It does not establish an exhaustive concern universe, universal semantic primitive inventory, complete dependency graph, or proof that no new concern can exist. A newly discovered concern, scope/assurance movement, authority movement, or ambiguity involving those classes exits bounded correction and requires governing disposition.
+
+## Prompt
+
+```text
+Run the bounded concern lifecycle for <GOVERNED_GENERATION> under <GOVERNING_OBJECTIVE>.
+
+Before progression, bind an immutable empirical CASE_ID supplied by separately governed case-selection authority, the generation/predecessor identity, frozen objective and assurance claim, frozen CONCERN_REGISTER, and each externally owned CONCERN_CONTRACT identity.
+
+Each frozen CONCERN_REGISTER entry must record the concern identifier/name, decision-critical claim, authoritative source/owner, exact CONCERN_CONTRACT identity/version/locator, applicability rationale, explicit exclusions, required evidence outputs, closure disposition, and reconstruction inputs.
+
+Each referenced CONCERN_CONTRACT must expose its exact identity/version/locator, owner/authority, finite obligation/output set for this invocation, closure criterion, evidence required to reconstruct the advertised result, correction boundary, and the conditions that constitute scope/assurance/authority movement outside that boundary. Promptbook may validate this interface and reconstruction but does not become the semantic owner of the concern.
+
+At S3 freeze a REVIEW_PACKAGE manifest with exact durable locators and integrity identities for the exact candidate/review target, frozen CONCERN_REGISTER, every invoked CONCERN_CONTRACT, required inputs, advertised author-side outputs/results, and generated evidence required by those contracts.
+
+At S4, using only that frozen package, require every required locator to resolve, integrity identities to match, required inputs/outputs to be present, advertised reconstructable checks to rerun as specified, and regenerated/recomputed outputs to match the advertised result wherever the applicable concern contract requires exact reproduction. If any required condition fails, REVIEW_PACKAGE_REPRODUCIBLE=false and S5 is unreachable.
+
+Maintain a generation-lifetime append-only OUTCOME_RECORD from generation creation. The record itself must retain, as applicable: generation and predecessor identities; CASE_ID; frozen objective/assurance and CONCERN_REGISTER identities; concern count and CONCERN_CONTRACT identities; author-side defects and correction consumption; admission attempts/failures; fresh-review identities, findings and routing classifications; post-review correction attempts; GD trigger and consumed allowances; fresh-review count; the consistently defined effort proxy and lifecycle timestamps; pending/terminal governing disposition; and the final governing disposition when later made. Record material lifecycle events as they occur and preserve negative, null, abandoned, decomposed, and non-convergent outcomes.
+
+Use this lifecycle:
+
+S0 SCOPE_DECLARED
+→ S1 CONCERNS_FROZEN
+→ S2 AUTHOR_CLOSURE
+→ S3 PACKAGE_FROZEN
+→ S4 ADMISSION_CHECK
+→ S5 READY_FOR_FRESH_REVIEW
+→ S6 FRESH_REVIEW_DISPOSITION
+→ S7 TERMINAL
+
+Bounded correction states are AC AUTHOR_CORRECTION and PC POST_REVIEW_CORRECTION. Governing exit is GD GOVERNING_DISPOSITION_REQUIRED.
+
+AUTHOR_CORRECTION_ALLOWANCE=1
+POST_REVIEW_CORRECTION_ALLOWANCE=1
+
+Consume the applicable allowance before entering AC or PC. Allowances are generation-owned monotone values and are never restored by backward transitions, package regeneration, re-review, relabelling, issue recreation, repackaging, or candidate replacement.
+
+For author-side failure during S2, or after S4 returns REVIEW_PACKAGE_REPRODUCIBLE=false, AC is eligible only when the defect is wholly inside the frozen objective/assurance, frozen CONCERN_REGISTER, applicable frozen CONCERN_CONTRACT correction boundary, and existing authority boundary, and AUTHOR_CORRECTION_ALLOWANCE=1. Consume A before entering AC. Perform exactly one bounded correction while preserving the frozen CONCERN_REGISTER and CONCERN_CONTRACT identities. Return to S2 whenever concern closure must be rerun; only a package-representation/reconstruction-only correction with unchanged candidate and unchanged concern-closure inputs/outputs may proceed directly to S3. Freeze a new REVIEW_PACKAGE and rerun S4. If A is already 0, the correction is ineligible, the correction fails, or any eligibility boundary changes, route GD. Before S1 completes, a register defect may be resolved without AC; after S1 CONCERNS_FROZEN, adding, removing, or replacing a decision-critical concern is not AC-eligible and routes GD.
+
+Admission at S4 establishes REVIEW_PACKAGE_REPRODUCIBLE only. It is not correctness, architecture completeness, approval, or fresh review.
+
+Every fresh-review blocking finding must be classified as exactly one of DECLARED_CONCERN_DEFECT, PACKAGE_EVIDENCE_DEFECT, NEW_CONCERN, SCOPE_OR_ASSURANCE_CHANGE, or AUTHORITY_CHANGE. This classification is required for routing and OUTCOME_RECORD accounting; it does not constrain reviewer reasoning or claim the taxonomy is a complete semantic concern universe.
+
+Fresh substantive review owns its blocking finding and routing classification. DECLARED_CONCERN_DEFECT or PACKAGE_EVIDENCE_DEFECT is correction-eligible only when it is unambiguously wholly inside the frozen objective/assurance, frozen concern register, applicable frozen concern-contract correction boundary, and existing authority boundary. If a finding plausibly overlaps NEW_CONCERN, SCOPE_OR_ASSURANCE_CHANGE, or AUTHORITY_CHANGE, or correction eligibility is ambiguous, route fail-closed to GD. Author evidence may inform but cannot downgrade that route.
+
+Every material correction invalidates the old REVIEW_PACKAGE. If AC or PC mutates the exact candidate or any input on which declared concern closure can depend, invalidate every frozen declared concern result, return to S2, rerun every frozen concern, then freeze a new package and independently repeat S4. Do not retain pre-correction concern evidence with a materially corrected candidate.
+
+A correction confined solely to package representation/reconstruction may avoid semantic concern reruns only when the exact candidate and all concern-closure inputs and outputs are unchanged. It still requires a new package identity/integrity witness and independent S4 admission.
+
+An eligible post-review correction consumes P before PC. Perform exactly one bounded correction in PC while preserving the frozen CONCERN_REGISTER and CONCERN_CONTRACT identities, then return through S2/S3/S4 and require another genuinely fresh substantive review. If P is already 0, the correction is ineligible, the PC correction fails, or any eligibility boundary changes, route GD.
+
+Create and bind OUTCOME_RECORD when the generation is created, not only at terminal S7. Append the GD event before active progression stops. A later governing-authority decision appends/finalises the disposition and never erases predecessor outcome.
+
+CASE_ID is established only by separately governed pilot case-selection/baseline authority. A successor generation, decomposition branch, repackaged generation, or authorised continuation arising from the same governed experimental case inherits the CASE_ID and predecessor/disposition linkage. Generation naming, issue recreation, branching, repackaging, candidate replacement, or ordinary governing disposition cannot create a new CASE_ID. A genuinely new CASE_ID requires separately authorised case selection. If continuity inside an already-started case is ambiguous, preserve continuity until pilot authority explicitly establishes a new case; this is accounting conservatism, not Promptbook ownership of domain-semantic sameness.
+
+Contract owner/version movement, objective/assurance movement, and authority movement route GD rather than bounded correction. NEW_CONCERN also routes GD. A successor after GD requires a durable predecessor governing disposition before it can count as empirical continuation.
+
+Keep concern-contract semantic ownership external. Promptbook coordinates lifecycle routing, currentness, package reconstruction, outcome accounting, and authority separation only.
+
+Do not infer implementation, pull-request, merge, pilot, consumer-mutation, normative-adoption, risk-acceptance, or concern-specific engineering authority from lifecycle progression.
+```
+
+## Inputs
+
+- `<GOVERNED_GENERATION>` — the exact bounded generation selected by current authority.
+- `<GOVERNING_OBJECTIVE>` — the frozen bounded process-assurance objective and authority constraints.
+
+## What it does
+
+Provides finite concern-specific closure packaging, conservative correction currentness, deterministic fail-closed routing, durable negative-outcome accounting, and empirical lineage continuity while preserving genuinely fresh substantive review and external concern ownership.
+
+It is designed for empirical convergence measurement rather than self-certification. Repeated novel concerns remain visible under one case lineage instead of being hidden by generation resets.
+
+## Boundaries / limitations
+
+This workflow does not claim an exhaustive concern set, universal primitive universe, dependency completeness, domain-semantic truth, universal convergence, or replacement for architecture closure when a strong closure-ready claim is actually required. It does not make the lifecycle portfolio-wide mandatory and does not add a public command.
+
+The lifecycle itself creates no implementation, PR, merge, release, deployment, pilot, consumer-repository mutation, normative-adoption, credential, production, risk-acceptance, or external-effect authority. Concern contracts and case-selection semantics remain owned by their separately governed authorities.
+
+## Status
+
+`experimental`
