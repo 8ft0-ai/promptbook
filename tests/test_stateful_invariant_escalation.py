@@ -314,7 +314,7 @@ class StatefulInvariantEscalationContractTests(unittest.TestCase):
     def test_closure_method_falsification_routes_before_fix(self):
         for marker in (
             "closure_method_falsified",
-            "architecture_closure_reconstruction_required",
+            "governing_disposition_required",
             "unmodelled_decision_critical_primitive",
             "separate-authority boundary",
         ):
