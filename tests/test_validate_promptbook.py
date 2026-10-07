@@ -23,6 +23,9 @@ PUBLIC_COMMANDS = {
     "/fix",
     "/save",
     "/prompt",
+    "/risk",
+    "/reflect",
+    "/challenge",
 }
 COMMAND_RE = re.compile(r"`(/[-a-z]+)(?:\s[^`]*)?`")
 

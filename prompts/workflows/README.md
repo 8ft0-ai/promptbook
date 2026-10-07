@@ -38,6 +38,9 @@ The normal public surface is:
 - `/fix [target]` — use [Remediate review findings](../engineering/remediate-review-findings.md) for objectively bounded findings under existing authority. If review-response synthesis has not yet been satisfied, perform that non-mutating synthesis first. Explicit `/fix` performs bounded remediation, required validation, and a proportional author-side remediation-readiness sweep, freezes the exact resulting candidate when review-ready, then returns control rather than silently continuing into fresh review, merge, or later lifecycle effects. The readiness sweep is remediation evidence, not review or approval.
 - `/save [target]` — persist the current material result in the smallest correct durable repository-native home. The command carries only the narrow intrinsic persistence authority defined by the resolved-run-context contract; it does not grant branch/PR/code/cross-repository/production mutation authority.
 - `/prompt [target-or-request]` — generate the shortest safe context-transfer artefact only. It may generate a continuation, delegation, or independent-review prompt contract, but it does not execute the prompt, create another context, transfer authority, establish freshness, or change the current governed lifecycle state.
+- `/risk [target-or-question]` — read-only. Use [Assess risk](assess-risk.md) to characterise material risk, controls, residual risk, uncertainty and legitimate disposition boundaries. Risk assessment does not accept risk, establish owner decisions, satisfy violated invariants, or create execution authority.
+- `/reflect [target-or-episode]` — read-only. Use [Reflect on completed work](reflect-on-work.md) to compare expectations with observed outcomes and derive justified episode-bound lessons. Reflection may be self-assessment but cannot satisfy fresh independent review, activate follow-up scope, or automatically promote a local lesson to policy.
+- `/challenge [target-or-proposal]` — read-only. Use [Challenge assumptions](challenge-assumptions.md) to adversarially test assumptions, evidence, model, contract, or proposed course. Challenge may question the contract itself but cannot approve a candidate, amend that contract, or satisfy a qualified review gate.
 
 For one authoritative resolved snapshot, preserve this projection invariant:
 
@@ -191,6 +194,9 @@ The command defaults are:
 | `/fix` | `suggest` |
 | `/save` | `stop` |
 | `/prompt` | `stop` |
+| `/risk` | `stop` |
+| `/reflect` | `stop` |
+| `/challenge` | `stop` |
 
 Explicit `/fix` is a scope-control request. Automatic remediation followed by further review/merge/verification progression remains available through `/go`; the bounded `/fix` invocation itself does not silently become `/go`.
 
@@ -362,5 +368,8 @@ Fail closed when the next invocation is not safely determined. `DECISION_REQUIRE
 - [Autonomous progression](autonomous-progression.md) — continue already-governed work with minimal human orchestration.
 - [Documentation assessment workflow](documentation-assessment.md) — discover and approve representative reader tasks, then continue a substantive documentation assessment with a pinned external method.
 - [Fresh independent review](fresh-independent-review.md) — reconstruct and adjudicate a candidate from a genuinely fresh context, including when an eligible isolated review context is delegated by the governing workflow.
+- [Assess risk](assess-risk.md) — characterise material risk and legitimate disposition boundaries without accepting risk or manufacturing authority.
+- [Reflect on completed work](reflect-on-work.md) — extract justified retrospective lessons without turning self-assessment into review evidence.
+- [Challenge assumptions](challenge-assumptions.md) — adversarially test assumptions or governing models without turning challenge into approval.
 - [Next-session handover](next-session-handover.md) — create the shortest safe continuation prompt for another context or capability boundary, retaining manual fresh-review context transport as the fallback when automatic isolation cannot be established.
 - [Stateful invariant analysis](stateful-invariant-analysis.md) — reconstruct materially stateful invariant/lifecycle semantics read-only, including mandatory escalation after repeated materially related review failures.
