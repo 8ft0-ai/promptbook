@@ -457,7 +457,7 @@ MODELLED_BUT_WRONG
 UNMODELLED_DECISION_CRITICAL_PRIMITIVE
 ```
 
-`MODELLED_BUT_WRONG` may still block approval and may require architecture-level correction, but it does not prove the closure universe itself was incomplete.
+`MODELLED_BUT_WRONG` may still block approval and may require architecture-level correction, but it does not prove the closure universe itself was incomplete and does not automatically establish `CLOSURE_METHOD_FALSIFIED`.
 
 Likewise, do not falsify the prior closure method solely because:
 
@@ -507,7 +507,7 @@ SEMANTIC_CORRECTION_ALLOWANCE = 1
 PACKAGE_ONLY_REPAIR_ALLOWANCE = 1
 ```
 
-Both allowances are monotone and generation-owned. Renaming, repackaging, issue recreation, candidate replacement, snapshot regeneration or moving the durable carrier cannot replenish a consumed allowance.
+Both the semantic-correction allowance and the package-only repair allowance are monotone and generation-owned. Renaming, repackaging, issue recreation, candidate replacement, snapshot regeneration or moving the durable carrier cannot replenish a consumed allowance.
 
 Fresh architecture-closure review owns classification of the completed blocking finding set for routing. Use the following mutually safety-preserving outcomes:
 
