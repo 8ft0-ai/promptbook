@@ -4,7 +4,7 @@
 
 Derive and challenge a decision-critical architecture-closure model whose completeness does not depend on the candidate's own self-defined object, relation, transition or prose universe.
 
-Use this workflow only for materially security-, authority-, identity-, lifecycle-, recovery/ambiguity-, irreversible-effect-, or migration/cutover-sensitive architecture work when current governed state requires architecture closure or reconstruction. It is intentionally stronger than ordinary stateful/invariant analysis and does not replace that proportional workflow for routine stateful defects.
+Use this workflow only for materially security-, authority-, identity-, lifecycle-, recovery/ambiguity-, irreversible-effect-, or migration/cutover-sensitive architecture work when current governed state requires architecture closure, or when a separately governed disposition has explicitly authorised a successor strong-closure generation that requires reconstruction. It is intentionally stronger than ordinary stateful/invariant analysis and does not replace that proportional workflow for routine stateful defects.
 
 ## When to use
 
@@ -12,7 +12,7 @@ Use this workflow when current authoritative evidence establishes one of:
 
 - proposed work is materially security-, authority-, identity-, recovery/ambiguity-, irreversible-effect-, or migration/cutover-sensitive **and** the resulting architecture is intended to claim or be treated as closed-world, architecture-closed, closure-ready, complete over its decision-critical authority/effect universe, or an equivalent strong completeness claim;
 - an authorised architecture reconsideration whose result requires an architecture-closure proof before a candidate can safely be treated as closure-ready; or
-- `CLOSURE_METHOD_FALSIFIED` / `ARCHITECTURE_CLOSURE_RECONSTRUCTION_REQUIRED` because a fresh substantive review identified an applicable unmodelled decision-critical primitive, relation, authority edge, effect boundary, recovery state, identity dependency, equivalence claim, terminal-provenance requirement or migration/fence obligation that should have been present in the prior closure universe.
+- `GOVERNING_DISPOSITION_REQUIRED` after `CLOSURE_METHOD_FALSIFIED`, **and** a separate governing disposition has explicitly authorised `AUTHORISE_NEW_STRONG_CLOSURE_GENERATION`, because a fresh substantive review identified an applicable unmodelled decision-critical primitive, relation, authority edge, effect boundary, recovery state, identity dependency, equivalence claim, terminal-provenance requirement or migration/fence obligation that should have been present in the predecessor closure universe.
 
 The proactive trigger is conjunctive. Do not select this workflow merely because an architecture is large, because a security/authority word appears, because a review found several blockers, or because a modelled element is locally wrong. Ordinary bounded design, local architecture decisions, exploratory proposals and explicitly modelled-but-incomplete drafts remain eligible for proportionate workflows when they do not make the strong completeness claim.
 
