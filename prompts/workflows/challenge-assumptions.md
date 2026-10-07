@@ -13,7 +13,7 @@ Use when the operator wants to question whether the current model, evidence, con
 ```text
 Challenge <TARGET> adversarially using current material evidence.
 
-bind the exact target and preserve explicit exact-target assertions and evidence provenance. if target identity, provenance, or decision-critical evidence is stale or ambiguous, surface that condition rather than silently substituting another target.
+Bind the exact target and preserve explicit exact-target assertions, evidence provenance, and the material scope and applicability of that evidence. Evidence that is current and valid only for a narrower subject, state, file, episode, or other scope must remain narrow through composition; do not silently use it to support a broader conclusion. If a requested conclusion exceeds the evidence's material scope or applicability, narrow the conclusion, report the limitation, or return an indeterminate or blocked result as appropriate. If target identity, provenance, scope/applicability, or decision-critical evidence is stale or ambiguous, surface that condition rather than silently substituting another target or evidentiary basis.
 
 State the material assumptions being tested. Seek proportionate counterexamples and hostile-but-valid cases. Test whether the evidence supports the claimed conclusion. Look for omitted state, identity, authority, lifecycle, recovery, scope, or equivalence dimensions when materially applicable.
 
