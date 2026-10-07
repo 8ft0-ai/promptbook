@@ -83,10 +83,10 @@ class IntentPilotTests(unittest.TestCase):
             self.assertNotIn(forbidden, self.router)
 
     def test_simple_repository_scenarios_are_portable_and_make_commands_distinct(self):
-        expected_questions = {
-            "/risk": "what material risk",
-            "/reflect": "what did this episode teach",
-            "/challenge": "which assumptions",
+        semantic_markers = {
+            "/risk": ("material risk", "controls", "residual risk"),
+            "/reflect": ("compare expectation with outcome", "lessons", "possible follow-up"),
+            "/challenge": ("assumptions being tested", "counterexamples", "surviving assumptions"),
         }
         for command, scenario in SIMPLE_REPOSITORY_SCENARIOS.items():
             self.assertIn(command, self.router)
@@ -101,7 +101,8 @@ class IntentPilotTests(unittest.TestCase):
                 "/reflect": self.reflect,
                 "/challenge": self.challenge,
             }[command]
-            self.assertIn(expected_questions[command], workflow)
+            for marker in semantic_markers[command]:
+                self.assertIn(marker, workflow)
             self.assertIn(scenario["expected_distinction"].lower(), workflow)
             self.assertIn(scenario["terminal"].lower(), workflow)
 
