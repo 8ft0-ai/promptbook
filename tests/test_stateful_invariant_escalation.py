@@ -291,7 +291,7 @@ class StatefulInvariantEscalationContractTests(unittest.TestCase):
             self.fix_lower,
         )
         self.assertIn(
-            "a previous invariant-closure analysis/remediation plan does not satisfy this stronger boundary",
+            "a previous invariant-closure analysis/remediation plan does not satisfy either stronger boundary",
             self.fix_lower,
         )
 
