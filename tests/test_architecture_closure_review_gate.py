@@ -228,7 +228,7 @@ class ArchitectureClosureReviewGateTests(unittest.TestCase):
         self.assertIn("equivalent_same_family_structural_falsification", self.closure)
         self.assertIn("the same governing disposition must consider simplification/decomposition", self.closure)
         self.assertIn(
-            "the structural classification takes precedence and routes first to `governing_disposition_required`",
+            "structural classification takes precedence and routes first to `governing_disposition_required`",
             self.analysis,
         )
         self.assertNotIn(
