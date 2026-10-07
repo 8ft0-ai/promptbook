@@ -165,10 +165,18 @@ class ArchitectureClosureReviewGateTests(unittest.TestCase):
         row = self.transition("CLOSURE_REVIEW_REQUIRED", "READ_ONLY_APPROVED_FOR_CANDIDATE_PROJECTION")
         self.assertEqual((row["next"], row["projection"]), ("CLOSURE_REVIEW_REQUIRED", "NO"))
 
-    def test_new_projection_semantics_require_reconstruction_before_re_review(self):
+    def test_new_projection_semantics_require_governing_disposition_before_new_generation(self):
         row = self.transition("CANDIDATE_PROJECTION_ELIGIBLE", "NEW_DECISION_CRITICAL_SEMANTICS")
         self.assertEqual((row["next"], row["action"]), ("GOVERNING_DISPOSITION_REQUIRED", "GOVERNING_DISPOSITION"))
         self.assertNotEqual(row["next"], "CLOSURE_REVIEW_REQUIRED")
+        self.assertIn(
+            "if projection needs any such new semantic, invalidate projection eligibility and route the current strong-closure generation to `governing_disposition_required`",
+            self.closure,
+        )
+        self.assertIn(
+            "do not enter reconstruction automatically",
+            self.auto,
+        )
 
     def test_snapshot_or_review_movement_revokes_projection_eligibility(self):
         self.assertEqual(
@@ -219,6 +227,24 @@ class ArchitectureClosureReviewGateTests(unittest.TestCase):
         self.assertIn("equivalent_same_family_structural_falsification", self.router)
         self.assertIn("equivalent_same_family_structural_falsification", self.closure)
         self.assertIn("complexity_disposition_required", self.analysis)
+
+    def test_method_falsification_has_no_direct_reconstruction_route(self):
+        self.assertIn(
+            "closure_method_falsified\n→ governing_disposition_required",
+            self.closure,
+        )
+        self.assertNotIn(
+            "closure_method_falsified\n→ architecture_closure_reconstruction_required",
+            self.closure,
+        )
+        self.assertIn(
+            "reports `governing_disposition_required` as the next transition/boundary",
+            self.router,
+        )
+        self.assertNotIn(
+            "reports `architecture_closure_reconstruction_required` as the next transition/boundary",
+            self.router,
+        )
 
     def test_generation_allowances_and_terminal_predecessor_rules_are_explicit(self):
         for text in (self.router, self.closure, self.auto):
