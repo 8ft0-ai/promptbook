@@ -35,6 +35,20 @@ class BoundedConcernLifecycleTests(unittest.TestCase):
         ):
             self.assertIn(marker, self.lower)
 
+    def test_post_review_correction_route_is_explicit(self):
+        for marker in (
+            "eligible post-review correction consumes p before pc",
+            "perform exactly one bounded correction in pc",
+            "preserving the frozen concern_register and concern_contract identities",
+            "return through s2/s3/s4",
+            "require another genuinely fresh substantive review",
+            "if p is already 0",
+            "pc correction fails",
+            "eligibility boundary changes",
+            "route gd",
+        ):
+            self.assertIn(marker, self.lower)
+
     def test_fresh_review_five_way_classification_is_explicit(self):
         self.assertIn("classified as exactly one of", self.lower)
         for marker in (
