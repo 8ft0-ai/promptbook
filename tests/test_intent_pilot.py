@@ -28,10 +28,24 @@ SIMPLE_REPOSITORY_SCENARIOS = {
 }
 
 COMPOSITION_CONTRACT = {
-    "target": ("exact target",),
-    "provenance": ("provenance",),
-    "scope": ("scope", "narrow"),
-    "currentness": ("current", "stale"),
+    "/risk": {
+        "target": ("target",),
+        "provenance": ("provenance",),
+        "scope": ("scope",),
+        "currentness": ("current", "stale"),
+    },
+    "/reflect": {
+        "target": ("episode",),
+        "provenance": ("provenance",),
+        "scope": ("scope", "local"),
+        "currentness": ("currentness", "stale"),
+    },
+    "/challenge": {
+        "target": ("exact target",),
+        "provenance": ("evidence provenance",),
+        "scope": ("scope", "narrow"),
+        "currentness": ("current", "stale"),
+    },
 }
 
 AUTHORITY_CONTRACT = {
@@ -41,10 +55,10 @@ AUTHORITY_CONTRACT = {
 }
 
 
-def composition_contract_holds(workflow):
+def composition_contract_holds(command, workflow):
     return all(
         all(marker in workflow for marker in markers)
-        for markers in COMPOSITION_CONTRACT.values()
+        for markers in COMPOSITION_CONTRACT[command].values()
     )
 
 
@@ -121,8 +135,9 @@ class IntentPilotTests(unittest.TestCase):
             self.assertIn(scenario["terminal"].lower(), workflow)
 
     def test_composition_contract_is_explicit_in_each_workflow(self):
-        for workflow in (self.risk, self.reflect, self.challenge):
-            self.assertTrue(composition_contract_holds(workflow))
+        workflows = {"/risk": self.risk, "/reflect": self.reflect, "/challenge": self.challenge}
+        for command, workflow in workflows.items():
+            self.assertTrue(composition_contract_holds(command, workflow))
 
         # Challenge must state the consequence of a scope mismatch, not merely
         # mention "scope" as a dimension that could be challenged.
@@ -140,9 +155,9 @@ class IntentPilotTests(unittest.TestCase):
             "scope": self.challenge.replace("scope", "coverage"),
             "currentness": self.challenge.replace("current", "available").replace("stale", "old"),
         }
-        self.assertTrue(composition_contract_holds(self.challenge))
+        self.assertTrue(composition_contract_holds("/challenge", self.challenge))
         for name, mutated in mutations.items():
-            self.assertFalse(composition_contract_holds(mutated), name)
+            self.assertFalse(composition_contract_holds("/challenge", mutated), name)
 
     def test_scope_mismatch_consequence_negative_mutations_fail(self):
         required_clauses = (
