@@ -6,8 +6,6 @@ WORKFLOWS = ROOT / "prompts" / "workflows"
 
 PUBLIC_COMMANDS = ("/risk", "/reflect", "/challenge")
 
-# Scenario evidence is deliberately data-only: these are ordinary repository facts,
-# not Watchtower/Corpus state, memory, review APIs, or a portfolio-specific runtime.
 SIMPLE_REPOSITORY_SCENARIOS = {
     "/risk": {
         "question": "Should this repository change its release script?",
@@ -28,6 +26,30 @@ SIMPLE_REPOSITORY_SCENARIOS = {
         "terminal": "NO_MATERIAL_CHALLENGE_FOUND",
     },
 }
+
+COMPOSITION_CONTRACT = {
+    "target": ("exact target",),
+    "provenance": ("provenance",),
+    "scope": ("scope", "narrow"),
+    "currentness": ("current", "stale"),
+}
+
+AUTHORITY_CONTRACT = {
+    "/risk": ("no authority to accept risk", "risk assessment != risk acceptance"),
+    "/reflect": ("cannot satisfy fresh independent review", "expand active scope"),
+    "/challenge": ("cannot approve", "satisfy a qualified review gate"),
+}
+
+
+def composition_contract_holds(workflow):
+    return all(
+        all(marker in workflow for marker in markers)
+        for markers in COMPOSITION_CONTRACT.values()
+    )
+
+
+def authority_contract_holds(command, workflow):
+    return all(marker in workflow for marker in AUTHORITY_CONTRACT[command])
 
 
 class IntentPilotTests(unittest.TestCase):
@@ -64,7 +86,6 @@ class IntentPilotTests(unittest.TestCase):
     def test_reflection_cannot_launder_self_assessment_into_review_or_scope(self):
         self.assertIn("reflection is not fresh independent review", self.reflect)
         self.assertIn("cannot satisfy fresh independent review", self.reflect)
-        self.assertIn("cannot", self.reflect)
         self.assertIn("expand active scope", self.reflect)
         self.assertIn("no_justified_result", self.reflect)
 
@@ -72,7 +93,6 @@ class IntentPilotTests(unittest.TestCase):
         self.assertIn("no_material_challenge_found", self.challenge)
         self.assertIn("is not approved", self.challenge)
         self.assertIn("cannot approve", self.challenge)
-        self.assertIn("cannot", self.challenge)
         self.assertIn("satisfy a qualified review gate", self.challenge)
 
     def test_pilot_uses_dedicated_workflows_not_generic_intent_runtime(self):
@@ -92,62 +112,58 @@ class IntentPilotTests(unittest.TestCase):
             self.assertIn(command, self.router)
             self.assertTrue(scenario["question"])
             self.assertGreaterEqual(len(scenario["evidence"]), 3)
-            self.assertNotIn("watchtower", repr(scenario).lower())
-            self.assertNotIn("corpus", repr(scenario).lower())
-            self.assertNotIn("memory", repr(scenario).lower())
-            self.assertNotIn("github api", repr(scenario).lower())
-            workflow = {
-                "/risk": self.risk,
-                "/reflect": self.reflect,
-                "/challenge": self.challenge,
-            }[command]
+            for forbidden in ("watchtower", "corpus", "memory", "github api"):
+                self.assertNotIn(forbidden, repr(scenario).lower())
+            workflow = {"/risk": self.risk, "/reflect": self.reflect, "/challenge": self.challenge}[command]
             for marker in semantic_markers[command]:
                 self.assertIn(marker, workflow)
             self.assertIn(scenario["expected_distinction"].lower(), workflow)
             self.assertIn(scenario["terminal"].lower(), workflow)
 
-    def test_composition_preserves_target_scope_provenance_and_currentness(self):
-        composition_cases = (
-            {
-                "name": "stale exact target",
-                "input": {"target": "commit-a", "provenance": "test result", "current": False, "scope": "commit-a"},
-                "consumer_target": "commit-b",
-                "required": "stale_input",
-            },
-            {
-                "name": "narrow evidence",
-                "input": {"target": "repository", "provenance": "file check", "current": True, "scope": "file-a"},
-                "consumer_target": "repository",
-                "required": "scope_preserved",
-            },
-            {
-                "name": "same target current evidence",
-                "input": {"target": "issue-7", "provenance": "issue evidence", "current": True, "scope": "issue-7"},
-                "consumer_target": "issue-7",
-                "required": "provenance_preserved",
-            },
-        )
-
-        for case in composition_cases:
-            source = case["input"]
-            if not source["current"] or source["target"] != case["consumer_target"]:
-                disposition = "stale_input"
-            elif source["scope"] != case["consumer_target"]:
-                disposition = "scope_preserved"
-            else:
-                disposition = "provenance_preserved"
-            self.assertEqual(case["required"], disposition, case["name"])
-
+    def test_composition_contract_is_explicit_in_each_workflow(self):
         for workflow in (self.risk, self.reflect, self.challenge):
-            self.assertIn("provenance", workflow)
-            self.assertTrue("current" in workflow or "stale" in workflow)
-        self.assertIn("scope", self.risk)
-        self.assertIn("scope", self.reflect)
-        self.assertIn("scope", self.challenge)
+            self.assertTrue(composition_contract_holds(workflow))
+
+        # Challenge must state the consequence of a scope mismatch, not merely
+        # mention "scope" as a dimension that could be challenged.
+        self.assertIn("evidence that is current and valid only for a narrower", self.challenge)
+        self.assertIn("must remain narrow through composition", self.challenge)
+        self.assertIn("do not silently use it to support a broader conclusion", self.challenge)
+        self.assertIn("if a requested conclusion exceeds the evidence's material scope", self.challenge)
+
+    def test_composition_contract_negative_mutations_fail(self):
+        # Each mutation removes a material protection from the real workflow
+        # contract. The checker must reject every weakened contract.
+        mutations = {
+            "target": self.challenge.replace("exact target", "subject"),
+            "provenance": self.challenge.replace("evidence provenance", "evidence source"),
+            "scope": self.challenge.replace("scope", "coverage"),
+            "currentness": self.challenge.replace("current", "available").replace("stale", "old"),
+        }
+        self.assertTrue(composition_contract_holds(self.challenge))
+        for name, mutated in mutations.items():
+            self.assertFalse(composition_contract_holds(mutated), name)
+
+    def test_scope_mismatch_consequence_negative_mutations_fail(self):
+        required_clauses = (
+            "must remain narrow through composition",
+            "do not silently use it to support a broader conclusion",
+            "narrow the conclusion, report the limitation, or return an indeterminate or blocked result",
+        )
+        for clause in required_clauses:
+            self.assertIn(clause, self.challenge)
+            weakened = self.challenge.replace(clause, "")
+            self.assertNotIn(clause, weakened)
+
+    def test_authority_boundaries_survive_composition_and_negative_mutation(self):
+        workflows = {"/risk": self.risk, "/reflect": self.reflect, "/challenge": self.challenge}
+        for command, workflow in workflows.items():
+            self.assertTrue(authority_contract_holds(command, workflow))
+            for marker in AUTHORITY_CONTRACT[command]:
+                weakened = workflow.replace(marker, "")
+                self.assertFalse(authority_contract_holds(command, weakened), (command, marker))
 
     def test_public_syntax_has_observable_operator_value_over_generic_analysis(self):
-        # The public commands encode three different questions and terminal semantics;
-        # /analyse remains the compatibility fallback rather than erasing those distinctions.
         self.assertIn("/analyse", self.router)
         for command in PUBLIC_COMMANDS:
             self.assertIn(command, self.router)
