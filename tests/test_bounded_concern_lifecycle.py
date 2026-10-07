@@ -21,6 +21,32 @@ class BoundedConcernLifecycleTests(unittest.TestCase):
         self.assertIn("route fail-closed to gd", self.lower)
         self.assertIn("author evidence may inform but cannot downgrade", self.lower)
 
+    def test_author_correction_route_is_explicit(self):
+        for marker in (
+            "author-side failure during s2",
+            "after s4 returns review_package_reproducible=false",
+            "consume a before entering ac",
+            "perform exactly one bounded correction",
+            "return to s2 whenever concern closure must be rerun",
+            "may proceed directly to s3",
+            "if a is already 0",
+            "correction fails",
+            "adding, removing, or replacing a decision-critical concern is not ac-eligible",
+        ):
+            self.assertIn(marker, self.lower)
+
+    def test_fresh_review_five_way_classification_is_explicit(self):
+        self.assertIn("classified as exactly one of", self.lower)
+        for marker in (
+            "declared_concern_defect",
+            "package_evidence_defect",
+            "new_concern",
+            "scope_or_assurance_change",
+            "authority_change",
+        ):
+            self.assertIn(marker, self.lower)
+        self.assertIn("required for routing and outcome_record accounting", self.lower)
+
     def test_correction_invalidates_all_declared_concern_evidence(self):
         self.assertIn("invalidates the old review_package", self.lower)
         self.assertIn("invalidate every frozen declared concern result", self.lower)
