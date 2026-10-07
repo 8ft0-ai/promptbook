@@ -143,6 +143,28 @@ class StatefulInvariantEscalationContractTests(unittest.TestCase):
             self.router_lower,
         )
 
+    def test_structural_post_closure_recurrence_routes_to_governing_disposition_first(self):
+        self.assertIn(
+            "if the same-family recurrence is independently established as `equivalent_same_family_structural_falsification`",
+            self.router_lower,
+        )
+        self.assertIn(
+            "the structural classification takes precedence over the generic recurrence route",
+            self.router_lower,
+        )
+        self.assertIn(
+            "route the current strong-closure generation to `governing_disposition_required`, not directly to `architecture_reconsideration_required`",
+            self.router_lower,
+        )
+        self.assertIn(
+            "do not enter this architecture-reconsideration branch merely because a recurrence is also a structural falsification",
+            self.analysis_lower,
+        )
+        self.assertIn(
+            "the structural route takes precedence: stop at `governing_disposition_required` rather than entering architecture reconsideration",
+            self.fix_lower,
+        )
+
     def test_adjacent_model_omission_blocks_fix_until_model_closure(self):
         for marker in (
             "adjacent_model_omission",
@@ -269,7 +291,7 @@ class StatefulInvariantEscalationContractTests(unittest.TestCase):
             self.fix_lower,
         )
         self.assertIn(
-            "a previous invariant-closure analysis/remediation plan does not satisfy this stronger boundary",
+            "a previous invariant-closure analysis/remediation plan does not satisfy either stronger boundary",
             self.fix_lower,
         )
 
@@ -314,7 +336,7 @@ class StatefulInvariantEscalationContractTests(unittest.TestCase):
     def test_closure_method_falsification_routes_before_fix(self):
         for marker in (
             "closure_method_falsified",
-            "architecture_closure_reconstruction_required",
+            "governing_disposition_required",
             "unmodelled_decision_critical_primitive",
             "separate-authority boundary",
         ):

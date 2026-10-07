@@ -109,6 +109,13 @@ class ArchitectureClosureCompletenessTests(unittest.TestCase):
             self.review_lower,
         )
 
+    def test_one_canonical_model_owns_semantics_and_views_are_generated_projections(self):
+        self.assertIn("one canonical typed closure model", self.closure_lower)
+        self.assertIn("sole normative semantic authority", self.closure_lower)
+        self.assertIn("closure_projections = derived_not_independent_authorities", self.closure_lower)
+        self.assertIn("generated projections", self.closure_lower)
+        self.assertIn("must not define the closure universe", self.closure_lower)
+
     def test_closure_model_has_required_global_dimensions(self):
         for marker in (
             "closed source/obligation universe",
@@ -155,6 +162,17 @@ class ArchitectureClosureCompletenessTests(unittest.TestCase):
         self.assertIn("a prose assertion of equivalence or disjointness is not closure evidence", self.closure_lower)
         self.assertIn("every terminal state must identify the exact durable result/outcome provenance", self.closure_lower)
 
+    def test_strong_closure_recovery_is_bounded_and_monotone(self):
+        for marker in (
+            "semantic_correction_allowance = 1",
+            "package_only_repair_allowance = 1",
+            "monotone and generation-owned",
+            "governing_disposition_required",
+            "no automatic successor generation is permitted",
+        ):
+            self.assertIn(marker, self.closure_lower)
+        self.assertIn("omitted already-authoritative obligation is immediately material", self.closure_lower)
+
     def test_closure_dispositions_distinguish_model_error_from_method_failure(self):
         for marker in (
             "architecture_closure_ready",
@@ -166,10 +184,10 @@ class ArchitectureClosureCompletenessTests(unittest.TestCase):
             self.assertIn(marker, self.closure_lower)
         self.assertIn("do not falsify the closure method merely because a represented primitive is wrong", self.closure_lower)
 
-    def test_closure_method_falsification_requires_reconstruction_and_blocks_fix(self):
+    def test_closure_method_falsification_requires_governing_disposition_and_blocks_fix(self):
         for marker in (
             "closure_method_falsified",
-            "architecture_closure_reconstruction_required",
+            "governing_disposition_required",
             "ordinary isolated",
             "do not merely append the newly discovered primitive to prose",
         ):
@@ -177,11 +195,11 @@ class ArchitectureClosureCompletenessTests(unittest.TestCase):
         self.assertIn("ordinary isolated", self.fix_lower)
         self.assertIn("return control to the router", self.fix_lower)
 
-    def test_reconstruction_is_separate_authority_and_one_shot(self):
-        self.assertIn("is a separate-authority boundary", self.closure_lower)
-        self.assertIn("does not silently become unlimited authority to rerun closure reconstruction", self.closure_lower)
-        self.assertIn("perform exactly one fresh closure reconstruction", self.closure_lower)
-        self.assertIn("do not loop into repeated reconstruction while it remains current", self.router_lower)
+    def test_method_falsification_requires_governing_disposition_before_new_generation(self):
+        self.assertIn("governing-disposition boundary", self.closure_lower)
+        self.assertIn("does not silently become authority to create another generation", self.closure_lower)
+        self.assertIn("separately governed disposition", self.closure_lower)
+        self.assertIn("do not loop automatically into repeated reconstruction", self.router_lower)
 
     def test_first_closure_proof_lives_inside_authorised_reconsideration(self):
         self.assertIn("if that authorised architecture reconsideration needs to establish architecture closure", self.analysis_lower)
@@ -228,7 +246,7 @@ class ArchitectureClosureCompletenessTests(unittest.TestCase):
     def test_router_exposes_falsification_before_fix(self):
         self.assertIn("fresh review establishes", self.router_lower)
         self.assertIn("closure_method_falsified", self.router_lower)
-        self.assertIn("architecture_closure_reconstruction_required", self.router_lower)
+        self.assertIn("governing_disposition_required", self.router_lower)
         self.assertIn("stops without remediation mutation", self.router_lower)
 
 

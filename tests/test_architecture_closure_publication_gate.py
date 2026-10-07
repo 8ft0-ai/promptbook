@@ -92,7 +92,7 @@ class ArchitectureClosurePublicationGateTests(unittest.TestCase):
         for marker in (
             "unmodelled_decision_critical_primitive",
             "closure_method_falsified",
-            "architecture_closure_reconstruction_required",
+            "governing_disposition_required",
         ):
             self.assertIn(marker, self.closure)
             self.assertIn(marker, self.review)

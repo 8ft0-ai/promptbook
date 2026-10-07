@@ -4,7 +4,7 @@
 
 Derive and challenge a decision-critical architecture-closure model whose completeness does not depend on the candidate's own self-defined object, relation, transition or prose universe.
 
-Use this workflow only for materially security-, authority-, identity-, lifecycle-, recovery/ambiguity-, irreversible-effect-, or migration/cutover-sensitive architecture work when current governed state requires architecture closure or reconstruction. It is intentionally stronger than ordinary stateful/invariant analysis and does not replace that proportional workflow for routine stateful defects.
+Use this workflow only for materially security-, authority-, identity-, lifecycle-, recovery/ambiguity-, irreversible-effect-, or migration/cutover-sensitive architecture work when current governed state requires architecture closure, or when a separately governed disposition has explicitly authorised a successor strong-closure generation that requires reconstruction. It is intentionally stronger than ordinary stateful/invariant analysis and does not replace that proportional workflow for routine stateful defects.
 
 ## When to use
 
@@ -12,7 +12,7 @@ Use this workflow when current authoritative evidence establishes one of:
 
 - proposed work is materially security-, authority-, identity-, recovery/ambiguity-, irreversible-effect-, or migration/cutover-sensitive **and** the resulting architecture is intended to claim or be treated as closed-world, architecture-closed, closure-ready, complete over its decision-critical authority/effect universe, or an equivalent strong completeness claim;
 - an authorised architecture reconsideration whose result requires an architecture-closure proof before a candidate can safely be treated as closure-ready; or
-- `CLOSURE_METHOD_FALSIFIED` / `ARCHITECTURE_CLOSURE_RECONSTRUCTION_REQUIRED` because a fresh substantive review identified an applicable unmodelled decision-critical primitive, relation, authority edge, effect boundary, recovery state, identity dependency, equivalence claim, terminal-provenance requirement or migration/fence obligation that should have been present in the prior closure universe.
+- `GOVERNING_DISPOSITION_REQUIRED` after `CLOSURE_METHOD_FALSIFIED`, **and** a separate governing disposition has explicitly authorised `AUTHORISE_NEW_STRONG_CLOSURE_GENERATION`, because a fresh substantive review identified an applicable unmodelled decision-critical primitive, relation, authority edge, effect boundary, recovery state, identity dependency, equivalence claim, terminal-provenance requirement or migration/fence obligation that should have been present in the predecessor closure universe.
 
 The proactive trigger is conjunctive. Do not select this workflow merely because an architecture is large, because a security/authority word appears, because a review found several blockers, or because a modelled element is locally wrong. Ordinary bounded design, local architecture decisions, exploratory proposals and explicitly modelled-but-incomplete drafts remain eligible for proportionate workflows when they do not make the strong completeness claim.
 
@@ -106,7 +106,34 @@ A current closure artefact is analysis evidence, not architecture approval. Cand
 
 ## Required closure artefact
 
-Produce one canonical closure artefact, or repository-appropriate equivalent, covering the following dimensions proportionately to the architecture.
+Produce exactly one canonical typed closure model, or repository-appropriate equivalent canonical semantic representation, covering the following dimensions proportionately to the architecture.
+
+The canonical model is the sole normative semantic authority for the closure generation. Its source/obligation records, primitive identities, state/transition semantics, authority/effect semantics, provenance and recovery relationships define the reviewed closure meaning. Review-oriented inventories, matrices, DAGs, witnesses and manifests are **generated projections** of that model, not separately maintained completeness authorities.
+
+Require semantics equivalent to:
+
+```text
+CANONICAL_CLOSURE_MODEL = ONE
+CLOSURE_PROJECTIONS = DERIVED_NOT_INDEPENDENT_AUTHORITIES
+```
+
+A projection may expose an inconsistency or defect in the canonical model, but it must not define the closure universe, create an obligation that is absent from authoritative sources, or silently override another projection. If two projections disagree, fail closed and correct the canonical model or projection generator; do not adjudicate completeness by choosing one hand-maintained view over another.
+
+The required projections include, where applicable:
+
+- source/obligation -> primitive coverage;
+- object inventory;
+- state/transition inventory;
+- authority inventory;
+- effect/recovery inventory;
+- global identity-dependency DAG;
+- ownership/state/transition matrix;
+- positive reachability witnesses;
+- equivalence/overlap and terminal-provenance views;
+- migration/fence view; and
+- evidence/reproducibility manifest.
+
+The sections below define the semantic dimensions those generated projections must expose.
 
 ### 1. Closed source/obligation universe and total coverage
 
@@ -404,30 +431,22 @@ The resulting governed state is:
 
 ```text
 CLOSURE_METHOD_FALSIFIED
-→ ARCHITECTURE_CLOSURE_RECONSTRUCTION_REQUIRED
+→ GOVERNING_DISPOSITION_REQUIRED
 → ordinary isolated /fix ineligible
 ```
+
+A later reconstruction/new generation is not part of this transition. It becomes eligible only if a separate governing disposition explicitly authorises a new strong-closure generation and binds that successor to the terminal predecessor evidence.
 
 Do not merely append the newly discovered primitive to prose and resume the previous repair plan.
 ## Closure-method falsification boundary
 
-`ARCHITECTURE_CLOSURE_RECONSTRUCTION_REQUIRED` is a separate-authority boundary.
+`CLOSURE_METHOD_FALSIFIED` is a governing-disposition boundary for the current strong-closure generation.
 
-The authority that permitted the previous one-shot architecture reconsideration does not silently become unlimited authority to rerun closure reconstruction after its closure method was falsified.
+The authority that permitted the current closure generation does not silently become authority to create another generation after the closure method was falsified. Preserve the falsifying review, prior canonical model/snapshot, exact candidate when applicable, governing contract and omitted obligation/primitive/relation as terminal predecessor evidence.
 
-Before reconstruction, require a current separately governed authority source specifically permitting that bounded read-only reconstruction. When authorised, perform exactly one fresh closure reconstruction bound to:
+Do not automatically reconstruct or append the newly discovered primitive and continue. A later strong-closure generation requires a separately governed disposition that explicitly authorises that new generation and binds it to the predecessor evidence.
 
-- the falsifying review;
-- prior closure artefact;
-- current exact candidate;
-- governing contract; and
-- reconstruction-authority source.
-
-A current reconstruction record satisfies that analysis gate for those exact bindings. Do not loop automatically into repeated reconstruction while it remains current. Material movement of a decision-critical binding requires refresh under normal freshness rules.
-
-The reconstruction result still creates no design-mutation/remediation authority. When reconstruction reaches `ARCHITECTURE_CLOSURE_READY`, the exact reconstructed closure artefact must pass the required genuinely fresh architecture-closure review before any resulting candidate may be projected from it. Any resulting candidate change also requires separately established current authority and a new candidate-bound remediation/design plan derived from the exact approved closure model.
-
-If a prior closure artefact had already received `APPROVED_FOR_CANDIDATE_PROJECTION` and later fresh evidence establishes either `CLOSURE_METHOD_FALSIFIED` or `EQUIVALENT_SAME_FAMILY_STRUCTURAL_FALSIFICATION`, perform a proportional complexity disposition before automatically expanding the model again. The equivalent structural class requires independent evidence that a same-family recurrence demonstrates structural inadequacy of the approved closure/model; a local regression inside a still-sound represented primitive is not enough. Explicitly consider state/authority/configuration/effect removal, platform-primitive reuse, moving authority to the actual authoritative boundary, lifecycle/contract decomposition, objective narrowing, and retirement of contradictory active surface. Record `SIMPLIFY_OR_DECOMPOSE` or `ADDITIONAL_MODEL_COMPLEXITY_JUSTIFIED`; simplification is first-class, not mandatory when additional complexity is genuinely necessary.
+If a prior closure artefact had already received `APPROVED_FOR_CANDIDATE_PROJECTION` and later fresh evidence establishes either `CLOSURE_METHOD_FALSIFIED` or `EQUIVALENT_SAME_FAMILY_STRUCTURAL_FALSIFICATION`, the same governing disposition must consider simplification/decomposition before authorising more closure complexity. Explicitly consider state/authority/configuration/effect removal, platform-primitive reuse, moving authority to the actual authoritative boundary, lifecycle/contract decomposition, objective narrowing, and retirement of contradictory active surface.
 
 ## Modelled defect versus missing primitive
 
@@ -440,7 +459,7 @@ MODELLED_BUT_WRONG
 UNMODELLED_DECISION_CRITICAL_PRIMITIVE
 ```
 
-`MODELLED_BUT_WRONG` may still block approval and may require architecture-level correction, but it does not prove the closure universe itself was incomplete.
+`MODELLED_BUT_WRONG` may still block approval and may require architecture-level correction, but it does not prove the closure universe itself was incomplete and does not automatically establish `CLOSURE_METHOD_FALSIFIED`.
 
 Likewise, do not falsify the prior closure method solely because:
 
@@ -462,7 +481,7 @@ ARCHITECTURE_CLOSURE_SOURCE=<exact closure artefact identity>
 ARCHITECTURE_CLOSURE_REVIEW=<exact fresh review identity with APPROVED_FOR_CANDIDATE_PROJECTION>
 ```
 
-Candidate projection may realise or refine already-modelled elements, but it must not silently introduce a new decision-critical primitive, authority edge, state family, effect class, identity dependency, recovery rule, equivalence/overlap claim, migration obligation or external/platform boundary. If projection needs any such new semantic, invalidate projection eligibility and enter closure reconstruction/analysis first; freeze a new `ARCHITECTURE_CLOSURE_READY` snapshot generation before another genuinely fresh closure review. Never route directly from new decision-critical projection semantics to review of the old snapshot. Byte-level change inside an already-modelled primitive does not by itself invalidate the closure approval. After a candidate is successfully projected within the approved universe, complete the applicable validation and remediation-/authoring-readiness evidence for that exact candidate before the separately fresh candidate review.
+Candidate projection may realise or refine already-modelled elements, but it must not silently introduce a new decision-critical primitive, authority edge, state family, effect class, identity dependency, recovery rule, equivalence/overlap claim, migration obligation or external/platform boundary. If projection needs any such new semantic, invalidate projection eligibility and route the current strong-closure generation to `GOVERNING_DISPOSITION_REQUIRED`. A new `ARCHITECTURE_CLOSURE_READY` snapshot generation may be produced only after a separate governing disposition explicitly authorises a new strong-closure generation; never route directly from new decision-critical projection semantics to reconstruction or review of the old snapshot. Byte-level change inside an already-modelled primitive does not by itself invalidate the closure approval. After a candidate is successfully projected within the approved universe, complete the applicable validation and remediation-/authoring-readiness evidence for that exact candidate before the separately fresh candidate review.
 
 
 For any later authorised architecture candidate derived from this workflow, completion evidence must establish all three layers:
@@ -480,6 +499,67 @@ PARENT_NON_REGRESSION
 ```
 
 Patching only the latest finding is insufficient when that finding exposed an omitted primitive.
+
+## Strong-closure generation and well-founded recovery
+
+Each strong architecture-closure attempt is one immutable **strong-closure generation**. Bind its identity to the governing source/obligation boundary, closure scope, canonical model identity and applicable authority source. The generation owns exactly:
+
+```text
+SEMANTIC_CORRECTION_ALLOWANCE = 1
+PACKAGE_ONLY_REPAIR_ALLOWANCE = 1
+```
+
+Both the semantic-correction allowance and the package-only repair allowance are monotone and generation-owned. Renaming, repackaging, issue recreation, candidate replacement, snapshot regeneration or moving the durable carrier cannot replenish a consumed allowance.
+
+Fresh architecture-closure review owns classification of the completed blocking finding set for routing. Use the following mutually safety-preserving outcomes:
+
+### `MODELLED_DEFECT`
+
+Use only when every material defect is wholly inside an obligation/primitive already represented by the current canonical model, the governing source/obligation boundary is unchanged, and no governing scope or authority movement is involved.
+
+If the semantic-correction allowance is unused, one bounded in-generation semantic correction may:
+
+1. correct the canonical model;
+2. regenerate all affected projections/package evidence;
+3. freeze a new exact snapshot inside the same generation; and
+4. return to genuinely fresh closure review.
+
+If the semantic allowance is already consumed, route to `GOVERNING_DISPOSITION_REQUIRED`.
+
+### `PACKAGE_ONLY_DEFECT`
+
+Use only when the canonical semantic model, governing source/obligation universe, decision-critical inputs and semantic outputs are unchanged and the defect is limited to packaging, manifest, retrievability, reproducibility or equivalent admission evidence.
+
+If the package-only allowance is unused, perform one bounded repair, rerun the applicable deterministic admission/reconstruction checks, freeze the repaired package, and return to fresh closure review where required. This path does not consume the semantic-correction allowance.
+
+If semantic movement is required, or package-only eligibility is ambiguous, do not use this route.
+
+### `NEW_OR_OMITTED_OBLIGATION`, `STRUCTURAL_FALSIFICATION`, `SCOPE_OR_AUTHORITY_MOVEMENT`
+
+Any of these routes the current generation directly to:
+
+```text
+GOVERNING_DISPOSITION_REQUIRED
+```
+
+An omitted already-authoritative obligation is immediately material when fresh review establishes its applicability and decision-critical consequence. It does **not** require a separate scope-amendment decision merely to become blocking.
+
+Mixed or ambiguous findings fail closed to `GOVERNING_DISPOSITION_REQUIRED`; author-side evidence cannot downgrade a review-owned structural route into an in-generation correction.
+
+### Governing disposition
+
+`GOVERNING_DISPOSITION_REQUIRED` terminates active progression for the current generation. It is not another closure-reconstruction state.
+
+A separately governed disposition may choose, as applicable:
+
+- authorise a new strong-closure generation with an amended source/obligation boundary;
+- decompose the architecture or objective;
+- reduce the assurance/completeness claim;
+- simplify by removing state, authority, effect paths or contradictory active surface;
+- defer;
+- reject or abandon the approach.
+
+A new generation receives new allowances only because it has a new explicitly authorised generation identity. The predecessor remains terminal provenance and must be linked durably; no automatic successor generation is permitted.
 
 ## Fresh-review expectation
 
@@ -557,7 +637,7 @@ Return a concise architecture-closure record containing:
 - disposition: `ARCHITECTURE_CLOSURE_READY`, `ARCHITECTURE_CLOSURE_NOT_READY`, or `CLOSURE_METHOD_FALSIFIED`;
 - `CLOSURE_REVIEW_REQUIRED` and the exact closure artefact identity when a fresh closure-review gate applies;
 - `COMPLEXITY_DISPOSITION_REQUIRED` plus `SIMPLIFY_OR_DECOMPOSE` or `ADDITIONAL_MODEL_COMPLEXITY_JUSTIFIED` when an approved closure is later structurally falsified;
-- any resulting `ARCHITECTURE_CLOSURE_RECONSTRUCTION_REQUIRED` boundary;
+- any resulting `GOVERNING_DISPOSITION_REQUIRED` boundary and, only when separately authorised, the successor-generation authority/provenance binding;
 - explicitly untested or unresolved surface;
 - required next authority/decision.
 

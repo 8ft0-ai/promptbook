@@ -8,7 +8,7 @@ ENGINEERING = ROOT / "prompts" / "engineering"
 
 
 def parse_lifecycle(router: str):
-    marker = "ARCHITECTURE_CLOSURE_LIFECYCLE_V1\n"
+    marker = "ARCHITECTURE_CLOSURE_LIFECYCLE_V2\n"
     if marker not in router:
         raise AssertionError("canonical closure lifecycle table missing")
     block = router.split(marker, 1)[1].split("```", 1)[0]
@@ -83,16 +83,75 @@ class ArchitectureClosureReviewGateTests(unittest.TestCase):
         for current, event, nxt in sequence:
             self.assertEqual(self.transition(current, event)["next"], nxt)
 
-    def test_changes_required_has_positive_recovery_to_new_snapshot_and_review(self):
+    def test_modelled_defect_has_one_bounded_semantic_correction_path(self):
         self.assertEqual(
-            self.transition("CLOSURE_REVIEW_REQUIRED", "DURABLE_CHANGES_REQUIRED_RECORDED")["next"],
-            "CLOSURE_RECONSTRUCTION_REQUIRED",
+            self.transition("CLOSURE_REVIEW_REQUIRED", "DURABLE_MODELLED_DEFECT_RECORDED")["next"],
+            "CLOSURE_MODEL_CORRECTION_REQUIRED",
         )
         self.assertEqual(
-            self.transition("CLOSURE_RECONSTRUCTION_REQUIRED", "READY_CLOSURE_SNAPSHOT_FROZEN")["next"],
+            self.transition(
+                "CLOSURE_MODEL_CORRECTION_REQUIRED",
+                "SEMANTIC_CORRECTION_ALLOWANCE_AVAILABLE_AND_CORRECTED_SNAPSHOT_FROZEN",
+            )["next"],
             "CLOSURE_REVIEW_REQUIRED",
         )
-        self.assertTrue(reachable(self.transitions, "CLOSURE_RECONSTRUCTION_REQUIRED", "CANDIDATE_REVIEW_REQUIRED"))
+        self.assertEqual(
+            self.transition(
+                "CLOSURE_MODEL_CORRECTION_REQUIRED",
+                "SEMANTIC_CORRECTION_ALLOWANCE_EXHAUSTED",
+            )["next"],
+            "GOVERNING_DISPOSITION_REQUIRED",
+        )
+
+    def test_package_only_defect_has_separate_bounded_repair_path(self):
+        self.assertEqual(
+            self.transition("CLOSURE_REVIEW_REQUIRED", "DURABLE_PACKAGE_ONLY_DEFECT_RECORDED")["next"],
+            "CLOSURE_PACKAGE_REPAIR_REQUIRED",
+        )
+        self.assertEqual(
+            self.transition(
+                "CLOSURE_PACKAGE_REPAIR_REQUIRED",
+                "PACKAGE_ONLY_REPAIR_ALLOWANCE_AVAILABLE_AND_PACKAGE_READMITTED",
+            )["next"],
+            "CLOSURE_REVIEW_REQUIRED",
+        )
+        self.assertEqual(
+            self.transition(
+                "CLOSURE_PACKAGE_REPAIR_REQUIRED",
+                "PACKAGE_ONLY_REPAIR_ALLOWANCE_EXHAUSTED",
+            )["next"],
+            "GOVERNING_DISPOSITION_REQUIRED",
+        )
+
+    def test_structural_and_unclassified_failures_route_to_governing_disposition(self):
+        for event in (
+            "DURABLE_NEW_OR_OMITTED_OBLIGATION_RECORDED",
+            "DURABLE_STRUCTURAL_FALSIFICATION_RECORDED",
+            "DURABLE_SCOPE_OR_AUTHORITY_MOVEMENT_RECORDED",
+            "DURABLE_AMBIGUOUS_CORRECTION_CLASSIFICATION_RECORDED",
+            "DURABLE_UNCLASSIFIED_CHANGES_REQUIRED_RECORDED",
+        ):
+            self.assertEqual(
+                self.transition("CLOSURE_REVIEW_REQUIRED", event)["next"],
+                "GOVERNING_DISPOSITION_REQUIRED",
+            )
+
+    def test_governing_disposition_is_required_before_a_new_generation(self):
+        self.assertEqual(
+            self.transition(
+                "GOVERNING_DISPOSITION_REQUIRED",
+                "AUTHORISE_NEW_STRONG_CLOSURE_GENERATION",
+            )["next"],
+            "ARCHITECTURE_CLOSURE_ANALYSIS_REQUIRED",
+        )
+        self.assertFalse(
+            reachable(
+                self.transitions,
+                "GOVERNING_DISPOSITION_REQUIRED",
+                "CLOSURE_REVIEW_REQUIRED",
+                forbidden_events={"AUTHORISE_NEW_STRONG_CLOSURE_GENERATION"},
+            )
+        )
 
     def test_durable_approval_is_the_only_route_from_review_gate_to_projection_eligibility(self):
         self.assertFalse(
@@ -106,19 +165,23 @@ class ArchitectureClosureReviewGateTests(unittest.TestCase):
         row = self.transition("CLOSURE_REVIEW_REQUIRED", "READ_ONLY_APPROVED_FOR_CANDIDATE_PROJECTION")
         self.assertEqual((row["next"], row["projection"]), ("CLOSURE_REVIEW_REQUIRED", "NO"))
 
-    def test_new_projection_semantics_require_reconstruction_before_re_review(self):
+    def test_new_projection_semantics_require_governing_disposition_before_new_generation(self):
         row = self.transition("CANDIDATE_PROJECTION_ELIGIBLE", "NEW_DECISION_CRITICAL_SEMANTICS")
-        self.assertEqual((row["next"], row["action"]), ("CLOSURE_RECONSTRUCTION_REQUIRED", "ANALYSE_CLOSURE"))
+        self.assertEqual((row["next"], row["action"]), ("GOVERNING_DISPOSITION_REQUIRED", "GOVERNING_DISPOSITION"))
         self.assertNotEqual(row["next"], "CLOSURE_REVIEW_REQUIRED")
-        self.assertEqual(
-            self.transition("CLOSURE_RECONSTRUCTION_REQUIRED", "READY_CLOSURE_SNAPSHOT_FROZEN")["next"],
-            "CLOSURE_REVIEW_REQUIRED",
+        self.assertIn(
+            "if projection needs any such new semantic, invalidate projection eligibility and route the current strong-closure generation to `governing_disposition_required`",
+            self.closure,
+        )
+        self.assertIn(
+            "do not enter reconstruction automatically",
+            self.auto,
         )
 
     def test_snapshot_or_review_movement_revokes_projection_eligibility(self):
         self.assertEqual(
             self.transition("CANDIDATE_PROJECTION_ELIGIBLE", "CLOSURE_SNAPSHOT_CHANGED")["next"],
-            "CLOSURE_RECONSTRUCTION_REQUIRED",
+            "GOVERNING_DISPOSITION_REQUIRED",
         )
         self.assertEqual(
             self.transition("CANDIDATE_PROJECTION_ELIGIBLE", "CLOSURE_REVIEW_RECORD_CHANGED_OR_INVALID")["next"],
@@ -126,7 +189,7 @@ class ArchitectureClosureReviewGateTests(unittest.TestCase):
         )
         self.assertEqual(
             self.transition("CANDIDATE_PROJECTION_ELIGIBLE", "GOVERNING_SCOPE_CHANGED")["next"],
-            "ARCHITECTURE_CLOSURE_ANALYSIS_REQUIRED",
+            "GOVERNING_DISPOSITION_REQUIRED",
         )
 
     def test_candidate_projection_requires_readiness_before_fresh_candidate_review(self):
@@ -158,12 +221,48 @@ class ArchitectureClosureReviewGateTests(unittest.TestCase):
         self.assertIn("genuinely fresh closure review", self.closure)
         self.assertIn("validation/readiness as applicable", self.closure)
 
-    def test_same_family_structural_falsification_requires_complexity_disposition(self):
+    def test_same_family_structural_falsification_requires_governing_disposition_before_reconsideration(self):
         row = self.transition("APPROVED_CLOSURE_LINEAGE", "EQUIVALENT_SAME_FAMILY_STRUCTURAL_FALSIFICATION")
-        self.assertEqual(row["next"], "COMPLEXITY_DISPOSITION_REQUIRED")
+        self.assertEqual(row["next"], "GOVERNING_DISPOSITION_REQUIRED")
         self.assertIn("equivalent_same_family_structural_falsification", self.router)
         self.assertIn("equivalent_same_family_structural_falsification", self.closure)
-        self.assertIn("complexity_disposition_required", self.analysis)
+        self.assertIn("the same governing disposition must consider simplification/decomposition", self.closure)
+        self.assertIn(
+            "structural classification takes precedence and routes first to `governing_disposition_required`",
+            self.analysis,
+        )
+        self.assertNotIn(
+            "if that recurrence is bound to a prior closure artefact that received `approved_for_candidate_projection` and the fresh review independently classified it as `equivalent_same_family_structural_falsification`, require `complexity_disposition_required` before this reconsideration expands the model",
+            self.analysis,
+        )
+
+    def test_method_falsification_has_no_direct_reconstruction_route(self):
+        self.assertIn(
+            "closure_method_falsified\n→ governing_disposition_required",
+            self.closure,
+        )
+        self.assertNotIn(
+            "closure_method_falsified\n→ architecture_closure_reconstruction_required",
+            self.closure,
+        )
+        self.assertIn(
+            "reports `governing_disposition_required` as the next transition/boundary",
+            self.router,
+        )
+        self.assertNotIn(
+            "reports `architecture_closure_reconstruction_required` as the next transition/boundary",
+            self.router,
+        )
+
+    def test_generation_allowances_and_terminal_predecessor_rules_are_explicit(self):
+        for text in (self.router, self.closure, self.auto):
+            self.assertIn("semantic-correction allowance", text)
+            self.assertIn("package-only repair allowance", text)
+            self.assertIn("governing_disposition_required", text)
+        self.assertIn("renaming", self.router)
+        self.assertIn("repackaging", self.router)
+        self.assertIn("terminal predecessor", self.router)
+        self.assertIn("no automatic successor generation", self.closure)
 
     def test_bounded_remediation_and_local_design_do_not_acquire_closure_gate(self):
         remediation = self.transition("ORDINARY_BOUNDED_REMEDIATION", "REVIEW_CHANGES_REQUIRED")
