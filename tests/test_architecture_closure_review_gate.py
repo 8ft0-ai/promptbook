@@ -221,12 +221,20 @@ class ArchitectureClosureReviewGateTests(unittest.TestCase):
         self.assertIn("genuinely fresh closure review", self.closure)
         self.assertIn("validation/readiness as applicable", self.closure)
 
-    def test_same_family_structural_falsification_requires_complexity_disposition(self):
+    def test_same_family_structural_falsification_requires_governing_disposition_before_reconsideration(self):
         row = self.transition("APPROVED_CLOSURE_LINEAGE", "EQUIVALENT_SAME_FAMILY_STRUCTURAL_FALSIFICATION")
         self.assertEqual(row["next"], "GOVERNING_DISPOSITION_REQUIRED")
         self.assertIn("equivalent_same_family_structural_falsification", self.router)
         self.assertIn("equivalent_same_family_structural_falsification", self.closure)
-        self.assertIn("complexity_disposition_required", self.analysis)
+        self.assertIn("the same governing disposition must consider simplification/decomposition", self.closure)
+        self.assertIn(
+            "the structural classification takes precedence and routes first to `governing_disposition_required`",
+            self.analysis,
+        )
+        self.assertNotIn(
+            "if that recurrence is bound to a prior closure artefact that received `approved_for_candidate_projection` and the fresh review independently classified it as `equivalent_same_family_structural_falsification`, require `complexity_disposition_required` before this reconsideration expands the model",
+            self.analysis,
+        )
 
     def test_method_falsification_has_no_direct_reconstruction_route(self):
         self.assertIn(
