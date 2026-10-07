@@ -33,10 +33,66 @@ class BoundedConcernLifecycleTests(unittest.TestCase):
         self.assertIn("generation-owned monotone values", self.lower)
         self.assertIn("never restored", self.lower)
 
+    def test_concern_register_contract_is_explicit(self):
+        for marker in (
+            "concern identifier/name",
+            "decision-critical claim",
+            "authoritative source/owner",
+            "applicability rationale",
+            "explicit exclusions",
+            "required evidence outputs",
+            "closure disposition",
+            "reconstruction inputs",
+        ):
+            self.assertIn(marker, self.lower)
+
+    def test_concern_contract_interface_is_explicit(self):
+        for marker in (
+            "finite obligation/output set",
+            "closure criterion",
+            "evidence required to reconstruct",
+            "correction boundary",
+            "conditions that constitute scope/assurance/authority movement",
+        ):
+            self.assertIn(marker, self.lower)
+
+    def test_review_package_manifest_and_admission_are_explicit(self):
+        for marker in (
+            "review_package manifest",
+            "exact candidate/review target",
+            "required inputs",
+            "advertised author-side outputs/results",
+            "every required locator to resolve",
+            "integrity identities to match",
+            "required inputs/outputs to be present",
+            "regenerated/recomputed outputs to match",
+            "review_package_reproducible=false",
+            "s5 is unreachable",
+        ):
+            self.assertIn(marker, self.lower)
+
     def test_negative_outcomes_exist_before_terminal(self):
         self.assertIn("generation-lifetime append-only outcome_record", self.lower)
         self.assertIn("append the gd event before active progression stops", self.lower)
         self.assertIn("negative, null, abandoned, decomposed, and non-convergent outcomes", self.lower)
+
+    def test_outcome_record_retains_reconstructable_configuration_and_history(self):
+        for marker in (
+            "generation and predecessor identities",
+            "case_id",
+            "frozen objective/assurance and concern_register identities",
+            "concern count and concern_contract identities",
+            "author-side defects and correction consumption",
+            "admission attempts/failures",
+            "fresh-review identities, findings and routing classifications",
+            "post-review correction attempts",
+            "gd trigger and consumed allowances",
+            "fresh-review count",
+            "effort proxy and lifecycle timestamps",
+            "pending/terminal governing disposition",
+            "final governing disposition",
+        ):
+            self.assertIn(marker, self.lower)
 
     def test_case_identity_cannot_be_reset_by_lifecycle_labels(self):
         self.assertIn("separately governed pilot case-selection", self.lower)
