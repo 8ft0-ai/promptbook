@@ -57,7 +57,7 @@ Every material correction invalidates the old REVIEW_PACKAGE. If AC or PC mutate
 
 A correction confined solely to package representation/reconstruction may avoid semantic concern reruns only when the exact candidate and all concern-closure inputs and outputs are unchanged. It still requires a new package identity/integrity witness and independent S4 admission.
 
-An eligible post-review correction consumes P before PC, returns through S2/S3/S4, and requires another genuinely fresh substantive review. If the applicable correction allowance is exhausted, route GD.
+An eligible post-review correction consumes P before PC. Perform exactly one bounded correction in PC while preserving the frozen CONCERN_REGISTER and CONCERN_CONTRACT identities, then return through S2/S3/S4 and require another genuinely fresh substantive review. If P is already 0, the correction is ineligible, the PC correction fails, or any eligibility boundary changes, route GD.
 
 Create and bind OUTCOME_RECORD when the generation is created, not only at terminal S7. Append the GD event before active progression stops. A later governing-authority decision appends/finalises the disposition and never erases predecessor outcome.
 
