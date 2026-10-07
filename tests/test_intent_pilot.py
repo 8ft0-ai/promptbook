@@ -116,7 +116,7 @@ class IntentPilotTests(unittest.TestCase):
             },
             {
                 "name": "narrow evidence",
-                "input": {"target": "file-a", "provenance": "file check", "current": True, "scope": "file-a"},
+                "input": {"target": "repository", "provenance": "file check", "current": True, "scope": "file-a"},
                 "consumer_target": "repository",
                 "required": "scope_preserved",
             },
@@ -149,7 +149,8 @@ class IntentPilotTests(unittest.TestCase):
         # The public commands encode three different questions and terminal semantics;
         # /analyse remains the compatibility fallback rather than erasing those distinctions.
         self.assertIn("/analyse", self.router)
-        self.assertIn("generic", self.router)
+        for command in PUBLIC_COMMANDS:
+            self.assertIn(command, self.router)
         questions = {scenario["question"] for scenario in SIMPLE_REPOSITORY_SCENARIOS.values()}
         distinctions = {scenario["expected_distinction"] for scenario in SIMPLE_REPOSITORY_SCENARIOS.values()}
         terminals = {scenario["terminal"] for scenario in SIMPLE_REPOSITORY_SCENARIOS.values()}
