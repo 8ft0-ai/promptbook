@@ -431,9 +431,11 @@ The resulting governed state is:
 
 ```text
 CLOSURE_METHOD_FALSIFIED
-→ ARCHITECTURE_CLOSURE_RECONSTRUCTION_REQUIRED
+→ GOVERNING_DISPOSITION_REQUIRED
 → ordinary isolated /fix ineligible
 ```
+
+A later reconstruction/new generation is not part of this transition. It becomes eligible only if a separate governing disposition explicitly authorises a new strong-closure generation and binds that successor to the terminal predecessor evidence.
 
 Do not merely append the newly discovered primitive to prose and resume the previous repair plan.
 ## Closure-method falsification boundary
@@ -479,7 +481,7 @@ ARCHITECTURE_CLOSURE_SOURCE=<exact closure artefact identity>
 ARCHITECTURE_CLOSURE_REVIEW=<exact fresh review identity with APPROVED_FOR_CANDIDATE_PROJECTION>
 ```
 
-Candidate projection may realise or refine already-modelled elements, but it must not silently introduce a new decision-critical primitive, authority edge, state family, effect class, identity dependency, recovery rule, equivalence/overlap claim, migration obligation or external/platform boundary. If projection needs any such new semantic, invalidate projection eligibility and enter closure reconstruction/analysis first; freeze a new `ARCHITECTURE_CLOSURE_READY` snapshot generation before another genuinely fresh closure review. Never route directly from new decision-critical projection semantics to review of the old snapshot. Byte-level change inside an already-modelled primitive does not by itself invalidate the closure approval. After a candidate is successfully projected within the approved universe, complete the applicable validation and remediation-/authoring-readiness evidence for that exact candidate before the separately fresh candidate review.
+Candidate projection may realise or refine already-modelled elements, but it must not silently introduce a new decision-critical primitive, authority edge, state family, effect class, identity dependency, recovery rule, equivalence/overlap claim, migration obligation or external/platform boundary. If projection needs any such new semantic, invalidate projection eligibility and route the current strong-closure generation to `GOVERNING_DISPOSITION_REQUIRED`. A new `ARCHITECTURE_CLOSURE_READY` snapshot generation may be produced only after a separate governing disposition explicitly authorises a new strong-closure generation; never route directly from new decision-critical projection semantics to reconstruction or review of the old snapshot. Byte-level change inside an already-modelled primitive does not by itself invalidate the closure approval. After a candidate is successfully projected within the approved universe, complete the applicable validation and remediation-/authoring-readiness evidence for that exact candidate before the separately fresh candidate review.
 
 
 For any later authorised architecture candidate derived from this workflow, completion evidence must establish all three layers:
@@ -635,7 +637,7 @@ Return a concise architecture-closure record containing:
 - disposition: `ARCHITECTURE_CLOSURE_READY`, `ARCHITECTURE_CLOSURE_NOT_READY`, or `CLOSURE_METHOD_FALSIFIED`;
 - `CLOSURE_REVIEW_REQUIRED` and the exact closure artefact identity when a fresh closure-review gate applies;
 - `COMPLEXITY_DISPOSITION_REQUIRED` plus `SIMPLIFY_OR_DECOMPOSE` or `ADDITIONAL_MODEL_COMPLEXITY_JUSTIFIED` when an approved closure is later structurally falsified;
-- any resulting `ARCHITECTURE_CLOSURE_RECONSTRUCTION_REQUIRED` boundary;
+- any resulting `GOVERNING_DISPOSITION_REQUIRED` boundary and, only when separately authorised, the successor-generation authority/provenance binding;
 - explicitly untested or unresolved surface;
 - required next authority/decision.
 
