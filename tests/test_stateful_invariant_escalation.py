@@ -223,6 +223,105 @@ class StatefulInvariantEscalationContractTests(unittest.TestCase):
             self.router_lower,
         )
 
+    def test_first_review_shared_model_failure_precedes_bounded_remediation(self):
+        synthesis_start = self.router_lower.index(
+            "when a completed review exposes `changes required`"
+        )
+        bounded_start = self.router_lower.index(
+            "when response synthesis selects `bounded_remediation`"
+        )
+        synthesis_gate = self.router_lower[synthesis_start:bounded_start]
+        for marker in (
+            "first_review_shared_model_failure",
+            "complete substantive `changes required` review",
+            "one sufficiently structural blocker able to qualify",
+            "finding count, shared terminology, component/file locality",
+            "ordinary `/fix` is ineligible",
+            "positive normal and admitted-recovery reachability",
+            "invoke [architecture closure analysis](architecture-closure-analysis.md) only when",
+        ):
+            self.assertIn(marker, synthesis_gate)
+        self.assertIn(
+            "this early trigger does not replace `adjacent_model_omission`",
+            synthesis_gate,
+        )
+        self.assertIn(
+            "strong-closure `governing_disposition_required` precedence",
+            synthesis_gate,
+        )
+
+    def test_first_review_lineage_excludes_post_remediation_r2_and_preserves_adjacent_backstop(self):
+        synthesis_start = self.router_lower.index(
+            "when a completed review exposes `changes required`"
+        )
+        bounded_start = self.router_lower.index(
+            "when response synthesis selects `bounded_remediation`"
+        )
+        synthesis_gate = self.router_lower[synthesis_start:bounded_start]
+        first_start = synthesis_gate.index(
+            "first apply an evidence-based first-review shared-model challenge"
+        )
+        adjacent_start = synthesis_gate.index(
+            "apply an evidence-based adjacent-model challenge"
+        )
+        first_gate = synthesis_gate[first_start:adjacent_start]
+        for marker in (
+            "first complete substantive candidate review",
+            "no remediation has intervened",
+            "authoritative review/candidate lineage evidence",
+            "a later review after remediation is ineligible",
+            "preserve `adjacent_model_omission`",
+            "materially related r1/r2 escalation",
+            "governing_disposition_required",
+        ):
+            self.assertIn(marker, first_gate)
+        self.assertIn(
+            "only for this verified first-review/pre-remediation lineage",
+            self.fresh_lower,
+        )
+        self.assertLess(first_start, adjacent_start)
+        # R1 local/complete model -> bounded correction -> R2 discovers an
+        # adjacent omitted dimension: the new first-review route is ineligible.
+        r1_complete = True
+        intervening_remediation = True
+        r2_adjacent_omission = True
+        first_review_eligible = not r1_complete and not intervening_remediation
+        self.assertFalse(first_review_eligible)
+        self.assertTrue(r2_adjacent_omission)
+
+    def test_first_review_trigger_requires_model_omission_not_blocker_count(self):
+        for marker in (
+            "first_review_shared_model_failure",
+            "one sufficiently structural blocker may establish this",
+            "multiple blockers do not establish it by count",
+            "shared terminology, file/component locality",
+            "several violations of an already-complete model are insufficient",
+        ):
+            self.assertIn(marker, self.fresh_lower)
+        self.assertIn(
+            "no prior remediation is required for this entry",
+            self.analysis_lower,
+        )
+
+    def test_first_review_trigger_blocks_fix_and_composes_with_existing_closure_gate(self):
+        for marker in (
+            "first_review_shared_model_failure",
+            "ordinary `/fix` is ineligible",
+            "complete relevant shared decision model",
+            "positive normal and admitted-recovery reachability",
+            "existing genuinely fresh closure-review gate",
+            "separately established current remediation/design authority",
+        ):
+            self.assertIn(marker, self.fix_lower)
+        self.assertIn(
+            "if closure is produced, preserve the existing fresh closure-review",
+            self.analysis_lower,
+        )
+        self.assertIn(
+            "rather than manufacturing successor-generation authority",
+            self.analysis_lower,
+        )
+
     def test_architecture_reconsideration_requires_authority_and_has_one_shot_satisfaction(self):
         for marker in (
             "separate-authority boundary",
