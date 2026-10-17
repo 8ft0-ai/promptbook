@@ -77,6 +77,21 @@ class ReviewCompletionContractTests(unittest.TestCase):
             self.router_lower,
         )
 
+    def test_unrelated_evidence_gap_does_not_stop_source_review(self):
+        for required in (
+            "missing evidence or unavailable capability blocks only",
+            "other safe, authorised work",
+            "unavailable host docker or integration evidence does not prevent",
+            "bounded independent source-only review",
+            "explicitly identifying unverified domains",
+            "withholding any dependent assurance or approval",
+            "distinguish incomplete assurance from missing authority",
+            "genuinely unsafe/prohibited effect",
+            "do not mark an applicable unexamined domain as `not_applicable`",
+            "infer integration, image, deployment or activation approval",
+        ):
+            self.assertIn(required, self.fresh_lower)
+
     def test_negative_disposition_reports_complete_blocker_set(self):
         self.assertIn(
             "for `changes required`, report all material blockers discovered across "
