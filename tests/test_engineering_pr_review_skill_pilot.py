@@ -55,7 +55,7 @@ class EngineeringPRReviewSkillPilotTests(unittest.TestCase):
         self.assertEqual(self.fixture["observations"], {"standalone": None, "skill": None})
         protocol = " ".join(self.fixture["protocol"]).lower()
         for required in ("separate reviewer contexts", "no github review",
-                         "actual reads", "token/context", "negative",
+                         "actual reads", "token/context", "probe unrelated",
                          "not force the governed /review router", "hold"):
             self.assertIn(required, protocol)
         self.assertIn("zero_writes", self.fixture["required_observations"])
