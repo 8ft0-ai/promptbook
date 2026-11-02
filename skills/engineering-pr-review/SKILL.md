@@ -1,31 +1,28 @@
 ---
 name: engineering-pr-review
-description: Review a fixed pull-request revision substantively and read-only, using repository authority, complete bounded evidence, and explicit independence checks when required.
+description: Substantive, evidence-backed, read-only review of an exact pull-request revision; apply repository authority and check fresh-review eligibility when required.
 ---
 
 # Engineering PR review
 
-Use for a standalone engineering review of code, configuration, documentation or workflows. This Skill is reusable methodology, **not a replacement for an owning repository's governed `/review` contract** and not permission to record a GitHub review.
+Use for standalone reviews of code, configuration, documentation or workflows. This Skill is **not a replacement** for an owning repository's governed `/review` contract.
 
-## Inputs and authority
+## Inputs and precedence
 
-- Repository and PR URL/number; governing issue or accepted requirements; intended outcome; requested read-only review scope.
-- Exact PR base and head commit SHAs, established from current PR metadata before examining the candidate; access to the full diff and decision-critical evidence.
-- Repository-local `AGENTS.md`, applicable policies and review requirements take precedence. If a governed workflow is explicitly requested, follow its own contract rather than silently importing or replacing it with this Skill.
-- When an independent review is required, verify an eligible context that did not author or materially shape the candidate or inherit its substantive verdict. A Skill/agent name, a new invocation or a copied prior conclusion does not establish independence.
+- Repository and PR URL/number; governing issue, accepted outcome and scope; current checks, full diff and exact base/head commit SHAs.
+- Read repository-local `AGENTS.md`, policies and review requirements first: they take precedence. If a governed review was requested, follow its existing contract instead of silently loading it as standalone overhead.
+- When independence is required, verify that this reviewer context did not author or materially shape the candidate or inherit a substantive verdict. Skill/agent names do not prove freshness.
 
-## Bounded method
+## Method
 
-1. **Bind identity.** Read the PR metadata, current base/head and complete changed-file diff (all pages); resolve the governing issue, accepted scope/design, unresolved review threads and current checks. Record exact candidate identity. If the head moves, prior candidate-specific findings/validation are not automatically reusable.
-2. **Review the actual outcome.** Compare the complete candidate against the promised result, existing repository conventions and authorised scope. Identify unrelated edits, omitted requirements and compatibility or migration impacts.
-3. **Inspect risk and proof.** Assess correctness, edge cases, failure/negative paths, security and permission boundaries, data/secret exposure, operational safety, regressions, maintainability, documentation, rollback, and test coverage proportionately. Verify that validation, assertions or thresholds were not weakened and that passing CI does not conceal an unresolved functional problem. Do not claim tests ran unless observed.
-4. **Complete the applicable surface.** An early blocker rules out approval but does not end the bounded substantive review. Missing host/integration evidence blocks only dependent assurance or effects; continue safe source inspection, disclose unverified domains, and withhold conclusions that depend on them. Do not label an unexamined applicable domain inapplicable.
-5. **Report evidence.** Give material findings with file/line or other precise evidence, consequence and required correction; distinguish blockers from observations and optional suggestions. Prefer one underlying defect explanation over duplicative comments. No findings is not proof of unexamined domains.
+1. **Pin candidate:** reconcile PR metadata, exact head/base and complete diff; examine issue/design, unresolved review threads, relevant source, tests and validation. A moved head invalidates candidate-specific review evidence.
+2. **Check outcome:** confirm requirements and intended behaviour, scope discipline and absence of unrelated changes. Inspect correctness, regressions, edge/negative paths, security, permissions and secrets, compatibility, operations, migration, documentation, rollback and maintainability as applicable.
+3. **Check proof:** examine whether tests and CI establish the required behaviour without weakened checks, assertions or thresholds. Do not claim tests ran or assurances exist unless observed. A passing check does not overrule functional evidence.
+4. **Complete bounded coverage:** finding one blocker does not end inspection of other decision-critical domains. Missing host/integration evidence does not halt safe source-only review; mark dependent assurances unverified and withhold dependent approval. Do not call an applicable unexamined domain inapplicable.
+5. **Report:** give concrete blockers with file/line or comparable evidence and consequence; separate material defects from optional observations. Prefer underlying causes over repeated stylistic remarks.
 
-## Output
+## Result and limits
 
-Identify repository, PR, exact base/head, reviewed domains, evidence actually inspected, missing evidence and reviewer-independence eligibility. End with exactly one **logical** disposition: `APPROVED`, `CHANGES REQUIRED`, or `CANNOT ASSESS`. For changes required, report all material blockers found across the bounded review surface. Withhold approval if decision-critical evidence or required independence is missing. A logical disposition is not formal GitHub approval or merge authority.
+State exact repository/base/head, inspected and unverified domains, independence eligibility and precisely one logical disposition: `APPROVED`, `CHANGES REQUIRED`, or `CANNOT ASSESS`. List all material blockers found; do not approve with missing decision-critical evidence or required independence.
 
-## Read-only boundary
-
-**Zero GitHub and repository writes.** Do not submit reviews, comments, approvals, issue updates, commits or status changes; do not merge, remediate, deploy, release, change credentials or settings, or infer authority for consequential actions. Provide findings only in the current response. This Skill does not alter local reviewer requirements or grant freshness, execution or write-back authority.
+**Read-only, zero writes:** report in chat only. Do not submit GitHub reviews/comments, change issues, code or settings, merge, remediate, deploy or infer approval/authority. A logical `APPROVED` is not formal GitHub approval or merge permission.
