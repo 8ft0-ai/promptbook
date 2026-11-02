@@ -1,0 +1,56 @@
+{
+  "fixture_version": 1,
+  "status": "UNRUN",
+  "purpose": "Compare alternative standalone review instructions on one unchanged PR revision; do not treat file size or an authored fixture as observed saving.",
+  "target": {
+    "repository": "8ft0-ai/promptbook",
+    "pull_request": 101,
+    "governing_issue": 100,
+    "exact_base": "8b6e76a82ae877d2b4855e0521dce853c192f5a0",
+    "exact_head": "000419dfc569e8eb990056e5f733a3a59efa76f7",
+    "changed_files": 2,
+    "expected_change": "Missing host/integration evidence must not block safe source-only inspection; dependent assurance remains withheld."
+  },
+  "alternatives": [
+    {
+      "id": "standalone",
+      "instruction": "prompts/engineering/pr-review.md"
+    },
+    {
+      "id": "skill",
+      "instruction": "skills/engineering-pr-review/SKILL.md"
+    }
+  ],
+  "common_evidence": [
+    "AGENTS.md at candidate context",
+    "Issue #100 and acceptance criteria",
+    "PR #101 metadata with exact base/head and complete two-file patch",
+    "Relevant source, regression tests, checks and unresolved review threads",
+    "Current repository requirements and validation contract"
+  ],
+  "protocol": [
+    "Use separate reviewer contexts eligible for independent review; neither may have authored or inherited the historical review verdict.",
+    "Use one alternative per context with identical target and available common evidence; do not force the governed /review router into the standalone baseline.",
+    "Keep both runs read-only: no GitHub review, comment, issue mutation or changes to PR.",
+    "Record actual reads and observed token/context usage, not inferred file totals; note unavailable telemetry.",
+    "Capture bounded domains, material findings, exact identity, unverified evidence, independence and manual prompts/handover steps for each run.",
+    "Probe unrelated missing host evidence, missing decision-critical assurance, shifted PR head, and ineligible author-context review.",
+    "Only compare once both observation records exist; mark HOLD if real observations or equivalent safety are not established."
+  ],
+  "required_observations": [
+    "reviewer_context_independence",
+    "exact_candidate_identity",
+    "instruction_and_tool_reads",
+    "tokens_if_observable",
+    "manual_prompts_and_handovers",
+    "coverage_and_negative_paths",
+    "material_findings",
+    "zero_writes",
+    "portability_plain_markdown"
+  ],
+  "observations": {
+    "standalone": null,
+    "skill": null
+  },
+  "decision": "HOLD"
+}
