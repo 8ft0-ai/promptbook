@@ -259,7 +259,7 @@ def run_case(repo,fixture,version,revision,model,endpoint,key,engine,max_turns,t
     with tempfile.TemporaryDirectory(prefix='pb106-replay-') as temp:
         box=Workspace(Path(temp),case)
         for turn in range(max_turns):
-            payload={'model':model,'messages':messages,'max_tokens':700,'temperature':0,
+            payload={'model':model,'messages':[dict(m) for m in messages],'max_tokens':700,'temperature':0,
                      'reasoning_effort':'none','response_format':{'type':'json_object'},'stream':False}
             started=time.monotonic()
             response=fixture_response(case,transcript,box.state) if engine=='fixture' else model_request(payload,endpoint,key,timeout)
