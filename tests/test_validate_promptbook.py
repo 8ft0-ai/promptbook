@@ -1,3 +1,4 @@
+from v2_contract_source import read_effective_contract
 import importlib.util
 import re
 import tempfile
@@ -77,7 +78,7 @@ class PromptbookValidationTests(unittest.TestCase):
 
     def test_prompt_index_lists_all_published_prompts(self):
         prompt_root = ROOT / "prompts"
-        index_text = (prompt_root / "README.md").read_text(encoding="utf-8")
+        index_text = read_effective_contract(prompt_root / "README.md")
 
         self.assertEqual([], MODULE.validate_prompt_index(prompt_root))
         for target in (
@@ -135,7 +136,7 @@ class PromptbookValidationTests(unittest.TestCase):
             self.assertEqual([], MODULE.validate_prompt_index(prompt_root))
 
     def test_workflow_router_contract(self):
-        text = (ROOT / "prompts" / "workflows" / "README.md").read_text(encoding="utf-8")
+        text = read_effective_contract(ROOT / "prompts" / "workflows" / "README.md")
         lower = text.lower()
 
         for target in (
@@ -188,16 +189,12 @@ class PromptbookValidationTests(unittest.TestCase):
             self.assertNotIn(pattern, text)
 
     def test_documentation_assessment_workflow_contract(self):
-        workflow = (
-            ROOT / "prompts" / "workflows" / "documentation-assessment.md"
-        ).read_text(encoding="utf-8")
+        workflow = read_effective_contract(ROOT / "prompts" / "workflows" / "documentation-assessment.md")
         workflow_lower = workflow.lower()
-        router = (ROOT / "prompts" / "workflows" / "README.md").read_text(encoding="utf-8")
+        router = read_effective_contract(ROOT / "prompts" / "workflows" / "README.md")
         router_lower = router.lower()
-        single = (
-            ROOT / "prompts" / "documentation" / "repository-assessment.md"
-        ).read_text(encoding="utf-8")
-        prompt_index = (ROOT / "prompts" / "README.md").read_text(encoding="utf-8")
+        single = read_effective_contract(ROOT / "prompts" / "documentation" / "repository-assessment.md")
+        prompt_index = read_effective_contract(ROOT / "prompts" / "README.md")
 
         self.assertIn("v0.1.2", workflow)
         self.assertIn("c1e1982dd448b3574bb7e14667363ba9db326c5c", workflow)
@@ -229,7 +226,7 @@ class PromptbookValidationTests(unittest.TestCase):
         self.assertIn("ordinary bounded documentation edits", router_lower)
         self.assertIn("known corrections", router_lower)
         self.assertIn("explicit drafting tasks", router_lower)
-        self.assertIn("../documentation/repository-assessment.md", router)
+        self.assertIn("../../prompts/documentation/repository-assessment.md", router)
         self.assertEqual(PUBLIC_COMMANDS, declared_commands(router, "Shorthand commands"))
 
         self.assertIn("level-1/single-task", single.lower())
@@ -237,7 +234,7 @@ class PromptbookValidationTests(unittest.TestCase):
         self.assertIn("workflows/documentation-assessment.md", prompt_index)
 
     def test_single_maintainer_router_contract(self):
-        text = (ROOT / "prompts" / "workflows" / "README.md").read_text(encoding="utf-8")
+        text = read_effective_contract(ROOT / "prompts" / "workflows" / "README.md")
         lower = text.lower()
 
         self.assertIn("single-maintainer repositories", lower)
@@ -249,7 +246,7 @@ class PromptbookValidationTests(unittest.TestCase):
         self.assertIn("does not itself create mutation authority", lower)
 
     def test_decision_capsule_router_contract(self):
-        text = (ROOT / "prompts" / "workflows" / "README.md").read_text(encoding="utf-8")
+        text = read_effective_contract(ROOT / "prompts" / "workflows" / "README.md")
         lower = text.lower()
 
         self.assertIn("## Decision capsules", text)
@@ -271,9 +268,7 @@ class PromptbookValidationTests(unittest.TestCase):
         self.assertIn("security controls", lower)
 
     def test_autonomous_progression_decision_capsule_contract(self):
-        text = (
-            ROOT / "prompts" / "workflows" / "autonomous-progression.md"
-        ).read_text(encoding="utf-8")
+        text = read_effective_contract(ROOT / "prompts" / "workflows" / "autonomous-progression.md")
         lower = text.lower()
 
         self.assertIn("recommendation-first decision capsule", lower)
@@ -291,13 +286,9 @@ class PromptbookValidationTests(unittest.TestCase):
         self.assertIn("change requests a revision", lower)
 
     def test_external_required_handoff_contract(self):
-        autonomous = (
-            ROOT / "prompts" / "workflows" / "autonomous-progression.md"
-        ).read_text(encoding="utf-8")
+        autonomous = read_effective_contract(ROOT / "prompts" / "workflows" / "autonomous-progression.md")
         autonomous_lower = autonomous.lower()
-        handover = (
-            ROOT / "prompts" / "workflows" / "next-session-handover.md"
-        ).read_text(encoding="utf-8")
+        handover = read_effective_contract(ROOT / "prompts" / "workflows" / "next-session-handover.md")
         handover_lower = handover.lower()
 
         self.assertIn("one concrete external action", autonomous_lower)
@@ -328,9 +319,7 @@ class PromptbookValidationTests(unittest.TestCase):
         self.assertIn("directly executable as the required action", handover_lower)
 
     def test_fresh_review_composition_contract(self):
-        text = (
-            ROOT / "prompts" / "workflows" / "fresh-independent-review.md"
-        ).read_text(encoding="utf-8")
+        text = read_effective_contract(ROOT / "prompts" / "workflows" / "fresh-independent-review.md")
         lower = text.lower()
 
         self.assertIn("single disposition is the review record", lower)
@@ -345,9 +334,7 @@ class PromptbookValidationTests(unittest.TestCase):
             self.assertNotIn(pattern, text)
 
     def test_single_maintainer_fresh_review_contract(self):
-        text = (
-            ROOT / "prompts" / "workflows" / "fresh-independent-review.md"
-        ).read_text(encoding="utf-8")
+        text = read_effective_contract(ROOT / "prompts" / "workflows" / "fresh-independent-review.md")
         lower = text.lower()
 
         self.assertIn("not automatically of the github account", lower)
@@ -361,7 +348,7 @@ class PromptbookValidationTests(unittest.TestCase):
 
     def test_project_bootstrap_contract(self):
         path = ROOT / "guides" / "project-bootstrap.md"
-        text = path.read_text(encoding="utf-8")
+        text = read_effective_contract(path)
         lower = text.lower()
 
         self.assertIn("AGENTS.md", text)
@@ -384,8 +371,8 @@ class PromptbookValidationTests(unittest.TestCase):
 
         self.assertEqual(PUBLIC_COMMANDS, declared_commands(text, "Shorthand commands"))
 
-        readme = (ROOT / "README.md").read_text(encoding="utf-8")
-        using = (ROOT / "guides" / "using-promptbook.md").read_text(encoding="utf-8")
+        readme = read_effective_contract(ROOT / "README.md")
+        using = read_effective_contract(ROOT / "guides" / "using-promptbook.md")
         self.assertIn("guides/project-bootstrap.md", readme)
         self.assertIn("project-bootstrap.md", using)
 
@@ -393,7 +380,7 @@ class PromptbookValidationTests(unittest.TestCase):
             self.assertNotIn(pattern, text)
 
     def test_single_maintainer_bootstrap_guidance(self):
-        text = (ROOT / "guides" / "project-bootstrap.md").read_text(encoding="utf-8")
+        text = read_effective_contract(ROOT / "guides" / "project-bootstrap.md")
         lower = text.lower()
 
         self.assertIn("single-maintainer projects", lower)
@@ -406,7 +393,7 @@ class PromptbookValidationTests(unittest.TestCase):
 
     def test_decision_capsule_guide_contract(self):
         path = ROOT / "guides" / "decision-capsules.md"
-        text = path.read_text(encoding="utf-8")
+        text = read_effective_contract(path)
         lower = text.lower()
 
         self.assertIn("Recommendation and choices first", text)
@@ -425,12 +412,15 @@ class PromptbookValidationTests(unittest.TestCase):
         self.assertIn("/go", text)
         self.assertIn("repository-local instructions", lower)
 
-        readme = (ROOT / "README.md").read_text(encoding="utf-8")
-        using = (ROOT / "guides" / "using-promptbook.md").read_text(encoding="utf-8")
-        router = (ROOT / "prompts" / "workflows" / "README.md").read_text(encoding="utf-8")
+        readme = read_effective_contract(ROOT / "README.md")
+        using = read_effective_contract(ROOT / "guides" / "using-promptbook.md")
+        router = read_effective_contract(ROOT / "prompts" / "workflows" / "README.md")
         self.assertIn("guides/decision-capsules.md", readme)
         self.assertIn("decision-capsules.md", using)
-        self.assertIn("../../guides/decision-capsules.md", router)
+        self.assertIn("../../guides/conditional/router-decision.md", router)
+        self.assertIn("../decision-capsules.md", read_effective_contract(
+            ROOT / "guides" / "conditional" / "router-decision.md"
+        ))
 
     def test_public_command_docs_stay_aligned(self):
         surfaces = (
@@ -441,7 +431,7 @@ class PromptbookValidationTests(unittest.TestCase):
         )
 
         for path, heading in surfaces:
-            text = path.read_text(encoding="utf-8")
+            text = read_effective_contract(path)
             self.assertEqual(
                 PUBLIC_COMMANDS,
                 declared_commands(text, heading),
@@ -449,8 +439,8 @@ class PromptbookValidationTests(unittest.TestCase):
             )
 
     def test_bootstrap_copy_stays_aligned_with_guide(self):
-        bootstrap = (ROOT / "BOOTSTRAP").read_text(encoding="utf-8").strip()
-        guide = (ROOT / "guides" / "project-bootstrap.md").read_text(encoding="utf-8")
+        bootstrap = read_effective_contract(ROOT / "BOOTSTRAP").strip()
+        guide = read_effective_contract(ROOT / "guides" / "project-bootstrap.md")
 
         self.assertIn(
             f"```text\n{bootstrap}\n```",
@@ -459,7 +449,7 @@ class PromptbookValidationTests(unittest.TestCase):
         )
 
     def test_agents_declares_public_interface_maintenance(self):
-        text = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+        text = read_effective_contract(ROOT / "AGENTS.md")
         lower = text.lower()
 
         self.assertIn("prompts/workflows/README.md", text)

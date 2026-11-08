@@ -1,3 +1,4 @@
+from v2_contract_source import read_effective_contract
 import unittest
 from pathlib import Path
 
@@ -7,22 +8,14 @@ ROOT = Path(__file__).resolve().parents[1]
 class CapabilityAvailabilityOverrideTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.availability = (
-            ROOT / "prompts" / "workflows" / "capability-availability-overrides.md"
-        ).read_text(encoding="utf-8")
+        cls.availability = read_effective_contract(ROOT / "prompts" / "workflows" / "capability-availability-overrides.md")
         cls.availability_lower = cls.availability.lower()
-        cls.projection = (
-            ROOT / "prompts" / "workflows" / "executor-capability-projection.md"
-        ).read_text(encoding="utf-8")
+        cls.projection = read_effective_contract(ROOT / "prompts" / "workflows" / "executor-capability-projection.md")
         cls.projection_lower = cls.projection.lower()
-        cls.progression = (
-            ROOT / "prompts" / "workflows" / "autonomous-progression.md"
-        ).read_text(encoding="utf-8")
+        cls.progression = read_effective_contract(ROOT / "prompts" / "workflows" / "autonomous-progression.md")
         cls.progression_lower = cls.progression.lower()
-        cls.prompt_index = (ROOT / "prompts" / "README.md").read_text(encoding="utf-8")
-        cls.using_guide = (ROOT / "guides" / "using-promptbook.md").read_text(
-            encoding="utf-8"
-        )
+        cls.prompt_index = read_effective_contract(ROOT / "prompts" / "README.md")
+        cls.using_guide = read_effective_contract(ROOT / "guides" / "using-promptbook.md")
         cls.using_guide_lower = cls.using_guide.lower()
 
     def test_first_supported_flag_is_portable_and_binary(self):

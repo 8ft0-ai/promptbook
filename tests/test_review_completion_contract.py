@@ -1,3 +1,4 @@
+from v2_contract_source import read_effective_contract
 import re
 import unittest
 from pathlib import Path
@@ -23,17 +24,11 @@ PUBLIC_COMMANDS = {
 class ReviewCompletionContractTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.fresh = (
-            ROOT / "prompts" / "workflows" / "fresh-independent-review.md"
-        ).read_text(encoding="utf-8")
+        cls.fresh = read_effective_contract(ROOT / "prompts" / "workflows" / "fresh-independent-review.md")
         cls.fresh_lower = cls.fresh.lower()
-        cls.router = (ROOT / "prompts" / "workflows" / "README.md").read_text(
-            encoding="utf-8"
-        )
+        cls.router = read_effective_contract(ROOT / "prompts" / "workflows" / "README.md")
         cls.router_lower = cls.router.lower()
-        cls.remediate = (
-            ROOT / "prompts" / "engineering" / "remediate-review-findings.md"
-        ).read_text(encoding="utf-8")
+        cls.remediate = read_effective_contract(ROOT / "prompts" / "engineering" / "remediate-review-findings.md")
         cls.remediate_lower = cls.remediate.lower()
 
     def test_review_derives_and_completes_bounded_surface(self):

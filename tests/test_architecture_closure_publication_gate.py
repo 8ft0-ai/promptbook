@@ -1,3 +1,4 @@
+from v2_contract_source import read_effective_contract
 import unittest
 from pathlib import Path
 
@@ -9,13 +10,13 @@ ENGINEERING = ROOT / "prompts" / "engineering"
 class ArchitectureClosurePublicationGateTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.closure = (WORKFLOWS / "architecture-closure-analysis.md").read_text(encoding="utf-8").lower()
-        cls.router = (WORKFLOWS / "README.md").read_text(encoding="utf-8").lower()
-        cls.analysis = (WORKFLOWS / "stateful-invariant-analysis.md").read_text(encoding="utf-8").lower()
-        cls.review = (WORKFLOWS / "fresh-independent-review.md").read_text(encoding="utf-8").lower()
-        cls.plan = (ENGINEERING / "plan-an-issue.md").read_text(encoding="utf-8").lower()
-        cls.implement = (ENGINEERING / "implement-an-approved-issue.md").read_text(encoding="utf-8").lower()
-        cls.fix = (ENGINEERING / "remediate-review-findings.md").read_text(encoding="utf-8").lower()
+        cls.closure = read_effective_contract(WORKFLOWS / "architecture-closure-analysis.md").lower()
+        cls.router = read_effective_contract(WORKFLOWS / "README.md").lower()
+        cls.analysis = read_effective_contract(WORKFLOWS / "stateful-invariant-analysis.md").lower()
+        cls.review = read_effective_contract(WORKFLOWS / "fresh-independent-review.md").lower()
+        cls.plan = read_effective_contract(ENGINEERING / "plan-an-issue.md").lower()
+        cls.implement = read_effective_contract(ENGINEERING / "implement-an-approved-issue.md").lower()
+        cls.fix = read_effective_contract(ENGINEERING / "remediate-review-findings.md").lower()
 
     def test_a_proactive_trigger_requires_material_risk_and_strong_completeness(self):
         self.assertIn("the proactive trigger is conjunctive", self.closure)

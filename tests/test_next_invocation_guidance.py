@@ -1,3 +1,4 @@
+from v2_contract_source import read_effective_contract
 import re
 import unittest
 from pathlib import Path
@@ -11,37 +12,23 @@ DOCUMENTATION = ROOT / "prompts" / "documentation"
 class NextInvocationGuidanceTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.router = (WORKFLOWS / "README.md").read_text(encoding="utf-8")
+        cls.router = read_effective_contract(WORKFLOWS / "README.md")
         cls.router_lower = cls.router.lower()
-        cls.fresh = (WORKFLOWS / "fresh-independent-review.md").read_text(
-            encoding="utf-8"
-        )
+        cls.fresh = read_effective_contract(WORKFLOWS / "fresh-independent-review.md")
         cls.fresh_lower = cls.fresh.lower()
-        cls.handover = (WORKFLOWS / "next-session-handover.md").read_text(
-            encoding="utf-8"
-        )
+        cls.handover = read_effective_contract(WORKFLOWS / "next-session-handover.md")
         cls.handover_lower = cls.handover.lower()
-        cls.autonomous = (WORKFLOWS / "autonomous-progression.md").read_text(
-            encoding="utf-8"
-        )
+        cls.autonomous = read_effective_contract(WORKFLOWS / "autonomous-progression.md")
         cls.autonomous_lower = cls.autonomous.lower()
-        cls.documentation_assessment = (
-            WORKFLOWS / "documentation-assessment.md"
-        ).read_text(encoding="utf-8")
+        cls.documentation_assessment = read_effective_contract(WORKFLOWS / "documentation-assessment.md")
         cls.documentation_assessment_lower = cls.documentation_assessment.lower()
-        cls.plan = (ENGINEERING / "plan-an-issue.md").read_text(encoding="utf-8")
+        cls.plan = read_effective_contract(ENGINEERING / "plan-an-issue.md")
         cls.plan_lower = cls.plan.lower()
-        cls.implement = (ENGINEERING / "implement-an-approved-issue.md").read_text(
-            encoding="utf-8"
-        )
+        cls.implement = read_effective_contract(ENGINEERING / "implement-an-approved-issue.md")
         cls.implement_lower = cls.implement.lower()
-        cls.remediate = (ENGINEERING / "remediate-review-findings.md").read_text(
-            encoding="utf-8"
-        )
+        cls.remediate = read_effective_contract(ENGINEERING / "remediate-review-findings.md")
         cls.remediate_lower = cls.remediate.lower()
-        cls.repository_assessment = (
-            DOCUMENTATION / "repository-assessment.md"
-        ).read_text(encoding="utf-8")
+        cls.repository_assessment = read_effective_contract(DOCUMENTATION / "repository-assessment.md")
         cls.repository_assessment_lower = cls.repository_assessment.lower()
 
     def test_router_defines_navigation_not_authority(self):
@@ -173,7 +160,7 @@ class NextInvocationGuidanceTests(unittest.TestCase):
             self.router_lower,
         )
         self.assertIn(
-            "[repository documentation assessment](../documentation/repository-assessment.md)",
+            "[repository documentation assessment](../../prompts/documentation/repository-assessment.md)",
             self.router_lower,
         )
         self.assertIn(

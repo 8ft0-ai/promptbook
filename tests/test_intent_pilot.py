@@ -1,3 +1,4 @@
+from v2_contract_source import read_effective_contract
 import unittest
 from pathlib import Path
 
@@ -69,13 +70,13 @@ def authority_contract_holds(command, workflow):
 class IntentPilotTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.router = (WORKFLOWS / "README.md").read_text(encoding="utf-8").lower()
-        cls.readme = (ROOT / "README.md").read_text(encoding="utf-8").lower()
-        cls.guide = (ROOT / "guides" / "project-bootstrap.md").read_text(encoding="utf-8").lower()
-        cls.agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8").lower()
-        cls.risk = (WORKFLOWS / "assess-risk.md").read_text(encoding="utf-8").lower()
-        cls.reflect = (WORKFLOWS / "reflect-on-work.md").read_text(encoding="utf-8").lower()
-        cls.challenge = (WORKFLOWS / "challenge-assumptions.md").read_text(encoding="utf-8").lower()
+        cls.router = read_effective_contract(WORKFLOWS / "README.md").lower()
+        cls.readme = read_effective_contract(ROOT / "README.md").lower()
+        cls.guide = read_effective_contract(ROOT / "guides" / "project-bootstrap.md").lower()
+        cls.agents = read_effective_contract(ROOT / "AGENTS.md").lower()
+        cls.risk = read_effective_contract(WORKFLOWS / "assess-risk.md").lower()
+        cls.reflect = read_effective_contract(WORKFLOWS / "reflect-on-work.md").lower()
+        cls.challenge = read_effective_contract(WORKFLOWS / "challenge-assumptions.md").lower()
 
     def test_public_surfaces_advertise_pilot_commands(self):
         for command in PUBLIC_COMMANDS:

@@ -79,6 +79,8 @@ You can answer naturally with `A`, `Choose A`, `accept`, `go ahead`, or another 
 
 ## How to use Promptbook
 
+The governed-workflow entry point uses a concise goal-driven core. Read specialised authority, independent-review, architecture, capability and handoff contracts only when their published applicability conditions are met; those controls remain mandatory when triggered. Existing commands, bootstrap and repository authority are unchanged.
+
 1. Open a prompt that matches the task you want to perform, or start from the [workflow router](prompts/workflows/README.md) when the next governed workflow should be selected from current state.
 2. Copy the text in its **Prompt** section when using an individual prompt, or follow the router invocation when using the workflow entrypoint.
 3. Replace the declared `<PLACEHOLDERS>` with your actual context where applicable.

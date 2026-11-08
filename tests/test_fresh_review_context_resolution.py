@@ -1,3 +1,4 @@
+from v2_contract_source import read_effective_contract
 import unittest
 from pathlib import Path
 
@@ -10,29 +11,15 @@ GUIDE = ROOT / "guides" / "go-lifecycle.md"
 class FreshReviewContextResolutionTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.router = (WORKFLOWS / "README.md").read_text(encoding="utf-8")
-        cls.fresh = (WORKFLOWS / "fresh-independent-review.md").read_text(
-            encoding="utf-8"
-        )
-        cls.context = (WORKFLOWS / "resolved-agent-run-context.md").read_text(
-            encoding="utf-8"
-        )
-        cls.autonomous = (WORKFLOWS / "autonomous-progression.md").read_text(
-            encoding="utf-8"
-        )
-        cls.projection = (WORKFLOWS / "executor-capability-projection.md").read_text(
-            encoding="utf-8"
-        )
-        cls.handover = (WORKFLOWS / "next-session-handover.md").read_text(
-            encoding="utf-8"
-        )
-        cls.implement = (ENGINEERING / "implement-an-approved-issue.md").read_text(
-            encoding="utf-8"
-        )
-        cls.remediate = (ENGINEERING / "remediate-review-findings.md").read_text(
-            encoding="utf-8"
-        )
-        cls.guide = GUIDE.read_text(encoding="utf-8")
+        cls.router = read_effective_contract(WORKFLOWS / "README.md")
+        cls.fresh = read_effective_contract(WORKFLOWS / "fresh-independent-review.md")
+        cls.context = read_effective_contract(WORKFLOWS / "resolved-agent-run-context.md")
+        cls.autonomous = read_effective_contract(WORKFLOWS / "autonomous-progression.md")
+        cls.projection = read_effective_contract(WORKFLOWS / "executor-capability-projection.md")
+        cls.handover = read_effective_contract(WORKFLOWS / "next-session-handover.md")
+        cls.implement = read_effective_contract(ENGINEERING / "implement-an-approved-issue.md")
+        cls.remediate = read_effective_contract(ENGINEERING / "remediate-review-findings.md")
+        cls.guide = read_effective_contract(GUIDE)
 
         for name in (
             "router",

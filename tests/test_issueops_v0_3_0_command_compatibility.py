@@ -1,3 +1,4 @@
+from v2_contract_source import read_effective_contract
 import unittest
 from pathlib import Path
 
@@ -57,29 +58,19 @@ class IssueOpsV030CommandCompatibilityTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.router = (WORKFLOWS / "README.md").read_text(encoding="utf-8")
+        cls.router = read_effective_contract(WORKFLOWS / "README.md")
         cls.router_lower = cls.router.lower()
-        cls.autonomous = (WORKFLOWS / "autonomous-progression.md").read_text(
-            encoding="utf-8"
-        )
+        cls.autonomous = read_effective_contract(WORKFLOWS / "autonomous-progression.md")
         cls.autonomous_lower = cls.autonomous.lower()
-        cls.run_context = (WORKFLOWS / "resolved-agent-run-context.md").read_text(
-            encoding="utf-8"
-        )
+        cls.run_context = read_effective_contract(WORKFLOWS / "resolved-agent-run-context.md")
         cls.run_context_lower = cls.run_context.lower()
-        cls.fresh_review = (WORKFLOWS / "fresh-independent-review.md").read_text(
-            encoding="utf-8"
-        )
+        cls.fresh_review = read_effective_contract(WORKFLOWS / "fresh-independent-review.md")
         cls.fresh_review_lower = cls.fresh_review.lower()
-        cls.plan = (ENGINEERING / "plan-an-issue.md").read_text(encoding="utf-8")
+        cls.plan = read_effective_contract(ENGINEERING / "plan-an-issue.md")
         cls.plan_lower = cls.plan.lower()
-        cls.implement = (ENGINEERING / "implement-an-approved-issue.md").read_text(
-            encoding="utf-8"
-        )
+        cls.implement = read_effective_contract(ENGINEERING / "implement-an-approved-issue.md")
         cls.implement_lower = cls.implement.lower()
-        cls.fix = (ENGINEERING / "remediate-review-findings.md").read_text(
-            encoding="utf-8"
-        )
+        cls.fix = read_effective_contract(ENGINEERING / "remediate-review-findings.md")
         cls.fix_lower = cls.fix.lower()
 
     def assert_issueops_rule(self, rule_name, *promptbook_markers):

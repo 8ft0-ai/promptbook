@@ -1,3 +1,4 @@
+from v2_contract_source import read_effective_contract
 import unittest
 from pathlib import Path
 
@@ -9,15 +10,15 @@ ENGINEERING = ROOT / "prompts" / "engineering"
 class ArchitectureClosureCompletenessTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.closure = (WORKFLOWS / "architecture-closure-analysis.md").read_text(encoding="utf-8")
+        cls.closure = read_effective_contract(WORKFLOWS / "architecture-closure-analysis.md")
         cls.closure_lower = cls.closure.lower()
-        cls.router = (WORKFLOWS / "README.md").read_text(encoding="utf-8")
+        cls.router = read_effective_contract(WORKFLOWS / "README.md")
         cls.router_lower = cls.router.lower()
-        cls.analysis = (WORKFLOWS / "stateful-invariant-analysis.md").read_text(encoding="utf-8")
+        cls.analysis = read_effective_contract(WORKFLOWS / "stateful-invariant-analysis.md")
         cls.analysis_lower = cls.analysis.lower()
-        cls.fix = (ENGINEERING / "remediate-review-findings.md").read_text(encoding="utf-8")
+        cls.fix = read_effective_contract(ENGINEERING / "remediate-review-findings.md")
         cls.fix_lower = cls.fix.lower()
-        cls.review = (WORKFLOWS / "fresh-independent-review.md").read_text(encoding="utf-8")
+        cls.review = read_effective_contract(WORKFLOWS / "fresh-independent-review.md")
         cls.review_lower = cls.review.lower()
 
     def test_closure_universe_is_independent_of_candidate_model(self):

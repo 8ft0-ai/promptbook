@@ -1,3 +1,4 @@
+from v2_contract_source import read_effective_contract
 import unittest
 from pathlib import Path
 
@@ -9,29 +10,15 @@ ENGINEERING = ROOT / "prompts" / "engineering"
 class RemediationReadinessContractTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.router = (WORKFLOWS / "README.md").read_text(encoding="utf-8").lower()
-        cls.fix = (
-            ENGINEERING / "remediate-review-findings.md"
-        ).read_text(encoding="utf-8").lower()
-        cls.fresh = (
-            WORKFLOWS / "fresh-independent-review.md"
-        ).read_text(encoding="utf-8").lower()
-        cls.root_readme = (ROOT / "README.md").read_text(encoding="utf-8").lower()
-        cls.bootstrap = (
-            ROOT / "guides" / "project-bootstrap.md"
-        ).read_text(encoding="utf-8").lower()
-        cls.run_context = (
-            WORKFLOWS / "resolved-agent-run-context.md"
-        ).read_text(encoding="utf-8").lower()
-        cls.autonomous = (
-            WORKFLOWS / "autonomous-progression.md"
-        ).read_text(encoding="utf-8").lower()
-        cls.go_lifecycle = (
-            ROOT / "guides" / "go-lifecycle.md"
-        ).read_text(encoding="utf-8").lower()
-        cls.foreground = (
-            WORKFLOWS / "foreground-execution-resilience.md"
-        ).read_text(encoding="utf-8").lower()
+        cls.router = read_effective_contract(WORKFLOWS / "README.md").lower()
+        cls.fix = read_effective_contract(ENGINEERING / "remediate-review-findings.md").lower()
+        cls.fresh = read_effective_contract(WORKFLOWS / "fresh-independent-review.md").lower()
+        cls.root_readme = read_effective_contract(ROOT / "README.md").lower()
+        cls.bootstrap = read_effective_contract(ROOT / "guides" / "project-bootstrap.md").lower()
+        cls.run_context = read_effective_contract(WORKFLOWS / "resolved-agent-run-context.md").lower()
+        cls.autonomous = read_effective_contract(WORKFLOWS / "autonomous-progression.md").lower()
+        cls.go_lifecycle = read_effective_contract(ROOT / "guides" / "go-lifecycle.md").lower()
+        cls.foreground = read_effective_contract(WORKFLOWS / "foreground-execution-resilience.md").lower()
 
     def test_enumerated_findings_are_not_the_exhaustive_readiness_surface(self):
         self.assertIn("findings are strong inputs but not the exhaustive search universe", self.fix)

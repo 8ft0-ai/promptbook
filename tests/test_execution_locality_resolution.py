@@ -1,3 +1,4 @@
+from v2_contract_source import read_effective_contract
 import unittest
 from pathlib import Path
 
@@ -13,12 +14,12 @@ GUIDE = ROOT / "guides" / "go-lifecycle.md"
 class ExecutionLocalityResolutionTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.router = ROUTER.read_text(encoding="utf-8")
-        cls.context = CONTEXT.read_text(encoding="utf-8")
-        cls.autonomous = AUTONOMOUS.read_text(encoding="utf-8")
-        cls.availability = AVAILABILITY.read_text(encoding="utf-8")
-        cls.projection = PROJECTION.read_text(encoding="utf-8")
-        cls.guide = GUIDE.read_text(encoding="utf-8")
+        cls.router = read_effective_contract(ROUTER)
+        cls.context = read_effective_contract(CONTEXT)
+        cls.autonomous = read_effective_contract(AUTONOMOUS)
+        cls.availability = read_effective_contract(AVAILABILITY)
+        cls.projection = read_effective_contract(PROJECTION)
+        cls.guide = read_effective_contract(GUIDE)
         cls.router_lower = cls.router.lower()
         cls.context_lower = cls.context.lower()
         cls.autonomous_lower = cls.autonomous.lower()

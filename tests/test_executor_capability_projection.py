@@ -1,3 +1,4 @@
+from v2_contract_source import read_effective_contract
 import unittest
 from pathlib import Path
 
@@ -7,13 +8,9 @@ ROOT = Path(__file__).resolve().parents[1]
 class ExecutorCapabilityProjectionTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.projection = (
-            ROOT / "prompts" / "workflows" / "executor-capability-projection.md"
-        ).read_text(encoding="utf-8")
+        cls.projection = read_effective_contract(ROOT / "prompts" / "workflows" / "executor-capability-projection.md")
         cls.projection_lower = cls.projection.lower()
-        cls.context = (
-            ROOT / "prompts" / "workflows" / "resolved-agent-run-context.md"
-        ).read_text(encoding="utf-8")
+        cls.context = read_effective_contract(ROOT / "prompts" / "workflows" / "resolved-agent-run-context.md")
         cls.context_lower = cls.context.lower()
 
     def test_projection_can_narrow_but_never_widen(self):
