@@ -117,6 +117,21 @@ Compatibility `/implement` retains its existing implementation workflow behaviou
 
 A lower-precedence preference may choose only among actions already permitted by higher-precedence constraints. Navigation emitted under `suggest` or `stop` is navigation metadata only and never supplies authority to the receiving invocation.
 
+## Goal-completion check before any additional effect
+
+For `/go`, after **each observed execution or validation result**, test the result against the **exact requested deliverable and governing completion conditions before selecting any further effect**. If all required acceptance evidence has been obtained, **return COMPLETE immediately**, including required narrow close-out, rather than automatically creating an extra PR, routing another review, or expanding scope. An optional next tool is not a reason to continue. A PR or fresh review is mandatory only if the governing objective/repository policy actually requires it; when a required independent review remains outstanding, do not mislabel the broader objective COMPLETE. A handoff or transport receipt without the underlying engineering result never satisfies this check. Respect explicitly bounded `/step`, `/plan` and read-only commands.
+
+## Mandatory pre-authoring architecture gate
+
+Before selecting ordinary implementation or authoring/publishing an architecture candidate, **first inspect authoritative objective and artefact evidence** (rather than assuming facts from labels or invoking closure analysis before reconnaissance). Determine whether **both** conditions hold:
+
+1. The work is a **materially high-risk architecture** change (including a stateful cross-component design, safety-critical architecture, concurrency/recovery trust boundary or equivalent materially consequential architecture).
+2. The proposed candidate or its acceptance intends a **strong closed-world, architecture-closed, closure-ready or completeness claim** about that architecture.
+
+If both apply, **before candidate authoring, implementation or publication**, determine whether a *current independently derived architecture-closure artefact* already satisfies this exact candidate generation. If it does not, first load [Specialised routing conditions](../../guides/conditional/router-special-routing.md) and [Architecture closure analysis](architecture-closure-analysis.md), apply the mandatory closure-analysis and fresh-review gates, and only then decide whether any candidate authoring is eligible. A previous unrelated closure, unreviewed self-certification or vague assumption does not satisfy this precondition. If the existence/identity of required closure evidence cannot be established, fail closed on consequential authoring until it is established; do not infer compliance from missing records.
+
+When either predicate is demonstrably false (for example, a normal bounded bug fix with no strong completeness claim), do **not** load the specialist architecture-closure workflow solely because implementation is requested. Ordinary authorised implementation remains available through the normal goal loop. This is a pre-action safety check, not a requirement to run architecture closure on every engineering task. The detailed specialised rules remain owned by their conditional contracts.
+
 ## Routing
 
 Reconstruct one unambiguous current work target from authoritative repository/task state. This router does not grant unrelated authority. A completed sub-workflow, successful handoff record or preparation report is not the original objective's completion.
@@ -126,7 +141,7 @@ For normal `/go`, select [Autonomous progression](autonomous-progression.md): ta
 Resolve special predicates *before* consequential action. Their referenced contracts are then mandatory; otherwise do not load them:
 
 1. **Explicit context-transfer deliverable** → [Next-session handover](next-session-handover.md); this generates navigation, not execution or authority.
-2. **Mandatory stateful/architecture analysis, closure review or non-routine route** → [Specialised routing conditions](../../guides/conditional/router-special-routing.md), followed as applicable by [Stateful invariant analysis](stateful-invariant-analysis.md) or [Architecture closure analysis](architecture-closure-analysis.md). A closed-world completeness claim is not self-authorising.
+2. **Mandatory stateful/architecture analysis, closure review or non-routine route** → the Specialised routing conditions linked in the pre-authoring gate above, followed as applicable by [Stateful invariant analysis](stateful-invariant-analysis.md) or [Architecture closure analysis](architecture-closure-analysis.md). A closed-world completeness claim is not self-authorising.
 3. **Independent review required** → [Fresh independent review](fresh-independent-review.md); the authoring context cannot claim fresh independence. On material blockers/remediation response/strong-closure recurrence read [Review response and escalation](../../guides/conditional/router-review-response.md); for an eligible solo-maintainer review also read [Single-maintainer rules](../../guides/conditional/router-single-maintainer.md).
 4. **Bounded approval received** → verify the exact unchanged proposal, consume approval once for that action, then [Autonomous progression](autonomous-progression.md). A later permission boundary never blocks authorised preceding work.
 5. **Broad documentation assessment** → [Documentation assessment](documentation-assessment.md) only when reader/task discovery is needed. Routine edits use ordinary progression.
