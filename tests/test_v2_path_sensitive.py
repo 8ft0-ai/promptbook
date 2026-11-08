@@ -1,164 +1,199 @@
+"""Effect-order, source-selection and negative-mutation tests for V2 #106.
 
+Content-conservation assertions live separately in v2_contract_source.py;
+passing a source-text union does NOT establish a valid operation route.
+"""
 import shutil
 import tempfile
 import unittest
 from pathlib import Path
 
 from v2_execution_probe import (
-    SimulatedCase, ContractBoundary, pre_action_sources,
-    execute_simulated, SPECIAL_ROUTER, CORE_ROUTER, ARCH_CLOSURE,
+    SimulatedCase, ContractBoundary, execute_simulated, pre_action_sources,
+    SPECIAL_ROUTER, CORE_ROUTER, ARCH_CLOSURE, GO_CONTEXT,
 )
 
-ROOT=Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[1]
+SOURCES = (
+    CORE_ROUTER, 'prompts/workflows/autonomous-progression.md',
+    'prompts/workflows/resolved-agent-run-context.md', GO_CONTEXT,
+    'guides/conditional/context-review.md',
+    'prompts/workflows/fresh-independent-review.md',
+    SPECIAL_ROUTER, ARCH_CLOSURE,
+)
+
+
+def closure_proof(snapshot='sha-A', reviewed='sha-A', disposition='APPROVED_FOR_CANDIDATE_PROJECTION',
+                  independent=True, authorise=True):
+    return {
+        'artifact': {'snapshot':snapshot, 'scope':'system-A', 'governing_contract':'issue-106',
+                     'independently_derived':True},
+        'review': {'snapshot':reviewed, 'scope':'system-A', 'governing_contract':'issue-106',
+                   'disposition':disposition, 'fresh_independent_context':independent},
+        'authoring_authority': {'snapshot':snapshot, 'scope':'system-A', 'granted':authorise},
+    }
+
 
 class V2PathSensitiveTests(unittest.TestCase):
-    def run_case(self,**values):
-        case=SimulatedCase(**values)
-        outcome=execute_simulated(ROOT,case)
-        return outcome,case
+    def replay(self, **kwargs):
+        case=SimulatedCase(**kwargs)
+        return execute_simulated(ROOT,case),case
 
-    def test_high_risk_strong_claim_guards_authoring_before_effect(self):
-        outcome,c=self.run_case(high_risk=True,strong_completeness=True,
-            attempted_actions=("inspect","author_candidate","create_pr"))
-        self.assertEqual(outcome,"CLOSURE_REQUIRED")
+    def stage(self):
+        temp=tempfile.TemporaryDirectory(prefix='v2-route-negative-')
+        root=Path(temp.name)
+        for rel in SOURCES:
+            dst=root/rel
+            dst.parent.mkdir(parents=True,exist_ok=True)
+            shutil.copy2(ROOT/rel,dst)
+        return temp,root
+
+    def test_high_risk_stages_inspection_before_specialist_reads_and_authoring(self):
+        result,c=self.replay(high_risk=True,strong_completeness=True,
+            attempted_actions=('inspect','architecture_closure','request_fresh_review'))
+        self.assertEqual(result,'REVIEW_REQUIRED')
+        kinds=[(e['kind'],e.get('path') or e.get('action')) for e in c.trace]
+        inspection=next(i for i,e in enumerate(c.trace) if e['kind']=='inspect')
+        specialist=next(i for i,e in enumerate(c.trace) if e.get('path')==SPECIAL_ROUTER)
+        closure=next(i for i,e in enumerate(c.trace) if e.get('path')==ARCH_CLOSURE)
+        self.assertLess(inspection,specialist)
+        self.assertLess(specialist,closure)
+        self.assertNotIn('author_candidate',c.effects)
+        self.assertIn('closure_draft_not_approval',c.observations)
+
+    def test_high_risk_without_inspection_cannot_load_or_author(self):
+        result,c=self.replay(high_risk=True,strong_completeness=True,
+            attempted_actions=('author_candidate',))
+        self.assertEqual(result,'INSPECTION_REQUIRED')
+        self.assertNotIn(SPECIAL_ROUTER,c.reads)
         self.assertEqual(c.effects,[])
-        self.assertIn(SPECIAL_ROUTER,c.reads)
-        self.assertIn(ARCH_CLOSURE,c.reads)
-        self.assertLess(c.reads.index(SPECIAL_ROUTER),c.reads.index(ARCH_CLOSURE))
-        self.assertIn("pre_authoring_closure_gate",c.observations)
 
-    def test_high_risk_has_current_independent_closure_and_authority(self):
-        outcome,c=self.run_case(high_risk=True,strong_completeness=True,
-            current_independent_closure=True,
-            attempted_actions=("author_candidate","run_tests","create_pr","mark_complete"))
-        self.assertEqual(outcome,"COMPLETE")
-        self.assertEqual(c.effects,["author_candidate","create_pr"])
-        self.assertIn(ARCH_CLOSURE,c.reads)
+    def test_current_exact_independent_closure_allows_scoped_projection(self):
+        result,c=self.replay(high_risk=True,strong_completeness=True,
+            closure_evidence=closure_proof(),pending_required_review=True,
+            attempted_actions=('inspect','author_candidate','run_tests','create_pr','mark_complete'))
+        self.assertEqual(result,'REVIEW_REQUIRED')
+        self.assertEqual(c.effects,['author_candidate','create_pr'])
+        self.assertEqual(len(c.effect_receipts),2)
+        self.assertTrue(all(x['after'] for x in c.effect_receipts))
 
-    def test_nontrigger_paths_do_not_load_architecture_details(self):
-        for kwargs in [
-            {},{"high_risk":True},{"strong_completeness":True},
-            {"current_independent_closure":False}]:
-            with self.subTest(kwargs=kwargs):
-                outcome,c=self.run_case(**kwargs,
-                    attempted_actions=("author_candidate","run_tests","create_pr","mark_complete"))
-                self.assertEqual(outcome,"COMPLETE")
+    def test_wrong_snapshot_freshness_or_projection_authority_denies(self):
+        cases=(closure_proof(reviewed='sha-B'),closure_proof(independent=False),
+               closure_proof(authorise=False),closure_proof(disposition='CHANGES REQUIRED'),None)
+        for proof in cases:
+            with self.subTest(proof=proof):
+                result,c=self.replay(high_risk=True,strong_completeness=True,
+                    closure_evidence=proof,attempted_actions=('inspect','author_candidate'))
+                self.assertEqual(result,'CLOSURE_REQUIRED')
+                self.assertEqual(c.effects,[])
+
+    def test_non_trigger_paths_never_load_architecture_details(self):
+        for pair in ((False,False),(True,False),(False,True)):
+            with self.subTest(pair=pair):
+                result,c=self.replay(high_risk=pair[0],strong_completeness=pair[1],
+                    attempted_actions=('inspect','author_candidate','run_tests','mark_complete'))
+                self.assertEqual(result,'COMPLETE')
                 self.assertNotIn(SPECIAL_ROUTER,c.reads)
                 self.assertNotIn(ARCH_CLOSURE,c.reads)
-                self.assertIn("guides/conditional/context-go.md",c.reads)
 
-    def test_missing_high_risk_contract_fails_closed(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            # A deliberately minimal test checkout with missing specialist.
-            base=Path(tmp)
-            for rel in [CORE_ROUTER,"prompts/workflows/autonomous-progression.md",
-                        "prompts/workflows/resolved-agent-run-context.md",
-                        "guides/conditional/context-go.md"]:
-                p=base/rel;p.parent.mkdir(parents=True,exist_ok=True)
-                shutil.copy2(ROOT/rel,p)
+    def test_missing_conditional_file_fails_closed_after_inspection(self):
+        temp,root=self.stage()
+        try:
+            (root/SPECIAL_ROUTER).unlink()
             c=SimulatedCase(high_risk=True,strong_completeness=True,
-                            attempted_actions=("author_candidate",))
-            with self.assertRaisesRegex(ContractBoundary,"required module unavailable"):
-                execute_simulated(base,c)
+                            attempted_actions=('inspect','author_candidate'))
+            with self.assertRaises(ContractBoundary):
+                execute_simulated(root,c)
             self.assertEqual(c.effects,[])
+            self.assertEqual(c.trace[-1]['kind'],'inspect')
+        finally:temp.cleanup()
 
-    def test_missing_preaction_predicate_not_repaired_by_union(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            base=Path(tmp)
-            for rel in [CORE_ROUTER,"prompts/workflows/autonomous-progression.md",
-                        "prompts/workflows/resolved-agent-run-context.md",
-                        "guides/conditional/context-go.md",SPECIAL_ROUTER,ARCH_CLOSURE]:
-                p=base/rel;p.parent.mkdir(parents=True,exist_ok=True)
-                shutil.copy2(ROOT/rel,p)
-            router=base/CORE_ROUTER
-            text=router.read_text()
-            start=text.index("## Mandatory pre-authoring architecture gate")
-            end=text.index("## Routing",start)
-            router.write_text(text[:start]+text[end:])
+    def test_removing_or_reordering_pre_authoring_gate_is_detected(self):
+        for operation in ('delete','move_late','weaken_conjunction','wrong_link'):
+            with self.subTest(operation=operation):
+                temp,root=self.stage()
+                try:
+                    p=root/CORE_ROUTER
+                    content=p.read_text()
+                    a=content.index('## Mandatory pre-authoring architecture gate')
+                    b=content.index('## Routing',a)
+                    if operation=='delete':content=content[:a]+content[b:]
+                    if operation=='move_late':content=content[:a]+content[b:]+content[a:b]
+                    if operation=='weaken_conjunction':content=content.replace('**both** conditions','**either** condition',1)
+                    if operation=='wrong_link':content=content.replace('](../../guides/conditional/router-special-routing.md)','](../../guides/conditional/router-decision.md)',1)
+                    p.write_text(content)
+                    c=SimulatedCase(high_risk=True,strong_completeness=True,
+                                    attempted_actions=('inspect','author_candidate'))
+                    with self.assertRaises(ContractBoundary):execute_simulated(root,c)
+                    self.assertEqual(c.effects,[])
+                finally:temp.cleanup()
+
+    def test_removing_exact_review_clause_is_detected_before_effect(self):
+        temp,root=self.stage()
+        try:
+            p=root/GO_CONTEXT
+            p.write_text(p.read_text().replace('APPROVED_FOR_CANDIDATE_PROJECTION','MAYBE_APPROVED'))
             c=SimulatedCase(high_risk=True,strong_completeness=True,
-                            attempted_actions=("author_candidate",))
-            with self.assertRaisesRegex(ContractBoundary,"high-risk gate not before"):
-                execute_simulated(base,c)
+                closure_evidence=closure_proof(),attempted_actions=('inspect','author_candidate'))
+            with self.assertRaises(ContractBoundary):execute_simulated(root,c)
             self.assertEqual(c.effects,[])
+        finally:temp.cleanup()
 
-    def test_preapproved_preparation_stops_only_at_later_deployment(self):
-        outcome,c=self.run_case(attempted_actions=(
-            "inspect","author_candidate","run_tests","create_pr","deploy"))
-        self.assertEqual(outcome,"REQUIRE_OWNER")
-        self.assertEqual(c.effects,["author_candidate","create_pr"])
-        self.assertIn("tests_pass",c.observations)
-        self.assertIn("deployment_permission_missing",c.observations)
+    def test_recover_same_failed_workspace_after_observed_failure(self):
+        with tempfile.TemporaryDirectory() as d:
+            c=SimulatedCase(injected_test_failure=True,attempted_actions=(
+                'inspect','author_candidate','run_tests','fix','run_tests','teardown','verify','mark_complete'))
+            result=execute_simulated(ROOT,c,workspace=Path(d))
+            self.assertEqual(result,'COMPLETE')
+            self.assertEqual(c.observations.count('tests_fail_observed'),1)
+            self.assertEqual(c.observations.count('tests_pass_observed'),1)
+            self.assertEqual(c.effects,['author_candidate','fix'])
+            self.assertEqual((Path(d)/'config.txt').read_text(),'corrected after observed failure')
+            self.assertEqual(len(c.effect_receipts),2)
 
-    def test_tracking_only_does_not_create_implementation_authority(self):
-        outcome,c=self.run_case(implementation_authorised=False,
-                        attempted_actions=("inspect","author_candidate","create_pr"))
-        self.assertEqual(outcome,"REQUIRE_OWNER")
+    def test_fix_without_observed_failure_forbidden(self):
+        result,c=self.replay(injected_test_failure=True,attempted_actions=('inspect','fix'))
+        self.assertEqual(result,'FORBID')
         self.assertEqual(c.effects,[])
 
-    def test_failed_validation_blocks_completion_until_authorised_recovery(self):
-        outcome,c=self.run_case(injected_test_failure=True,
-            attempted_actions=("author_candidate","run_tests","mark_complete"))
-        self.assertEqual(outcome,"BLOCKED")
-        self.assertEqual(c.effects,["author_candidate"])
-        self.assertIn("failed_validation_blocks_completion",c.observations)
-        # An authorised routine fix permits re-validation; only after the
-        # failure is genuinely cleared can the test fixture report complete.
-        outcome,recovered=self.run_case(injected_test_failure=False,
-            attempted_actions=("fix","run_tests","mark_complete"))
-        self.assertEqual(outcome,"COMPLETE")
-        self.assertIn("fix",recovered.effects)
-        self.assertIn("tests_pass",recovered.observations)
+    def test_read_only_stale_and_nonfresh_review_never_write(self):
+        for options in ({'read_only':True,'reviewer_fresh':True},
+                        {'reviewer_fresh':False},
+                        {'reviewer_fresh':True,'exact_head':'a'*40,'observed_head':'b'*40}):
+            with self.subTest(options=options):
+                with tempfile.TemporaryDirectory() as d:
+                    c=SimulatedCase(operation='/review',attempted_actions=('inspect','write_review'),**options)
+                    self.assertEqual(execute_simulated(ROOT,c,Path(d)),'FORBID')
+                    self.assertFalse(list(Path(d).iterdir()))
+                    self.assertNotIn(GO_CONTEXT,c.reads)
 
-    def test_fresh_review_read_only_and_stale_head_never_write(self):
-        for kwargs,reason in [
-            ({"read_only":True},"review_write_forbidden"),
-            ({"exact_head":"a"*40,"observed_head":"b"*40},"stale_head")]:
-            with self.subTest(reason=reason):
-                outcome,c=self.run_case(operation="/review",
-                                         attempted_actions=("inspect","write_review"),**kwargs)
-                self.assertEqual(outcome,"FORBID")
-                self.assertNotIn("write_review",c.effects)
-                self.assertIn(reason,c.observations)
-                self.assertIn("guides/conditional/context-review.md",c.reads)
-                self.assertNotIn("guides/conditional/context-go.md",c.reads)
+    def test_later_deployment_approval_does_not_block_earlier_preparation(self):
+        result,c=self.replay(attempted_actions=(
+            'inspect','author_candidate','run_tests','create_pr','deploy'))
+        self.assertEqual(result,'REQUIRE_OWNER')
+        self.assertEqual(c.effects,['author_candidate','create_pr'])
+        self.assertIn('tests_pass_observed',c.observations)
 
-    def test_requested_implementation_and_tests_end_before_extra_pr(self):
-        outcome,c=self.run_case(requested_deliverable_is_implementation_and_tests=True,
-            attempted_actions=("inspect","author_candidate","run_tests","create_pr"))
-        self.assertEqual(outcome,"COMPLETE")
-        self.assertEqual(c.effects,["author_candidate"])
-        self.assertIn("requested_deliverable_verified",c.observations)
-        self.assertNotIn("create_pr",c.effects)
-
-    def test_pr_pending_fresh_review_is_not_goal_completion(self):
-        outcome,c=self.run_case(pending_required_review=True,
-            attempted_actions=("author_candidate","run_tests","create_pr","mark_complete"))
-        self.assertEqual(outcome,"REVIEW_REQUIRED")
-        self.assertIn("fresh_review_still_required",c.observations)
-        self.assertNotIn("verified_goal",c.observations)
-
-    def test_bounded_requested_deliverable_must_not_expand_to_pr(self):
-        progression=(ROOT/"prompts/workflows/autonomous-progression.md").read_text().lower()
-        router=(ROOT/"prompts/workflows/README.md").read_text().lower()
-        self.assertIn("do not invent a pr, review, publication or adjacent scope",progression)
-        self.assertIn("return complete immediately",router)
-        self.assertIn("after each observed execution or validation result",router.replace("**", ""))
-        self.assertIn("opened pr awaiting mandatory independent review",progression)
-        self.assertIn("after every observed tool result, check whether all acceptance evidence",progression)
-        self.assertIn("first inspect authoritative objective and artefact evidence",router)
-        self.assertLess(router.index("first inspect authoritative objective"),
-                        router.index("specialised routing conditions"))
-
-    def test_step_one_transition_and_handoff_not_completion(self):
-        outcome,c=self.run_case(operation="/step",
-            attempted_actions=("inspect","author_candidate","create_pr","mark_complete"))
-        self.assertEqual(outcome,"ONE_TRANSITION")
+    def test_tracking_only_cannot_author(self):
+        result,c=self.replay(implementation_authorised=False,attempted_actions=('inspect','author_candidate'))
+        self.assertEqual(result,'REQUIRE_OWNER')
         self.assertEqual(c.effects,[])
-        self.assertNotIn("verified_goal",c.observations)
-        outcome,g=self.run_case(attempted_actions=("inspect",))
-        self.assertEqual(outcome,"IN_PROGRESS")
-        self.assertEqual(g.effects,[])
-        self.assertNotIn("verified_goal",g.observations)
 
-if __name__=="__main__":
-    unittest.main()
+    def test_step_one_transition_then_intrinsic_stop(self):
+        result,c=self.replay(operation='/step',attempted_actions=('inspect','author_candidate'))
+        self.assertEqual(result,'ONE_TRANSITION')
+        self.assertEqual(c.effects,[])
+
+    def test_completed_bounded_deliverable_not_extended_to_pr(self):
+        result,c=self.replay(requested_deliverable_is_implementation_and_tests=True,
+            attempted_actions=('inspect','author_candidate','run_tests','create_pr'))
+        self.assertEqual(result,'COMPLETE')
+        self.assertEqual(c.effects,['author_candidate'])
+
+    def test_pr_waiting_fresh_review_is_not_completed_goal(self):
+        result,c=self.replay(pending_required_review=True,
+            attempted_actions=('inspect','author_candidate','run_tests','create_pr','mark_complete'))
+        self.assertEqual(result,'REVIEW_REQUIRED')
+        self.assertEqual(c.effects,['author_candidate','create_pr'])
+
+if __name__=='__main__':unittest.main()
