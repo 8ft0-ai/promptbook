@@ -1,3 +1,4 @@
+from v2_contract_source import read_effective_contract
 import unittest
 from pathlib import Path
 
@@ -9,22 +10,16 @@ ENGINEERING = ROOT / "prompts" / "engineering"
 class StatefulInvariantEscalationContractTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.router = (WORKFLOWS / "README.md").read_text(encoding="utf-8")
+        cls.router = read_effective_contract(WORKFLOWS / "README.md")
         cls.router_lower = cls.router.lower()
-        cls.analysis = (WORKFLOWS / "stateful-invariant-analysis.md").read_text(
-            encoding="utf-8"
-        )
+        cls.analysis = read_effective_contract(WORKFLOWS / "stateful-invariant-analysis.md")
         cls.analysis_lower = cls.analysis.lower()
-        cls.fresh = (WORKFLOWS / "fresh-independent-review.md").read_text(
-            encoding="utf-8"
-        )
+        cls.fresh = read_effective_contract(WORKFLOWS / "fresh-independent-review.md")
         cls.fresh_lower = cls.fresh.lower()
-        cls.fix = (
-            ENGINEERING / "remediate-review-findings.md"
-        ).read_text(encoding="utf-8")
+        cls.fix = read_effective_contract(ENGINEERING / "remediate-review-findings.md")
         cls.fix_lower = cls.fix.lower()
-        cls.index = (ROOT / "prompts" / "README.md").read_text(encoding="utf-8")
-        cls.root_readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        cls.index = read_effective_contract(ROOT / "prompts" / "README.md")
+        cls.root_readme = read_effective_contract(ROOT / "README.md")
 
     def test_stateful_analysis_is_indexed_read_only_and_proportionate(self):
         self.assertIn(
@@ -238,7 +233,7 @@ class StatefulInvariantEscalationContractTests(unittest.TestCase):
             "finding count, shared terminology, component/file locality",
             "ordinary `/fix` is ineligible",
             "positive normal and admitted-recovery reachability",
-            "invoke [architecture closure analysis](architecture-closure-analysis.md) only when",
+            "invoke [architecture closure analysis](../../prompts/workflows/architecture-closure-analysis.md) only when",
         ):
             self.assertIn(marker, synthesis_gate)
         self.assertIn(

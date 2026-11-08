@@ -1,3 +1,4 @@
+from v2_contract_source import read_effective_contract
 import unittest
 from pathlib import Path
 
@@ -7,31 +8,19 @@ ROOT = Path(__file__).resolve().parents[1]
 class CapabilityAvailabilityCarrierTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.availability = (
-            ROOT / "prompts" / "workflows" / "capability-availability-overrides.md"
-        ).read_text(encoding="utf-8")
+        cls.availability = read_effective_contract(ROOT / "prompts" / "workflows" / "capability-availability-overrides.md")
         cls.availability_lower = cls.availability.lower()
-        cls.context = (
-            ROOT / "prompts" / "workflows" / "resolved-agent-run-context.md"
-        ).read_text(encoding="utf-8")
+        cls.context = read_effective_contract(ROOT / "prompts" / "workflows" / "resolved-agent-run-context.md")
         cls.context_lower = cls.context.lower()
-        cls.progression = (
-            ROOT / "prompts" / "workflows" / "autonomous-progression.md"
-        ).read_text(encoding="utf-8")
+        cls.progression = read_effective_contract(ROOT / "prompts" / "workflows" / "autonomous-progression.md")
         cls.progression_lower = cls.progression.lower()
-        cls.projection = (
-            ROOT / "prompts" / "workflows" / "executor-capability-projection.md"
-        ).read_text(encoding="utf-8")
+        cls.projection = read_effective_contract(ROOT / "prompts" / "workflows" / "executor-capability-projection.md")
         cls.projection_lower = cls.projection.lower()
-        cls.guide = (
-            ROOT / "guides" / "capability-availability-configuration.md"
-        ).read_text(encoding="utf-8")
+        cls.guide = read_effective_contract(ROOT / "guides" / "capability-availability-configuration.md")
         cls.guide_lower = cls.guide.lower()
-        cls.using = (ROOT / "guides" / "using-promptbook.md").read_text(
-            encoding="utf-8"
-        )
+        cls.using = read_effective_contract(ROOT / "guides" / "using-promptbook.md")
         cls.using_lower = cls.using.lower()
-        cls.bootstrap = (ROOT / "BOOTSTRAP").read_text(encoding="utf-8")
+        cls.bootstrap = read_effective_contract(ROOT / "BOOTSTRAP")
 
     def test_carrier_precedence_is_deterministic(self):
         ordered = (

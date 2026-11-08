@@ -1,3 +1,4 @@
+from v2_contract_source import read_effective_contract
 import unittest
 from pathlib import Path
 
@@ -9,18 +10,10 @@ ENGINEERING = ROOT / "prompts" / "engineering"
 class ForegroundExecutionResilienceTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.contract = (WORKFLOWS / "foreground-execution-resilience.md").read_text(
-            encoding="utf-8"
-        )
-        cls.implement = (ENGINEERING / "implement-an-approved-issue.md").read_text(
-            encoding="utf-8"
-        )
-        cls.remediate = (ENGINEERING / "remediate-review-findings.md").read_text(
-            encoding="utf-8"
-        )
-        cls.autonomous = (WORKFLOWS / "autonomous-progression.md").read_text(
-            encoding="utf-8"
-        )
+        cls.contract = read_effective_contract(WORKFLOWS / "foreground-execution-resilience.md")
+        cls.implement = read_effective_contract(ENGINEERING / "implement-an-approved-issue.md")
+        cls.remediate = read_effective_contract(ENGINEERING / "remediate-review-findings.md")
+        cls.autonomous = read_effective_contract(WORKFLOWS / "autonomous-progression.md")
         cls.contract_lower = cls.contract.lower()
         cls.implement_lower = cls.implement.lower()
         cls.remediate_lower = cls.remediate.lower()

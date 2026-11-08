@@ -1,3 +1,4 @@
+from v2_contract_source import read_effective_contract
 import unittest
 from pathlib import Path
 
@@ -7,25 +8,17 @@ ROOT = Path(__file__).resolve().parents[1]
 class ReviewWritebackContractTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.router = (ROOT / "prompts" / "workflows" / "README.md").read_text(
-            encoding="utf-8"
-        )
+        cls.router = read_effective_contract(ROOT / "prompts" / "workflows" / "README.md")
         cls.router_lower = cls.router.lower()
-        cls.fresh = (
-            ROOT / "prompts" / "workflows" / "fresh-independent-review.md"
-        ).read_text(encoding="utf-8")
+        cls.fresh = read_effective_contract(ROOT / "prompts" / "workflows" / "fresh-independent-review.md")
         cls.fresh_lower = cls.fresh.lower()
-        cls.readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        cls.readme = read_effective_contract(ROOT / "README.md")
         cls.readme_lower = cls.readme.lower()
-        cls.guide = (ROOT / "guides" / "project-bootstrap.md").read_text(
-            encoding="utf-8"
-        )
+        cls.guide = read_effective_contract(ROOT / "guides" / "project-bootstrap.md")
         cls.guide_lower = cls.guide.lower()
-        cls.bootstrap = (ROOT / "BOOTSTRAP").read_text(encoding="utf-8")
+        cls.bootstrap = read_effective_contract(ROOT / "BOOTSTRAP")
         cls.bootstrap_lower = cls.bootstrap.lower()
-        cls.standalone = (
-            ROOT / "prompts" / "engineering" / "pr-review.md"
-        ).read_text(encoding="utf-8")
+        cls.standalone = read_effective_contract(ROOT / "prompts" / "engineering" / "pr-review.md")
         cls.standalone_lower = cls.standalone.lower()
 
     def test_router_review_records_by_default(self):

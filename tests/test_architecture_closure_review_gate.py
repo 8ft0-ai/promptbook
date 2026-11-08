@@ -1,3 +1,4 @@
+from v2_contract_source import read_effective_contract
 import unittest
 from collections import defaultdict, deque
 from pathlib import Path
@@ -56,18 +57,18 @@ def reachable(rows, start, target, forbidden_events=()):
 class ArchitectureClosureReviewGateTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.router_raw = (WORKFLOWS / "README.md").read_text(encoding="utf-8")
+        cls.router_raw = read_effective_contract(WORKFLOWS / "README.md")
         cls.router = cls.router_raw.lower()
         cls.transitions = parse_lifecycle(cls.router_raw)
-        cls.closure = (WORKFLOWS / "architecture-closure-analysis.md").read_text(encoding="utf-8").lower()
-        cls.review = (WORKFLOWS / "fresh-independent-review.md").read_text(encoding="utf-8").lower()
-        cls.analysis = (WORKFLOWS / "stateful-invariant-analysis.md").read_text(encoding="utf-8").lower()
-        cls.context = (WORKFLOWS / "resolved-agent-run-context.md").read_text(encoding="utf-8").lower()
-        cls.auto = (WORKFLOWS / "autonomous-progression.md").read_text(encoding="utf-8").lower()
-        cls.go = (ROOT / "guides" / "go-lifecycle.md").read_text(encoding="utf-8").lower()
-        cls.plan = (ENGINEERING / "plan-an-issue.md").read_text(encoding="utf-8").lower()
-        cls.implement = (ENGINEERING / "implement-an-approved-issue.md").read_text(encoding="utf-8").lower()
-        cls.fix = (ENGINEERING / "remediate-review-findings.md").read_text(encoding="utf-8").lower()
+        cls.closure = read_effective_contract(WORKFLOWS / "architecture-closure-analysis.md").lower()
+        cls.review = read_effective_contract(WORKFLOWS / "fresh-independent-review.md").lower()
+        cls.analysis = read_effective_contract(WORKFLOWS / "stateful-invariant-analysis.md").lower()
+        cls.context = read_effective_contract(WORKFLOWS / "resolved-agent-run-context.md").lower()
+        cls.auto = read_effective_contract(WORKFLOWS / "autonomous-progression.md").lower()
+        cls.go = read_effective_contract(ROOT / "guides" / "go-lifecycle.md").lower()
+        cls.plan = read_effective_contract(ENGINEERING / "plan-an-issue.md").lower()
+        cls.implement = read_effective_contract(ENGINEERING / "implement-an-approved-issue.md").lower()
+        cls.fix = read_effective_contract(ENGINEERING / "remediate-review-findings.md").lower()
 
     def transition(self, current, event):
         return self.transitions[(current, event)]

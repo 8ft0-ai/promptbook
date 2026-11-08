@@ -1,3 +1,4 @@
+from v2_contract_source import read_effective_contract
 import unittest
 from pathlib import Path
 
@@ -8,7 +9,7 @@ WORKFLOW = ROOT / "prompts" / "workflows" / "bounded-concern-lifecycle.md"
 class BoundedConcernLifecycleTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.text = WORKFLOW.read_text(encoding="utf-8")
+        cls.text = read_effective_contract(WORKFLOW)
         cls.lower = cls.text.lower()
 
     def test_bounded_not_universal(self):

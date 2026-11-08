@@ -1,3 +1,4 @@
+from v2_contract_source import read_effective_contract
 import unittest
 from pathlib import Path
 
@@ -7,11 +8,9 @@ ROOT = Path(__file__).resolve().parents[1]
 class ProjectBoundaryGuardTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.bootstrap = (ROOT / "BOOTSTRAP").read_text(encoding="utf-8")
+        cls.bootstrap = read_effective_contract(ROOT / "BOOTSTRAP")
         cls.bootstrap_lower = cls.bootstrap.lower()
-        cls.guide = (ROOT / "guides" / "project-bootstrap.md").read_text(
-            encoding="utf-8"
-        )
+        cls.guide = read_effective_contract(ROOT / "guides" / "project-bootstrap.md")
         cls.guide_lower = cls.guide.lower()
 
     def test_project_identity_is_explicit(self):

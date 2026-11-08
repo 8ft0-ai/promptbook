@@ -1,3 +1,4 @@
+from v2_contract_source import read_effective_contract
 import unittest
 from pathlib import Path
 
@@ -7,13 +8,9 @@ ROOT = Path(__file__).resolve().parents[1]
 class SingleMaintainerReviewTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.router = (ROOT / "prompts" / "workflows" / "README.md").read_text(
-            encoding="utf-8"
-        )
+        cls.router = read_effective_contract(ROOT / "prompts" / "workflows" / "README.md")
         cls.router_lower = cls.router.lower()
-        cls.fresh = (
-            ROOT / "prompts" / "workflows" / "fresh-independent-review.md"
-        ).read_text(encoding="utf-8")
+        cls.fresh = read_effective_contract(ROOT / "prompts" / "workflows" / "fresh-independent-review.md")
         cls.fresh_lower = cls.fresh.lower()
 
     def test_known_same_account_authorship_skips_impossible_formal_review(self):

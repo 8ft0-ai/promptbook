@@ -1,3 +1,4 @@
+from v2_contract_source import read_effective_contract
 import unittest
 from pathlib import Path
 
@@ -10,7 +11,7 @@ HANDOVER = ROOT / "prompts" / "workflows" / "next-session-handover.md"
 class OperationalArtifactHandoffTests(unittest.TestCase):
     def test_consuming_workflows_bind_the_shared_contract(self):
         for path in (AUTONOMOUS, HANDOVER):
-            text = path.read_text(encoding="utf-8")
+            text = read_effective_contract(path)
             lower = text.lower()
             self.assertIn("operational-artifact-handoff.md", text)
             self.assertIn("genuinely atomic", lower)
@@ -22,7 +23,7 @@ class OperationalArtifactHandoffTests(unittest.TestCase):
             self.assertIn("large fragile transcript", lower)
 
     def test_selection_authority_integrity_and_evidence_scenarios(self):
-        text = CONTRACT.read_text(encoding="utf-8")
+        text = read_effective_contract(CONTRACT)
         lower = text.lower()
 
         scenarios = {
@@ -87,7 +88,7 @@ class OperationalArtifactHandoffTests(unittest.TestCase):
                     self.assertIn(phrase, lower)
 
     def test_defaults_are_portable_recommendations_not_authority(self):
-        lower = CONTRACT.read_text(encoding="utf-8").lower()
+        lower = read_effective_contract(CONTRACT).lower()
 
         for phrase in (
             "recommended defaults/examples rather than universal workflow law",
