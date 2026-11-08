@@ -1,8 +1,10 @@
 # Progression Locality
 
-**Conditional contract:** Load after a failed or unavailable authorised executor, or ineligible isolated reviewer.
+**Conditional contract:** Load when an authorised action needs executor discovery, an executor fails or is unavailable, or isolated review is ineligible.
 
 When an authorised action is not executable through the first mechanism, resolve execution locality proportionately before escalating. Prefer an eligible `connected/native` mechanism, then `hosted/hermetic` execution when the required truth or effect can be established from explicit/remote inputs without owner-private state, then a separately governed `owner-local/bounded-executor` when correctness genuinely depends on owner-local/private state. Each alternate locality must preserve the exact governed action and consume only the existing no-widening action-specific capability projection. This ladder does not resolve review freshness; fresh-review context eligibility is the separate information-boundary mechanism above.
+
+Inspect only relevant session-advertised tools, connected execution mechanisms and authoritative task/repository execution surfaces. Check eligible remote hosts and existing checkouts; not yet discovered is distinct from confirmed unavailable. Attempt a suitable permitted executor and record its actual result. Recover routine authentication, missing dependency, checkout/path and environment-selection faults within authority, then resume the same authorised goal rather than stopping at reconnaissance. An environment blocker needs concrete failed/denied attempts or authoritative unavailability evidence. Avoid exhaustive tool catalogues, guessed remote dispatch, credential disclosure, suppressed-effect bypass or new permissions.
 
 Before generating a substantial owner-operated hand-off, inspect only authoritative repository/task execution or operator surfaces relevant to the action and prefer an established maintained capability with typed invocation-specific identities/expectations. Do not search arbitrary files for executables, build a global tool registry, or invent arbitrary remote shell/argv dispatch. A claim that owner-local execution is required must identify the material private/local dependency; historical convenience or previous owner-shell usage is insufficient.
 

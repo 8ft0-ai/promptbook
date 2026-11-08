@@ -161,6 +161,76 @@ class ExecutionLocalityResolutionTests(unittest.TestCase):
         self.assertIn("do not retry the same unchanged failed locality indefinitely", self.autonomous_lower)
         self.assertIn("avoid an execution loop", self.context_lower)
 
+    def assert_capability_discovery_gate(self, core, locality):
+        # Deliberately inspect the *loaded* ordinary-path source and its linked
+        # conditional contract, not a text union of unrelated specialist files.
+        execute = core.split("3. EXECUTE:", 1)[1].split("4. VERIFY:", 1)[0]
+        ordered = (
+            "check relevant available execution capabilities",
+            "then attempt an eligible mechanism",
+            "A tool not yet discovered is not a tool verified unavailable",
+            "then resume execution after recovery",
+            "Require concrete evidence of unavailability or denial before an environment blocker",
+        )
+        for requirement in ordered:
+            self.assertIn(requirement, execute)
+        indices = [execute.index(requirement) for requirement in ordered]
+        self.assertEqual(indices, sorted(indices), "discovery/attempt/recovery must precede blocker")
+        for requirement in (
+            "including connected remote hosts and existing checkouts",
+            "authentication, dependency and environment-selection failures within current authority",
+            "do not demand exhaustive tool searches, unsafe workarounds or broader permissions",
+            "Executor discovery, failed execution mechanism",
+            "](../../guides/conditional/progression-locality.md)",
+        ):
+            self.assertIn(requirement, core)
+        for requirement in (
+            "relevant session-advertised tools, connected execution mechanisms",
+            "Check eligible remote hosts and existing checkouts",
+            "not yet discovered is distinct from confirmed unavailable",
+            "Attempt a suitable permitted executor and record its actual result",
+            "then resume the same authorised goal rather than stopping at reconnaissance",
+            "concrete failed/denied attempts or authoritative unavailability evidence",
+            "Avoid exhaustive tool catalogues, guessed remote dispatch, credential disclosure",
+        ):
+            self.assertIn(requirement, locality)
+
+    def test_capability_discovery_precedes_unsupported_environment_blocker(self):
+        core = AUTONOMOUS.read_text(encoding="utf-8")
+        locality = (ROOT / "guides/conditional/progression-locality.md").read_text(
+            encoding="utf-8"
+        )
+        self.assert_capability_discovery_gate(core, locality)
+        # An authorised action must not be classified as environment-blocked
+        # solely from an undiscovered tool; the executor is attempted first.
+        self.assertLess(
+            core.index("then attempt an eligible mechanism"),
+            core.index("Require concrete evidence of unavailability or denial"),
+        )
+        self.assertIn("Technical capability never grants permission.", core)
+
+    def test_discovery_gate_negative_source_mutations_are_detected(self):
+        core = AUTONOMOUS.read_text(encoding="utf-8")
+        locality = (ROOT / "guides/conditional/progression-locality.md").read_text(
+            encoding="utf-8"
+        )
+        mutations = (
+            (core.replace("check relevant available execution capabilities", "assume no shell", 1), locality),
+            (core.replace("then attempt an eligible mechanism", "then report BLOCKED", 1), locality),
+            (core.replace("A tool not yet discovered is not a tool verified unavailable", "An undiscovered tool is unavailable", 1), locality),
+            (core.replace("then resume execution after recovery", "then request an owner prompt", 1), locality),
+            (core.replace("Require concrete evidence of unavailability or denial before an environment blocker", "Report an environment blocker immediately", 1), locality),
+            (core.replace("do not demand exhaustive tool searches, unsafe workarounds or broader permissions", "search all tools and try broad privileges", 1), locality),
+            (core.replace("](../../guides/conditional/progression-locality.md)", "](../../guides/conditional/progression-recovery.md)", 1), locality),
+            (core, locality.replace("Attempt a suitable permitted executor and record its actual result", "Guess that no executor exists", 1)),
+            (core, locality.replace("concrete failed/denied attempts or authoritative unavailability evidence", "assumptions", 1)),
+            (core, locality.replace("then resume the same authorised goal rather than stopping at reconnaissance", "then stop after reconnaissance", 1)),
+        )
+        for index, (mutated_core, mutated_locality) in enumerate(mutations):
+            with self.subTest(mutation=index):
+                with self.assertRaises((AssertionError, ValueError, IndexError)):
+                    self.assert_capability_discovery_gate(mutated_core, mutated_locality)
+
     def test_discovery_before_invention_uses_authoritative_execution_surfaces(self):
         self.assertIn("authoritative repository/task execution or operator surfaces", self.context_lower)
         self.assertIn("prefer an established maintained capability", self.context_lower)
