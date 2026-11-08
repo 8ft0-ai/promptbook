@@ -4,7 +4,7 @@
 
 - Exact baseline: `305c351b32343b5c7c3d9132f611e2727595259b`.
 - Exact evaluated V2 implementation: `3c470d3aac04b0cec7445fc64af0b1d79ca92935` (before this evidence-only addition).
-- [Inspectable action/read/token evidence](promptbook_v2_106_paired_trials.json), SHA-256 `1a4e6ba497c3b1e36c53d83716ddfcf9102e8d2793c12d55d8b8fa1900aca2c9`.
+- [Inspectable action/read/token evidence](promptbook_v2_106_paired_trials.json), SHA-256 `b0f521dd97d8d89a13876f80e02b8da6954485966f0d0c00fb99e772d95aaf59`.
 
 ## Before/after contract size and file map
 
