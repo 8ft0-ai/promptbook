@@ -38,6 +38,25 @@ class V2RecorderTests(unittest.TestCase):
             previous_length=len(t['request_json']['messages'])
         self.assertLess(len(row['turns'][0]['request_json']['messages']),
                         len(row['turns'][-1]['request_json']['messages']))
+    def test_reinspection_reuses_loaded_specialist_and_exposes_authoritative_facts(self):
+        fixture=json.loads((ROOT/'tests/fixtures/v2_106_prospective_replay.json').read_text())
+        case=next(x for x in fixture['preserved_scenarios'] if x['name']=='high_risk_strong_closure')
+        def local_read(_repo,_revision,path):
+            return (ROOT/path).read_bytes()
+        def repeat_inspect(_case,_history,_state):
+            return {'choices':[{'message':{'content':'{"action":"inspect","reason":"test"}'}}],
+                    'usage':{'prompt_tokens':0,'completion_tokens':0},'model':'offline-fixture-NOT-inference'}
+        with patch.object(runner,'git_read',side_effect=local_read), \
+                patch.object(runner,'fixture_response',side_effect=repeat_inspect):
+            row=runner.run_case(ROOT,case,'v2','synthetic-test',runner.MODEL_DEFAULT,
+                                runner.ENDPOINT_DEFAULT,None,'fixture',3,5)
+        reads=[x['path'] for x in row['source_reads']]
+        self.assertEqual(reads.count(runner.ROUTER_DETAIL),1)
+        self.assertEqual(reads.count(runner.ARCH_DETAIL),1)
+        self.assertEqual(row['source_reads'][-1]['step'],1)
+        self.assertTrue(row['turns'][0]['host_effect']['observed_facts']['risk'])
+        self.assertIn('closure_evidence',row['turns'][0]['host_effect']['observed_facts'])
+
     def test_versioned_fixture_is_prospective_not_retroactive(self):
         fixture=json.loads((ROOT/'tests/fixtures/v2_106_prospective_replay.json').read_text())
         self.assertEqual(len(fixture['preserved_scenarios']),9)
