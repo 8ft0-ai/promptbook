@@ -40,30 +40,30 @@ class OutcomeEvidenceSufficiencyTests(unittest.TestCase):
         ):
             with self.subTest(supporting_evidence=supporting_evidence):
                 self.assertIn(supporting_evidence, self.verify)
-        self.assertIn("a broken application", self.verify)
+        self.assertIn("broken application", self.verify)
         self.assertIn("precludes complete", self.verify)
 
     def test_successful_api_without_required_readback_is_not_complete(self):
         # Transport success cannot establish consumer-observed delivery.
         self.assertIn("integration consumer readback", self.verify)
-        self.assertIn("missing mandatory consumer readback precludes complete", self.verify)
+        self.assertIn("missing mandatory readback precludes complete", self.verify)
 
     def test_verified_positive_result_can_complete_without_extra_work(self):
         # A working application and verified consumer remain eligible to finish.
         self.assertIn("verified behaviour permits complete", self.verify)
-        self.assertIn("when conditions hold", self.verify)
-        self.assertIn("least expensive sufficient authorised checks", self.verify)
-        self.assertIn("stop when satisfied without optional pr/review", self.verify)
+        self.assertIn("when other conditions hold", self.verify)
+        self.assertIn("least-cost sufficient authorised checks", self.verify)
+        self.assertIn("stop if satisfied without optional pr/review", self.verify)
         self.assertIn("return complete immediately", self.router)
 
     def test_unavailable_verification_does_not_invent_authority(self):
         # Unavailable or prohibited integration evidence cannot be called PASS.
         self.assertIn("if verification is unavailable or prohibited", self.verify)
-        self.assertIn("report the unverified boundary", self.verify)
+        self.assertIn("report the gap", self.verify)
         self.assertIn("do not demand a routine `proceed` confirmation", self.router)
         self.assertIn("without inventing success or authority", self.verify)
         self.assertIn("authorised checks", self.verify)
-        self.assertIn("including relevant negative paths", self.verify)
+        self.assertIn("and negative paths", self.verify)
 
     def test_existing_lifecycle_and_review_boundaries_remain_intact(self):
         for invariant in (
