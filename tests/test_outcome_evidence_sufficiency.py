@@ -20,11 +20,11 @@ class OutcomeEvidenceSufficiencyTests(unittest.TestCase):
 
     def test_acceptance_reaches_observable_boundary_not_intermediate_success(self):
         for requirement in (
-            "requested result at its lowest relevant observable boundary",
+            "requested result at the lowest relevant observable boundary",
             "application behaviour",
             "integration consumer readback",
             "operational effect",
-            "not substitutes for outcome proof",
+            "cannot replace outcome evidence",
         ):
             with self.subTest(requirement=requirement):
                 self.assertIn(requirement, self.verify)
@@ -33,7 +33,7 @@ class OutcomeEvidenceSufficiencyTests(unittest.TestCase):
         # An engine with all tests passing, but a broken delivered application.
         for supporting_evidence in (
             "generated code",
-            "passing unit tests",
+            "unit tests",
             "green ci",
             "process exit",
             "artefacts",
@@ -51,17 +51,17 @@ class OutcomeEvidenceSufficiencyTests(unittest.TestCase):
     def test_verified_positive_result_can_complete_without_extra_work(self):
         # A working application and verified consumer remain eligible to finish.
         self.assertIn("verified behaviour permits complete", self.verify)
-        self.assertIn("once other conditions hold", self.verify)
+        self.assertIn("when conditions hold", self.verify)
         self.assertIn("least expensive sufficient authorised checks", self.verify)
-        self.assertIn("stop once satisfied without optional pr or review", self.verify)
+        self.assertIn("stop when satisfied without optional pr/review", self.verify)
         self.assertIn("return complete immediately", self.router)
 
     def test_unavailable_verification_does_not_invent_authority(self):
         # Unavailable or prohibited integration evidence cannot be called PASS.
-        self.assertIn("if outcome verification is unavailable or prohibited", self.verify)
+        self.assertIn("if verification is unavailable or prohibited", self.verify)
         self.assertIn("report the unverified boundary", self.verify)
-        self.assertIn("continue authorised work", self.verify)
-        self.assertIn("without inventing success, permission or approval", self.verify)
+        self.assertIn("do not demand a routine `proceed` confirmation", self.router)
+        self.assertIn("without inventing success or authority", self.verify)
         self.assertIn("authorised checks", self.verify)
         self.assertIn("including relevant negative paths", self.verify)
 
