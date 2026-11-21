@@ -20,11 +20,11 @@ class OutcomeEvidenceSufficiencyTests(unittest.TestCase):
 
     def test_acceptance_reaches_observable_boundary_not_intermediate_success(self):
         for requirement in (
-            "requested result at the lowest relevant observable boundary",
+            "requested result at its lowest relevant observable boundary",
             "application behaviour",
             "integration consumer readback",
             "operational effect",
-            "not substitutes for required outcome evidence",
+            "not substitutes for outcome proof",
         ):
             with self.subTest(requirement=requirement):
                 self.assertIn(requirement, self.verify)
@@ -32,16 +32,16 @@ class OutcomeEvidenceSufficiencyTests(unittest.TestCase):
     def test_green_engine_tests_do_not_mask_broken_application(self):
         # An engine with all tests passing, but a broken delivered application.
         for supporting_evidence in (
-            "code generation",
+            "generated code",
             "passing unit tests",
             "green ci",
             "process exit",
-            "intermediate artefacts",
+            "artefacts",
         ):
             with self.subTest(supporting_evidence=supporting_evidence):
                 self.assertIn(supporting_evidence, self.verify)
         self.assertIn("a broken application", self.verify)
-        self.assertIn("precludes complete despite green supporting checks", self.verify)
+        self.assertIn("precludes complete", self.verify)
 
     def test_successful_api_without_required_readback_is_not_complete(self):
         # Transport success cannot establish consumer-observed delivery.
@@ -51,18 +51,18 @@ class OutcomeEvidenceSufficiencyTests(unittest.TestCase):
     def test_verified_positive_result_can_complete_without_extra_work(self):
         # A working application and verified consumer remain eligible to finish.
         self.assertIn("verified behaviour permits complete", self.verify)
-        self.assertIn("once all other governing conditions hold", self.verify)
-        self.assertIn("least expensive sufficient checks", self.verify)
-        self.assertIn("do not create an optional pr, review or further workflow", self.verify)
+        self.assertIn("once other conditions hold", self.verify)
+        self.assertIn("least expensive sufficient authorised checks", self.verify)
+        self.assertIn("stop once satisfied without optional pr or review", self.verify)
         self.assertIn("return complete immediately", self.router)
 
     def test_unavailable_verification_does_not_invent_authority(self):
         # Unavailable or prohibited integration evidence cannot be called PASS.
         self.assertIn("if outcome verification is unavailable or prohibited", self.verify)
         self.assertIn("report the unverified boundary", self.verify)
-        self.assertIn("continue other authorised work", self.verify)
-        self.assertIn("without inventing success, permission or a new approval stage", self.verify)
-        self.assertIn("permitted by current authority", self.verify)
+        self.assertIn("continue authorised work", self.verify)
+        self.assertIn("without inventing success, permission or approval", self.verify)
+        self.assertIn("authorised checks", self.verify)
         self.assertIn("including relevant negative paths", self.verify)
 
     def test_existing_lifecycle_and_review_boundaries_remain_intact(self):
