@@ -19,6 +19,7 @@ Promptbook is organised by the task a user wants to perform.
 - [Autonomous progression](workflows/autonomous-progression.md)
 - [Assess objective alignment](workflows/assess-objective.md)
 - [Triage competing problems](workflows/triage-problems.md)
+- [Decide among alternatives](workflows/decide-alternatives.md)
 - [Assess risk](workflows/assess-risk.md)
 - [Challenge assumptions](workflows/challenge-assumptions.md)
 - [Capability availability overrides](workflows/capability-availability-overrides.md)

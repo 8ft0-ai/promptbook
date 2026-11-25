@@ -32,6 +32,7 @@ The normal public surface is:
 - `/plan [target]` — use [Plan an issue](../engineering/plan-an-issue.md). Planning remains non-implementation work unless separate authority says otherwise.
 - `/assess [target]` — [Read-only objective alignment](assess-objective.md); recommend course, never authorise action.
 - `/triage [target]` — [Read-only problem prioritisation](triage-problems.md); rank evidence-backed issues without remediation authority.
+- `/decide [target]` — [Compare options](decide-alternatives.md); read-only.
 - `/verify [target]` — [Read-only outcome check](verify-outcome.md); does not write back or replace fresh review.
 - `/simplify [target]` — [Read-only subtractive assessment](simplify.md); recommends less complexity without implementation authority.
 - `/review [target]` — request a substantive independent review using [Fresh independent review](fresh-independent-review.md). For a GitHub pull request, ordinary `/review` includes the narrow authority to durably record the requested review on GitHub after refreshing the exact candidate/head and applying repository/platform constraints. For `REVIEW_TYPE=ARCHITECTURE_CLOSURE` whose closure artefact is durably anchored in a GitHub issue or issue comment, ordinary `/review` likewise includes only the narrow authority to publish one durable closure-review record as a new top-level comment on that owning issue. Treat repository object IDs as locators, not content-version identities: bind the reviewed closure to an edit-sensitive snapshot identity (for example locator plus canonical body digest and repository-native version/update witness), bind the review record to that exact closure snapshot, and bind the review record itself to an edit-sensitive snapshot identity. The created comment ID is therefore a locator component, not sufficient identity by itself. Closure-review records are append-only evidence for this gate; an in-place edit invalidates their fresh-review status and requires a new review record. If no permitted durable repository-native review-record target is available, the assessment may still be reported but cannot satisfy `CLOSURE_REVIEW_REQUIRED`. `/review --read-only [target]`, or an unambiguous natural-language equivalent such as `review without mutation` or `review only in chat`, performs the same assessment with zero GitHub write-back and therefore cannot by itself satisfy a durable closure-review gate. Review-recording authority does not grant remediation, merge, release, deployment, issue-closure, settings, credential, production, candidate authoring, or unrelated mutation authority.
@@ -105,6 +106,7 @@ The command defaults are:
 | `/plan` | `suggest` |
 | `/assess` | `stop` |
 | `/triage` | `stop` |
+| `/decide` | `stop` |
 | `/verify` | `stop` |
 | `/simplify` | `stop` |
 | `/review` | `suggest` |

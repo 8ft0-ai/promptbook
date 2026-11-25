@@ -143,6 +143,7 @@ The canonical command semantics live in [`prompts/workflows/README.md`](../promp
 - `/plan [target]` — plan bounded work using the Promptbook planning prompt.
 - `/assess [target]` — compare original objective with current direction, value and effort; recommend continuing, correcting course, simplifying, stopping or acknowledging uncertainty, read-only.
 - `/triage [target]` — classify and prioritise a finite set of problems, distinguish verified blockers from important, deferred or noise items, and recommend the smallest next intervention, read-only.
+- `/decide [target]` — compare alternatives using explicit criteria, evidence and trade-offs, recommending or deferring without making an owner-reserved decision, read-only.
 - `/verify [target]` — check whether mandatory delivered-outcome evidence is actually observed, read-only; no review write-back or lifecycle authority.
 - `/simplify [target]` — recommend the smallest safe subtractive alternative, read-only; no mutation or approval.
 - `/review [target]` — request substantive fresh review. For a GitHub pull request, record the requested review on GitHub by default; use `/review --read-only [target]` or an unambiguous natural-language zero-write qualifier to report only in chat.
