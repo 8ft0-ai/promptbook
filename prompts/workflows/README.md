@@ -1,6 +1,6 @@
 # Workflow router
 
-Canonical workflow router. Platform safety and explicit task authority apply; repository-local instructions and authoritative evidence remain higher precedence.
+Canonical workflow router. Platform safety and explicit task authority apply; repository-local instructions and current authoritative evidence remain higher precedence.
 
 ## Using the router
 
