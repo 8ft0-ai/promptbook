@@ -1,6 +1,6 @@
 # Workflow router
 
-Canonical workflow router. Platform safety and explicit task authority apply; repository-local instructions and current authoritative evidence remain higher precedence.
+Canonical governed-workflow router. Platform safety rules and explicit task authority apply; repository-local instructions and current authoritative evidence remain higher precedence. Shorthand commands grant only their defined authority.
 
 ## Using the router
 
@@ -179,13 +179,13 @@ Review readiness, validation results, PR readiness, merge readiness and ordinary
 ## Current workflows
 
 - [Autonomous progression](autonomous-progression.md) — continue already-governed work with minimal human orchestration.
-- [Bounded concern lifecycle](bounded-concern-lifecycle.md) — bounded closure.
-- [Documentation assessment workflow](documentation-assessment.md) — assess reader tasks.
-- [Fresh independent review](fresh-independent-review.md) — independent assessment, including eligible isolated review.
+- [Bounded concern lifecycle](bounded-concern-lifecycle.md) — bounded concern closure without universal completeness claims.
+- [Documentation assessment workflow](documentation-assessment.md) — assess representative reader tasks using the pinned method.
+- [Fresh independent review](fresh-independent-review.md) — reconstruct and adjudicate a candidate from a genuinely fresh context, including when an eligible isolated review context is delegated by the governing workflow.
 - [Objective alignment assessment](assess-objective.md) — read-only.
 - [Triage competing problems](triage-problems.md) — read-only ranking.
 - [Decide among alternatives](decide-alternatives.md) — read-only.
-- [Assess risk](assess-risk.md) — assess risk without acceptance or authority.
+- [Assess risk](assess-risk.md) — characterise material risk and legitimate disposition boundaries without accepting risk or manufacturing authority.
 - [Reflect on completed work](reflect-on-work.md) — extract justified retrospective lessons without turning self-assessment into review evidence.
 - [Challenge assumptions](challenge-assumptions.md) — adversarially test assumptions or governing models without turning challenge into approval.
 - [Next-session handover](next-session-handover.md) — create the shortest safe continuation prompt for another context or capability boundary, retaining manual fresh-review context transport as the fallback when automatic isolation cannot be established.
