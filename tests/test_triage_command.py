@@ -46,7 +46,7 @@ class TriageCommandTests(unittest.TestCase):
 
     def test_distinct_from_next_risk_and_execution(self):
         for marker in ("/next", "/risk", "/go", "/fix",
-                       "does not", "not a proven blocker"):
+                       "do not turn the ranking", "not a proven blocker"):
             with self.subTest(marker=marker):
                 self.assertIn(marker, self.workflow)
 
