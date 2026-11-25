@@ -1,6 +1,6 @@
 # Workflow router
 
-This is Promptbook's canonical governed-workflow entry point. Select the next workflow from current evidence. The router grants no new authority: platform safety, repository-local instructions, explicit task authority and authoritative evidence take precedence. Shorthand commands retain only their defined narrow authority.
+This is Promptbook's canonical governed-workflow entry point. Select the next workflow from current evidence. The router grants no new authority: platform safety rules and explicit task authority apply; repository-local instructions and current authoritative evidence remain higher precedence. Shorthand commands retain only their defined narrow authority.
 
 ## Using the router
 
