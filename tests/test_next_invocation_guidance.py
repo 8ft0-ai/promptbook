@@ -411,6 +411,7 @@ class NextInvocationGuidanceTests(unittest.TestCase):
                 "/plan",
                 "/assess",
                 "/triage",
+                "/decide",
                 "/verify",
                 "/simplify",
                 "/review",

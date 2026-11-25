@@ -22,6 +22,7 @@ PUBLIC_COMMANDS = {
     "/plan",
     "/assess",
     "/triage",
+    "/decide",
     "/verify",
     "/simplify",
     "/review",
