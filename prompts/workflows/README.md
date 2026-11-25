@@ -1,8 +1,6 @@
 # Workflow router
 
-This directory is the canonical Promptbook entry point for governed engineering workflow continuation.
-
-Point the agent here when you want it to determine the appropriate reusable workflow from the current task state rather than choosing an individual prompt yourself. The router does not create unrelated authority: platform safety rules, explicit task authority, repository-local instructions and current authoritative evidence remain higher precedence. An explicit shorthand command may carry only the narrow authority intrinsic to the operation defined for that command; it never supplies unrelated repository or lifecycle authority.
+This is Promptbook's canonical governed-workflow entry point. Select the next workflow from current evidence. The router grants no new authority: platform safety, repository-local instructions, explicit task authority and authoritative evidence take precedence. Shorthand commands retain only their defined narrow authority.
 
 ## Using the router
 
@@ -32,7 +30,7 @@ The normal public surface is:
 - `/status [target]` — read-only. Reconstruct and report broader authoritative current state, decision-critical identity, blocker/boundary, the same next transition reported by `/next`, what `/go` would do, and minimum decision-critical evidence.
 - `/help [topic-or-question]` — read-only advisory interpretation of the same resolved state. Recommend what the operator should do and why, explain material alternatives or blockers, and answer prospective questions without executing the described action or creating authority.
 - `/plan [target]` — use [Plan an issue](../engineering/plan-an-issue.md). Planning remains non-implementation work unless separate authority says otherwise.
-- `/assess [target]` — read-only [Objective alignment assessment](assess-objective.md). Compare the original goal with current direction and value of continuing; recommend a course, not a lifecycle transition, approval or mutation.
+- `/assess [target]` — [Read-only objective alignment](assess-objective.md); recommend course, never authorise action.
 - `/verify [target]` — [Read-only outcome check](verify-outcome.md); does not write back or replace fresh review.
 - `/simplify [target]` — [Read-only subtractive assessment](simplify.md); recommends less complexity without implementation authority.
 - `/review [target]` — request a substantive independent review using [Fresh independent review](fresh-independent-review.md). For a GitHub pull request, ordinary `/review` includes the narrow authority to durably record the requested review on GitHub after refreshing the exact candidate/head and applying repository/platform constraints. For `REVIEW_TYPE=ARCHITECTURE_CLOSURE` whose closure artefact is durably anchored in a GitHub issue or issue comment, ordinary `/review` likewise includes only the narrow authority to publish one durable closure-review record as a new top-level comment on that owning issue. Treat repository object IDs as locators, not content-version identities: bind the reviewed closure to an edit-sensitive snapshot identity (for example locator plus canonical body digest and repository-native version/update witness), bind the review record to that exact closure snapshot, and bind the review record itself to an edit-sensitive snapshot identity. The created comment ID is therefore a locator component, not sufficient identity by itself. Closure-review records are append-only evidence for this gate; an in-place edit invalidates their fresh-review status and requires a new review record. If no permitted durable repository-native review-record target is available, the assessment may still be reported but cannot satisfy `CLOSURE_REVIEW_REQUIRED`. `/review --read-only [target]`, or an unambiguous natural-language equivalent such as `review without mutation` or `review only in chat`, performs the same assessment with zero GitHub write-back and therefore cannot by itself satisfy a durable closure-review gate. Review-recording authority does not grant remediation, merge, release, deployment, issue-closure, settings, credential, production, candidate authoring, or unrelated mutation authority.
@@ -180,7 +178,7 @@ Review readiness, validation results, PR readiness, merge readiness and ordinary
 - [Bounded concern lifecycle](bounded-concern-lifecycle.md) — orchestrate explicitly selected finite concern-specific closure packages and empirical convergence without claiming universal semantic completeness.
 - [Documentation assessment workflow](documentation-assessment.md) — discover and approve representative reader tasks, then continue a substantive documentation assessment with a pinned external method.
 - [Fresh independent review](fresh-independent-review.md) — reconstruct and adjudicate a candidate from a genuinely fresh context, including when an eligible isolated review context is delegated by the governing workflow.
-- [Objective alignment assessment](assess-objective.md) — assess whether current work still advances its original goal, read-only.
+- [Objective alignment assessment](assess-objective.md) — read-only.
 - [Assess risk](assess-risk.md) — characterise material risk and legitimate disposition boundaries without accepting risk or manufacturing authority.
 - [Reflect on completed work](reflect-on-work.md) — extract justified retrospective lessons without turning self-assessment into review evidence.
 - [Challenge assumptions](challenge-assumptions.md) — adversarially test assumptions or governing models without turning challenge into approval.
