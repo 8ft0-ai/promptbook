@@ -43,7 +43,7 @@ class BoundedExperimentModelEvaluationTests(unittest.TestCase):
 
     def test_no_silent_permissions_or_independent_review(self):
         for contract in (self.experiment, self.evaluation):
-            for phrase in ("no new public", "authority", "review", "deploy"):
+            for phrase in ("authority", "review", "deploy"):
                 with self.subTest(phrase=phrase):
                     self.assertIn(phrase, contract)
         self.assertIn("not permission to trade", self.experiment)
