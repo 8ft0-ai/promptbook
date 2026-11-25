@@ -147,8 +147,9 @@ Resolve special predicates *before* consequential action. Their referenced contr
 3. **Independent review required** → [Fresh independent review](fresh-independent-review.md); the authoring context cannot claim fresh independence. On material blockers/remediation response/strong-closure recurrence read [Review response and escalation](../../guides/conditional/router-review-response.md); for an eligible solo-maintainer review also read [Single-maintainer rules](../../guides/conditional/router-single-maintainer.md).
 4. **Bounded approval received** → verify the exact unchanged proposal, consume approval once for that action, then [Autonomous progression](autonomous-progression.md). A later permission boundary never blocks authorised preceding work.
 5. **Broad documentation assessment** → [Documentation assessment](documentation-assessment.md) only when reader/task discovery is needed. Routine edits use ordinary progression.
-6. **Ordinary authorised work** → [Autonomous progression](autonomous-progression.md), including routine implementation, troubleshooting, testing and PR preparation.
-7. **No safely determinable route** → report the evidenced genuine boundary. Unknown authority never defaults to ALLOW; unfinished work is not by itself BLOCKED.
+6. **Explicit bounded experiment or model/agent comparison** → use [Bounded experiment](bounded-experiment.md) for finite empirical protocols, or [Model evaluation](model-evaluation.md) for fair candidate comparison. Both remain under [Autonomous progression](autonomous-progression.md) and current task authority; neither adds a command, execution right or lifecycle stage.
+7. **Ordinary authorised work** → [Autonomous progression](autonomous-progression.md), including routine implementation, troubleshooting, testing and PR preparation.
+8. **No safely determinable route** → report the evidenced genuine boundary. Unknown authority never defaults to ALLOW; unfinished work is not by itself BLOCKED.
 
 On a required human decision load [Decision capsules](../../guides/conditional/router-decision.md). On manual handoff or stop load [Next-invocation guidance](../../guides/conditional/router-terminal-handover.md). For contested command precedence or non-standard lifecycle edges use the specialised routing conditions linked in case 2 above.
 
