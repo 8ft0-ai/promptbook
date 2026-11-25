@@ -409,6 +409,7 @@ class NextInvocationGuidanceTests(unittest.TestCase):
                 "/status",
                 "/help",
                 "/plan",
+                "/verify",
                 "/review",
                 "/fix",
                 "/save",

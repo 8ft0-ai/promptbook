@@ -29,6 +29,7 @@ Once Promptbook is configured for a project, common workflow intents can be invo
 | `/status [target]` | Reconstruct and report broader authoritative current state, read-only |
 | `/help [topic-or-question]` | Advise what to do next and why from current governed state, read-only |
 | `/plan [target]` | Plan bounded work |
+| `/verify [target]` | Verify delivered outcome against observed acceptance evidence, read-only |
 | `/review [target]` | Perform substantive fresh review and record the requested GitHub review by default |
 | `/fix [target]` | Remediate bounded review findings, validate, challenge review-readiness proportionately, then return control |
 | `/save [target]` | Persist the material result in the smallest correct durable repository-native home |
@@ -44,6 +45,7 @@ Examples:
 /step
 /next
 /help should I use step or go?
+/verify issue #42
 /review PR #43
 /review --read-only PR #43
 /fix
@@ -54,7 +56,7 @@ Examples:
 /challenge this design
 ```
 
-Commands are shorthand intent selectors with only the narrow authority intrinsic to the operation defined by the workflow router. Commands do not grant unrelated authority. `/go` and `/step` share the same governed transition model but differ in progression depth; `/next`, `/status`, and `/help` are read-only projections over the same resolved state. For a GitHub pull request, ordinary `/review` includes the bounded write needed to record the requested review; `/review --read-only` or an unambiguous natural-language zero-write qualifier reports only in chat. `/save` carries only its narrow persistence ceiling, while `/prompt` generates text only and does not create another context, transfer authority, or establish freshness. `/risk`, `/reflect`, and `/challenge` are read-only reasoning intents: risk assessment does not accept risk, reflection does not satisfy fresh review, and challenge does not create approval evidence. Commands do not bypass repository-local instructions, validation, security controls, freshness, or independent-review requirements.
+Commands are shorthand intent selectors with only the narrow authority intrinsic to the operation defined by the workflow router. Commands do not grant unrelated authority. `/go` and `/step` share the same governed transition model but differ in progression depth; `/next`, `/status`, and `/help` are read-only projections over the same resolved state. `/verify` is a read-only evidence check, not an independent `/review`, a remediation command or a new lifecycle approval. For a GitHub pull request, ordinary `/review` includes the bounded write needed to record the requested review; `/review --read-only` or an unambiguous natural-language zero-write qualifier reports only in chat. `/save` carries only its narrow persistence ceiling, while `/prompt` generates text only and does not create another context, transfer authority, or establish freshness. `/risk`, `/reflect`, and `/challenge` are read-only reasoning intents: risk assessment does not accept risk, reflection does not satisfy fresh review, and challenge does not create approval evidence. Commands do not bypass repository-local instructions, validation, security controls, freshness, or independent-review requirements.
 
 See [Project bootstrap and shorthand commands](guides/project-bootstrap.md) for setup and the [Workflow router](prompts/workflows/README.md) for canonical command semantics.
 
