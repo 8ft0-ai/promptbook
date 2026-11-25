@@ -14,6 +14,8 @@ Promptbook is organised by the task a user wants to perform.
 - [Workflow router — start here for governed continuation](workflows/README.md)
 - [Architecture closure analysis](workflows/architecture-closure-analysis.md)
 - [Bounded concern lifecycle](workflows/bounded-concern-lifecycle.md)
+- [Bounded experiment](workflows/bounded-experiment.md)
+- [Model evaluation](workflows/model-evaluation.md)
 - [Autonomous progression](workflows/autonomous-progression.md)
 - [Assess risk](workflows/assess-risk.md)
 - [Challenge assumptions](workflows/challenge-assumptions.md)
