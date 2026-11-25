@@ -44,7 +44,7 @@ class VerifyOutcomeCommandTests(unittest.TestCase):
     def test_verify_does_not_authorise_implementation_or_fresh_review(self):
         for marker in (
             "do not remediate", "write reviews", "merge", "deploy",
-            "fresh reviewer independence", "no lifecycle authority",
+            "fresh reviewer independence", "new lifecycle stage",
         ):
             self.assertIn(marker, self.verify)
         self.assertIn("| `/verify` | `stop` |", self.router)
