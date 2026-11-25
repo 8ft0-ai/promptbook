@@ -24,6 +24,7 @@ Advise on <TARGET> as read-only decision support.
 ## Inputs
 
 - `<TARGET>` — a bounded decision or set of alternatives; infer only when unambiguous.
+- `<OPTION>` — the selected alternative's name in a conditional recommendation; never an automatically approved choice.
 - Governing requirements, current evidence, constraints, preferences and decision ownership; explicitly note unavailable inputs.
 
 ## What it does
