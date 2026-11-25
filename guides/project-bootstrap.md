@@ -141,6 +141,7 @@ The canonical command semantics live in [`prompts/workflows/README.md`](../promp
 - `/status [target]` — report broader authoritative state, identity, blocker/boundary, next transition, `/go` behaviour, and minimum decision-critical evidence, read-only.
 - `/help [topic-or-question]` — advise what the operator should do and why from the same resolved state, without executing the recommendation.
 - `/plan [target]` — plan bounded work using the Promptbook planning prompt.
+- `/verify [target]` — check whether mandatory delivered-outcome evidence is actually observed, read-only; no review write-back or lifecycle authority.
 - `/review [target]` — request substantive fresh review. For a GitHub pull request, record the requested review on GitHub by default; use `/review --read-only [target]` or an unambiguous natural-language zero-write qualifier to report only in chat.
 - `/fix [target]` — remediate objectively bounded review findings under existing authority, validate the changed candidate, complete a proportional author-side remediation-readiness sweep, then return control rather than silently continuing to later lifecycle effects.
 - `/save [target]` — persist the material result using only the narrow repository-native persistence authority defined by the router/run-context contract.
