@@ -34,6 +34,7 @@ The normal public surface is:
 - `/status [target]` — read-only. Reconstruct and report broader authoritative current state, decision-critical identity, blocker/boundary, the same next transition reported by `/next`, what `/go` would do, and minimum decision-critical evidence.
 - `/help [topic-or-question]` — read-only advisory interpretation of the same resolved state. Recommend what the operator should do and why, explain material alternatives or blockers, and answer prospective questions without executing the described action or creating authority.
 - `/plan [target]` — use [Plan an issue](../engineering/plan-an-issue.md). Planning remains non-implementation work unless separate authority says otherwise.
+- `/verify [target]` — read-only observed-outcome verification using [Verify delivered outcome](verify-outcome.md). Establish whether mandatory acceptance evidence exists for the delivered behaviour, distinguishing source/tests from consumer/operational observation. Reports VERIFIED / FAILED / INCONCLUSIVE; does not write back, remediate, approve, substitute for fresh `/review`, or grant lifecycle authority.
 - `/review [target]` — request a substantive independent review using [Fresh independent review](fresh-independent-review.md). For a GitHub pull request, ordinary `/review` includes the narrow authority to durably record the requested review on GitHub after refreshing the exact candidate/head and applying repository/platform constraints. For `REVIEW_TYPE=ARCHITECTURE_CLOSURE` whose closure artefact is durably anchored in a GitHub issue or issue comment, ordinary `/review` likewise includes only the narrow authority to publish one durable closure-review record as a new top-level comment on that owning issue. Treat repository object IDs as locators, not content-version identities: bind the reviewed closure to an edit-sensitive snapshot identity (for example locator plus canonical body digest and repository-native version/update witness), bind the review record to that exact closure snapshot, and bind the review record itself to an edit-sensitive snapshot identity. The created comment ID is therefore a locator component, not sufficient identity by itself. Closure-review records are append-only evidence for this gate; an in-place edit invalidates their fresh-review status and requires a new review record. If no permitted durable repository-native review-record target is available, the assessment may still be reported but cannot satisfy `CLOSURE_REVIEW_REQUIRED`. `/review --read-only [target]`, or an unambiguous natural-language equivalent such as `review without mutation` or `review only in chat`, performs the same assessment with zero GitHub write-back and therefore cannot by itself satisfy a durable closure-review gate. Review-recording authority does not grant remediation, merge, release, deployment, issue-closure, settings, credential, production, candidate authoring, or unrelated mutation authority.
 - `/fix [target]` — use [Remediate review findings](../engineering/remediate-review-findings.md) for objectively bounded findings under existing authority. If review-response synthesis has not yet been satisfied, perform that non-mutating synthesis first. Explicit `/fix` performs bounded remediation, required validation, and a proportional author-side remediation-readiness sweep, freezes the exact resulting candidate when review-ready, then returns control rather than silently continuing into fresh review, merge, or later lifecycle effects. The readiness sweep is remediation evidence, not review or approval.
 - `/save [target]` — persist the current material result in the smallest correct durable repository-native home. The command carries only the narrow intrinsic persistence authority defined by the resolved-run-context contract; it does not grant branch/PR/code/cross-repository/production mutation authority.
@@ -103,6 +104,7 @@ The command defaults are:
 | `/status` | `stop` |
 | `/help` | `stop` |
 | `/plan` | `suggest` |
+| `/verify` | `stop` |
 | `/review` | `suggest` |
 | `/fix` | `suggest` |
 | `/save` | `stop` |
@@ -135,6 +137,8 @@ When either predicate is demonstrably false (for example, a normal bounded bug f
 ## Routing
 
 Reconstruct one unambiguous current work target from authoritative repository/task state. This router does not grant unrelated authority. A completed sub-workflow, successful handoff record or preparation report is not the original objective's completion.
+
+For `/verify`, select [Verify delivered outcome](verify-outcome.md) and report evidence only, without performing a governed transition or claiming qualified independent review.
 
 For normal `/go`, select [Autonomous progression](autonomous-progression.md): take the next ALLOW and executable goal-advancing action, verify, repeat to the real goal or genuine boundary. For `/step`, perform exactly one transition. `/next`, `/status` and `/help` project the same resolved transition without executing it.
 
@@ -175,6 +179,7 @@ Review readiness, validation results, PR readiness, merge readiness and ordinary
 - [Autonomous progression](autonomous-progression.md) — continue already-governed work with minimal human orchestration.
 - [Bounded concern lifecycle](bounded-concern-lifecycle.md) — orchestrate explicitly selected finite concern-specific closure packages and empirical convergence without claiming universal semantic completeness.
 - [Documentation assessment workflow](documentation-assessment.md) — discover and approve representative reader tasks, then continue a substantive documentation assessment with a pinned external method.
+- [Verify delivered outcome](verify-outcome.md) — read-only adjudication of actual acceptance evidence distinct from candidate review.
 - [Fresh independent review](fresh-independent-review.md) — reconstruct and adjudicate a candidate from a genuinely fresh context, including when an eligible isolated review context is delegated by the governing workflow.
 - [Assess risk](assess-risk.md) — characterise material risk and legitimate disposition boundaries without accepting risk or manufacturing authority.
 - [Reflect on completed work](reflect-on-work.md) — extract justified retrospective lessons without turning self-assessment into review evidence.
