@@ -20,8 +20,6 @@ Follow `8ft0-ai/promptbook` → `prompts/workflows/README.md`.
 Approved — proceed.
 ```
 
-Do not manually choose a workflow when this router can determine the route from current evidence.
-
 ## Shorthand commands
 
 When a user message begins with one of these commands, treat it as a concise intent selector. Resolve an omitted target from the current conversation and authoritative repository/task state only when that is unambiguous. Commands do not grant authority beyond the narrow operation authority explicitly defined here, bypass repository policy, weaken freshness or independence requirements, or turn unavailable capabilities into available ones. Any intrinsic operation authority is bounded to the requested command and does not become remediation, merge, release, deployment, settings, credential, production, or other unrelated authority.
@@ -35,6 +33,7 @@ The normal public surface is:
 - `/help [topic-or-question]` — read-only advisory interpretation of the same resolved state. Recommend what the operator should do and why, explain material alternatives or blockers, and answer prospective questions without executing the described action or creating authority.
 - `/plan [target]` — use [Plan an issue](../engineering/plan-an-issue.md). Planning remains non-implementation work unless separate authority says otherwise.
 - `/verify [target]` — [Read-only outcome check](verify-outcome.md); does not write back or replace fresh review.
+- `/simplify [target]` — [Read-only subtractive assessment](simplify.md); recommends less complexity without implementation authority.
 - `/review [target]` — request a substantive independent review using [Fresh independent review](fresh-independent-review.md). For a GitHub pull request, ordinary `/review` includes the narrow authority to durably record the requested review on GitHub after refreshing the exact candidate/head and applying repository/platform constraints. For `REVIEW_TYPE=ARCHITECTURE_CLOSURE` whose closure artefact is durably anchored in a GitHub issue or issue comment, ordinary `/review` likewise includes only the narrow authority to publish one durable closure-review record as a new top-level comment on that owning issue. Treat repository object IDs as locators, not content-version identities: bind the reviewed closure to an edit-sensitive snapshot identity (for example locator plus canonical body digest and repository-native version/update witness), bind the review record to that exact closure snapshot, and bind the review record itself to an edit-sensitive snapshot identity. The created comment ID is therefore a locator component, not sufficient identity by itself. Closure-review records are append-only evidence for this gate; an in-place edit invalidates their fresh-review status and requires a new review record. If no permitted durable repository-native review-record target is available, the assessment may still be reported but cannot satisfy `CLOSURE_REVIEW_REQUIRED`. `/review --read-only [target]`, or an unambiguous natural-language equivalent such as `review without mutation` or `review only in chat`, performs the same assessment with zero GitHub write-back and therefore cannot by itself satisfy a durable closure-review gate. Review-recording authority does not grant remediation, merge, release, deployment, issue-closure, settings, credential, production, candidate authoring, or unrelated mutation authority.
 - `/fix [target]` — use [Remediate review findings](../engineering/remediate-review-findings.md) for objectively bounded findings under existing authority. If review-response synthesis has not yet been satisfied, perform that non-mutating synthesis first. Explicit `/fix` performs bounded remediation, required validation, and a proportional author-side remediation-readiness sweep, freezes the exact resulting candidate when review-ready, then returns control rather than silently continuing into fresh review, merge, or later lifecycle effects. The readiness sweep is remediation evidence, not review or approval.
 - `/save [target]` — persist the current material result in the smallest correct durable repository-native home. The command carries only the narrow intrinsic persistence authority defined by the resolved-run-context contract; it does not grant branch/PR/code/cross-repository/production mutation authority.
@@ -72,7 +71,7 @@ Treat an explicit current-user identity or constraint differently from derived s
 
 Target-only invocation is valid only while reconstruction is unambiguous. If multiple active candidates, conflicting authorities, materially different pending actions, or missing decision-critical evidence prevent a unique safe interpretation, do not guess. Reducing operator input never collapses separate authority boundaries such as candidate approval, merge, release, deployment, or production mutation.
 
-For a conceptual map of `/go` state, authority, capability, evidence rebinding and terminal boundaries, see [`/go` lifecycle](../../guides/go-lifecycle.md). The router remains the canonical behavioural contract.
+For a `/go` lifecycle map see [`/go` lifecycle](../../guides/go-lifecycle.md). This router is canonical.
 
 
 ## Continuation policy
@@ -105,6 +104,7 @@ The command defaults are:
 | `/help` | `stop` |
 | `/plan` | `suggest` |
 | `/verify` | `stop` |
+| `/simplify` | `stop` |
 | `/review` | `suggest` |
 | `/fix` | `suggest` |
 | `/save` | `stop` |

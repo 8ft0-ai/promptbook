@@ -22,6 +22,7 @@ Promptbook is organised by the task a user wants to perform.
 - [Executor capability projection](workflows/executor-capability-projection.md)
 - [Foreground execution resilience](workflows/foreground-execution-resilience.md)
 - [Verify delivered outcome](workflows/verify-outcome.md)
+- [Simplify a design or workflow](workflows/simplify.md)
 - [Fresh independent review](workflows/fresh-independent-review.md)
 - [Next-session handover](workflows/next-session-handover.md)
 - [Operational artifact hand-off](workflows/operational-artifact-handoff.md)

@@ -12,6 +12,7 @@ PUBLIC_COMMANDS = {
     "/help",
     "/plan",
     "/verify",
+    "/simplify",
     "/review",
     "/fix",
     "/save",
